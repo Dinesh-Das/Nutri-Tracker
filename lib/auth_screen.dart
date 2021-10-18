@@ -126,7 +126,7 @@ class _AuthScreenState extends State<AuthScreen>
                     duration: defaultDuration,
                    // textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: _isShowSignUp ? 20 : 36,
+                        fontSize: _isShowSignUp ? 26 : 36,
                         fontWeight: FontWeight.bold,
                         color: _isShowSignUp ? Colors.black87 : Colors.black
                         ),
@@ -164,7 +164,7 @@ class _AuthScreenState extends State<AuthScreen>
                     duration: defaultDuration,
                    // textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: !_isShowSignUp ? 20 : 32,
+                        fontSize: !_isShowSignUp ? 26 : 36,
                         fontWeight: FontWeight.bold,
                         color: !_isShowSignUp ? Colors.black87 : Colors.black
                         ),
