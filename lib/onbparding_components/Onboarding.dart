@@ -87,7 +87,7 @@ class _OnboardingState extends State<Onboarding> {
             onPressed: () {
               if (currentIndex == contents.length - 1) {
                 Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (_) => const AuthScreen()
+                    context, MaterialPageRoute(builder: (_) =>  const AuthScreen()
                     )
                   );
               }

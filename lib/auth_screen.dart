@@ -9,7 +9,7 @@ import 'package:nutri_tracker/login_components/socal_buttons.dart';
 
 
 class AuthScreen extends StatefulWidget {
-  const AuthScreen({Key? key}) : super(key: key);
+   const AuthScreen({Key? key}) : super(key: key);
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -141,6 +141,7 @@ class _AuthScreenState extends State<AuthScreen>
                            }
                            else{
                              //login
+                             
                            }
                         },
                         child: Container(
