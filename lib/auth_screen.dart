@@ -9,7 +9,7 @@ import 'package:nutri_tracker/login_components/socal_buttons.dart';
 
 
 class AuthScreen extends StatefulWidget {
-   const AuthScreen({Key? key}) : super(key: key);
+  const AuthScreen({Key? key}) : super(key: key);
 
   @override
   State<AuthScreen> createState() => _AuthScreenState();
@@ -126,7 +126,7 @@ class _AuthScreenState extends State<AuthScreen>
                     duration: defaultDuration,
                    // textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: _isShowSignUp ? 26 : 36,
+                        fontSize: _isShowSignUp ? 20 : 36,
                         fontWeight: FontWeight.bold,
                         color: _isShowSignUp ? Colors.black87 : Colors.black
                         ),
@@ -141,7 +141,6 @@ class _AuthScreenState extends State<AuthScreen>
                            }
                            else{
                              //login
-                             
                            }
                         },
                         child: Container(
@@ -165,7 +164,7 @@ class _AuthScreenState extends State<AuthScreen>
                     duration: defaultDuration,
                    // textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: !_isShowSignUp ? 26 : 36,
+                        fontSize: !_isShowSignUp ? 20 : 32,
                         fontWeight: FontWeight.bold,
                         color: !_isShowSignUp ? Colors.black87 : Colors.black
                         ),

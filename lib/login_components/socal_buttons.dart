@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+
 class SocalButtons extends StatelessWidget {
   const SocalButtons({
     Key? key,
@@ -18,6 +18,3 @@ class SocalButtons extends StatelessWidget {
     );
   }
 }
-
-
-
