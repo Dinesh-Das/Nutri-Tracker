@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "244672019672",
+    "project_id": "nutri-tracker-34aef",
+    "storage_bucket": "nutri-tracker-34aef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:244672019672:android:6eef116c505f22b1da2bad",
+        "android_client_info": {
+          "package_name": "com.example.nutri_tracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "244672019672-oc8ie4rtl0pgo4ir3crbjj79c14cnlmg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nutri_tracker",
+            "certificate_hash": "e97bee4594bd1ad61b774417712b535c4441a99b"
+          }
+        },
+        {
+          "client_id": "244672019672-a362683mgaqqv6bee61n3c8j0go3ob5s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBbC7RkZXQWdGS97UbXJEqxKBCsxEXvPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "244672019672-a362683mgaqqv6bee61n3c8j0go3ob5s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
