@@ -1,121 +1,177 @@
 // ignore_for_file: file_names
 
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:nutri_tracker/onbparding_components/content_model.dart';
+import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:nutri_tracker/auth_screen.dart';
-
+import 'package:nutri_tracker/onbparding_components/content_model.dart';
 class Onboarding extends StatefulWidget {
-  const Onboarding({Key? key}) : super(key: key);
+  const Onboarding({ Key? key }) : super(key: key);
 
   @override
   _OnboardingState createState() => _OnboardingState();
 }
 
 class _OnboardingState extends State<Onboarding> {
-  int currentIndex = 0;
-  late PageController _controller;
+
+  int page = 0;
+  late LiquidController liquidController;
+  late UpdateType updateType;
+
   @override
   void initState() {
-    _controller = PageController(initialPage: 0);
+    liquidController = LiquidController();
     super.initState();
-    
-  }
-  @override
-  void dispose() {
-    
-    _controller.dispose();
-    super.dispose();
   }
 
-  @override
-   Widget build(BuildContext context) {
-    return Scaffold(
-        body:  Column(
-      children: [
-        Expanded(
-          child: PageView.builder(
-              controller: _controller,
-              itemCount: contents.length,
-              onPageChanged: (int index) {
-                setState(() {
-                  currentIndex = index;
-                });
-              },
-              itemBuilder: (_, i) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      SvgPicture.asset(
-                        contents[i].image,
-                        height: 400,
-                      ),
-                      Text(
-                        contents[i].title,
-                        style: const TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        contents[i].description,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 18, color: Colors.grey),
-                      )
-                    ],
-                  ),
-                );
-              }),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-              contents.length, (index) => buildDot(index, context)),
-        ),
-        Container(
-          height: 55,
-          margin: const EdgeInsets.all(40),
-          width: double.infinity,
-          // ignore: deprecated_member_use
-          child: FlatButton(
-            child:
-                Text(currentIndex == contents.length - 1 ? "Continue" : "Next"),
-            onPressed: () {
-              if (currentIndex == contents.length - 1) {
-                Navigator.pushReplacement(
-                    context, MaterialPageRoute(builder: (_) => const AuthScreen()
-                    )
-                  );
-              }
-              _controller.nextPage(
-                duration: const Duration(microseconds: 100),
-                curve: Curves.bounceIn,
-              );
-            },
-            color: Theme.of(context).primaryColor,
-            textColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
+  pageChangeCallback(int lpage) {
+    setState(() {
+      page = lpage;
+    });
+  }
+  continueToHome() {
+
+  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const AuthScreen()));
+}
+
+
+  Widget _buildDot(int index) {
+    double selectedness = Curves.easeOut.transform(
+      max(
+        0.0,
+        1.0 - (page - index).abs(),
+      ),
+    );
+    double zoom = 1.0 + (2.0 - 1.0) * selectedness;
+    return SizedBox(
+      width: 25.0,
+      child: Center(
+        child: Material(
+          color: Colors.white,
+          type: MaterialType.circle,
+          child: SizedBox(
+            width: 8.0 * zoom,
+            height: 8.0 * zoom,
           ),
-        )
-      ],
-    ));
-  }
-
-  Container buildDot(int index, BuildContext context) {
-    return Container(
-      height: 10,
-      width: currentIndex == index ? 20 : 10,
-      margin: const EdgeInsets.only(right: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Theme.of(context).primaryColor,
+        ),
       ),
     );
   }
+  
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            LiquidSwipe.builder(
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                return Container(
+                  width: double.infinity,
+                  color: data[index].color,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      //Image asset
+                      Image.asset(
+                        data[index].image,
+                        height: 400,
+                        fit: BoxFit.contain,
+                      ),
+                      // Text and description
+                      Column(
+                        children: <Widget>[
+                          Text(
+                            data[index].title,
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontFamily: "Billy",
+                              fontWeight: FontWeight.w600,
+                               ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.all(10),
+                            ),
+                          Text(
+                            data[index].description,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontFamily: "Billy",
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.all(20),
+                      ),
+                    ],
+                  ),
+                );
+              },
+
+              positionSlideIcon: 0.8,
+              slideIconWidget: const Icon(Icons.arrow_back_ios),
+              onPageChangeCallback: pageChangeCallback,
+              waveType: WaveType.liquidReveal,
+              liquidController: liquidController,
+              fullTransitionValue: 880,
+              enableSideReveal: true,
+              enableLoop: false,
+              ignoreUserGestureWhileAnimating: true,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: <Widget>[
+                  const Expanded(child: SizedBox()),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List<Widget>.generate(data.length, _buildDot),
+                  ),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: FlatButton(
+                  onPressed: () {
+                    liquidController.currentPage + 1 > data.length - 1 ? continueToHome() :
+                     liquidController.animateToPage(
+                        page: data.length - 1, duration: 700);
+                  },
+                  child: liquidController.currentPage + 1 > data.length - 1 ? const Text("Continue",style:TextStyle(fontWeight: FontWeight.bold)): const Text("Skip to End",style:TextStyle(fontWeight: FontWeight.bold),),
+                  color: Colors.white.withOpacity(0.01),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: FlatButton(
+                  onPressed: () {
+                    liquidController.jumpToPage(
+                        page: liquidController.currentPage + 1 > data.length - 1
+                            ? 0
+                            : liquidController.currentPage + 1);
+                  },
+                  child: liquidController.currentPage + 1 > data.length - 1 ? const Text("Back",style:TextStyle(fontWeight: FontWeight.bold)) :const Text("Next",style:TextStyle(fontWeight: FontWeight.bold)),
+                  color: Colors.white.withOpacity(0.01),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
 }
+
