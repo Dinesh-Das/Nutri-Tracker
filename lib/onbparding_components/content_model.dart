@@ -1,27 +1,17 @@
+import 'package:flutter/material.dart';
 
-class OnboardingContent{
-  String image,title,description;
-  OnboardingContent({required this.image, required this.title, required this.description});
+class ItemData {
+  final Color color;
+  final String image;
+  final String title;
+  final String description;
+
+  ItemData(this.color, this.image, this.title, this.description);
 }
-List<OnboardingContent> contents = [
-  OnboardingContent(
-    title: 'Onboarding Page 1',
-    image: 'assets/onboard/1.svg',
-    description: "Description of onboarding Page 1"
-  ),
-  OnboardingContent(
-    title: 'Onboarding Page 2',
-    image: 'assets/onboard/2.svg',
-    description: "Description of onboarding Page 2"
-  ),
-  OnboardingContent(
-    title: 'Onboarding Page 3',
-    image: 'assets/onboard/3.svg',
-    description: "Description of onboarding Page 3"
-  ),
-  OnboardingContent(
-    title: 'Onboarding Page 4',
-    image: 'assets/onboard/4.svg',
-    description: "Description of onboarding Page 4"
-  ),
-];
+List<ItemData> data = [
+    ItemData(Colors.blue, "assets/onboard/1.png", "Onboarding Page 1", "Onboarding Description Space 1"),
+    ItemData(Colors.deepPurpleAccent, "assets/onboard/2.png","Onboarding Page 2", "Onboarding Description Space 2"),
+    ItemData(Colors.green, "assets/onboard/3.png", "Onboarding Page 3", "Onboarding Description Space 3"),
+    ItemData(Colors.yellow, "assets/onboard/4.png", "Onboarding Page 4", "Onboarding Description Space 4"),
+    ItemData(Colors.red, "assets/onboard/5.png", "Onboarding Page 5", "Onboarding Description Space 5"),
+  ];
