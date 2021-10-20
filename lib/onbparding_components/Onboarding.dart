@@ -136,32 +136,34 @@ class _OnboardingState extends State<Onboarding> {
               ),
             ),
             Align(
-              alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: const EdgeInsets.all(25.0),
-                child: FlatButton(
-                  onPressed: () {
-                    liquidController.currentPage + 1 > data.length - 1 ? continueToHome() :
-                     liquidController.animateToPage(
-                        page: data.length - 1, duration: 700);
-                  },
-                  child: liquidController.currentPage + 1 > data.length - 1 ? const Text("Continue",style:TextStyle(fontWeight: FontWeight.bold)): const Text("Skip to End",style:TextStyle(fontWeight: FontWeight.bold),),
-                  color: Colors.white.withOpacity(0.01),
-                ),
-              ),
-            ),
-            Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
                 child: FlatButton(
                   onPressed: () {
-                    liquidController.jumpToPage(
-                        page: liquidController.currentPage + 1 > data.length - 1
-                            ? 0
-                            : liquidController.currentPage + 1);
+                    liquidController.currentPage + 1 > data.length - 1 || liquidController.currentPage != 0 ?   
+                     liquidController.jumpToPage(
+                        page: liquidController.currentPage - 1):
+                     liquidController.animateToPage(
+                        page: data.length - 1, duration: 700);
                   },
-                  child: liquidController.currentPage + 1 > data.length - 1 ? const Text("Back",style:TextStyle(fontWeight: FontWeight.bold)) :const Text("Next",style:TextStyle(fontWeight: FontWeight.bold)),
+                  child: liquidController.currentPage + 1 > data.length - 1 || liquidController.currentPage != 0 ? const Text("Back",style:TextStyle(fontWeight: FontWeight.bold)): const Text("Skip",style:TextStyle(fontWeight: FontWeight.bold),),
+                  color: Colors.white.withOpacity(0.01),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: FlatButton(
+                  onPressed: () {
+                    liquidController.currentPage + 1 > data.length - 1
+                            ? continueToHome()
+                            : liquidController.jumpToPage(
+                        page: liquidController.currentPage + 1);
+                  },
+                  child: liquidController.currentPage + 1 > data.length - 1 ? const Text("Continue",style:TextStyle(fontWeight: FontWeight.bold)) :const Text("Next",style:TextStyle(fontWeight: FontWeight.bold)),
                   color: Colors.white.withOpacity(0.01),
                 ),
               ),
@@ -171,6 +173,5 @@ class _OnboardingState extends State<Onboarding> {
       ),
     );
   }
-
 }
 
