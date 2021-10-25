@@ -3,16 +3,18 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:nutri_tracker/auth_screen.dart';
+import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/onbparding_components/content_model.dart';
+import 'package:nutri_tracker/screens/home.dart';
+
 class Onboarding extends StatefulWidget {
-  const Onboarding({ Key? key }) : super(key: key);
+  const Onboarding({Key? key}) : super(key: key);
 
   @override
   _OnboardingState createState() => _OnboardingState();
 }
 
 class _OnboardingState extends State<Onboarding> {
-
   int page = 0;
   late LiquidController liquidController;
   late UpdateType updateType;
@@ -28,11 +30,11 @@ class _OnboardingState extends State<Onboarding> {
       page = lpage;
     });
   }
+
   continueToHome() {
-
-  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> const AuthScreen()));
-}
-
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const homepage()));
+  }
 
   Widget _buildDot(int index) {
     double selectedness = Curves.easeOut.transform(
@@ -56,7 +58,7 @@ class _OnboardingState extends State<Onboarding> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -90,11 +92,11 @@ class _OnboardingState extends State<Onboarding> {
                               fontSize: 30,
                               fontFamily: "Billy",
                               fontWeight: FontWeight.w600,
-                               ),
+                            ),
                           ),
                           const Padding(
                             padding: EdgeInsets.all(10),
-                            ),
+                          ),
                           Text(
                             data[index].description,
                             style: const TextStyle(
@@ -112,7 +114,6 @@ class _OnboardingState extends State<Onboarding> {
                   ),
                 );
               },
-
               positionSlideIcon: 0.8,
               slideIconWidget: const Icon(Icons.arrow_back_ios),
               onPageChangeCallback: pageChangeCallback,
@@ -141,13 +142,21 @@ class _OnboardingState extends State<Onboarding> {
                 padding: const EdgeInsets.all(25.0),
                 child: FlatButton(
                   onPressed: () {
-                    liquidController.currentPage + 1 > data.length - 1 || liquidController.currentPage != 0 ?   
-                     liquidController.jumpToPage(
-                        page: liquidController.currentPage - 1):
-                     liquidController.animateToPage(
-                        page: data.length - 1, duration: 700);
+                    liquidController.currentPage + 1 > data.length - 1 ||
+                            liquidController.currentPage != 0
+                        ? liquidController.jumpToPage(
+                            page: liquidController.currentPage - 1)
+                        : liquidController.animateToPage(
+                            page: data.length - 1, duration: 700);
                   },
-                  child: liquidController.currentPage + 1 > data.length - 1 || liquidController.currentPage != 0 ? const Text("Back",style:TextStyle(fontWeight: FontWeight.bold)): const Text("Skip",style:TextStyle(fontWeight: FontWeight.bold),),
+                  child: liquidController.currentPage + 1 > data.length - 1 ||
+                          liquidController.currentPage != 0
+                      ? const Text("Back",
+                          style: TextStyle(fontWeight: FontWeight.bold))
+                      : const Text(
+                          "Skip",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                   color: Colors.white.withOpacity(0.01),
                 ),
               ),
@@ -159,11 +168,15 @@ class _OnboardingState extends State<Onboarding> {
                 child: FlatButton(
                   onPressed: () {
                     liquidController.currentPage + 1 > data.length - 1
-                            ? continueToHome()
-                            : liquidController.jumpToPage(
-                        page: liquidController.currentPage + 1);
+                        ? continueToHome()
+                        : liquidController.jumpToPage(
+                            page: liquidController.currentPage + 1);
                   },
-                  child: liquidController.currentPage + 1 > data.length - 1 ? const Text("Continue",style:TextStyle(fontWeight: FontWeight.bold)) :const Text("Next",style:TextStyle(fontWeight: FontWeight.bold)),
+                  child: liquidController.currentPage + 1 > data.length - 1
+                      ? const Text("Continue",
+                          style: TextStyle(fontWeight: FontWeight.bold))
+                      : const Text("Next",
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                   color: Colors.white.withOpacity(0.01),
                 ),
               ),
@@ -174,4 +187,3 @@ class _OnboardingState extends State<Onboarding> {
     );
   }
 }
-
