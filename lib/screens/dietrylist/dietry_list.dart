@@ -37,6 +37,82 @@ class dietrylist extends StatelessWidget {
                     child: const Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
+                        'Sprouts',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  child: Container(
+                    color: Colors.blueGrey.withOpacity(0.2),
+                    height: 150,
+                    width: 350,
+                    child: const Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Snow Peas',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  child: Container(
+                    color: Colors.blueGrey.withOpacity(0.2),
+                    height: 150,
+                    width: 350,
+                    child: const Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Cucumber',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  child: Container(
+                    color: Colors.blueGrey.withOpacity(0.2),
+                    height: 150,
+                    width: 350,
+                    child: const Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        'Cabage',
+                        style: TextStyle(
+                            fontSize: 22, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  child: Container(
+                    color: Colors.blueGrey.withOpacity(0.2),
+                    height: 150,
+                    width: 350,
+                    child: const Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
                         'Brokoli',
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.w500),
