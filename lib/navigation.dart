@@ -30,32 +30,35 @@ class _homepageState extends State<homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: listOfPages[_selectedIndex],
-        bottomNavigationBar: BottomNavyBar(
-          selectedIndex: _selectedIndex,
-          showElevation: true, // use this to remove appBar's elevation
-          onItemSelected: (index) => setState(() {
-            _selectedIndex = index;
-          }),
-          backgroundColor: Colors.transparent,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          curve: Curves.slowMiddle,
-          items: [
-            BottomNavyBarItem(
-                icon: Icon(Icons.house),
-                title: Text('Home'),
-                activeColor: Colors.red,
-                textAlign: TextAlign.center),
-            BottomNavyBarItem(
-                icon: Icon(Icons.health_and_safety),
-                title: Text('Dietry'),
-                activeColor: Colors.purpleAccent,
-                textAlign: TextAlign.center),
-            BottomNavyBarItem(
-                icon: Icon(Icons.food_bank_sharp),
-                title: Text('Recipe'),
-                activeColor: Colors.pink,
-                textAlign: TextAlign.center),
-          ],
+        bottomNavigationBar: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(40.0)),
+          child: BottomNavyBar(
+            selectedIndex: _selectedIndex,
+            showElevation: true, // use this to remove appBar's elevation
+            onItemSelected: (index) => setState(() {
+              _selectedIndex = index;
+            }),
+            backgroundColor: Colors.transparent,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            curve: Curves.slowMiddle,
+            items: [
+              BottomNavyBarItem(
+                  icon: Icon(Icons.house),
+                  title: Text('Home'),
+                  activeColor: Colors.red,
+                  textAlign: TextAlign.center),
+              BottomNavyBarItem(
+                  icon: Icon(Icons.health_and_safety),
+                  title: Text('Dietry'),
+                  activeColor: Colors.purpleAccent,
+                  textAlign: TextAlign.center),
+              BottomNavyBarItem(
+                  icon: Icon(Icons.food_bank_sharp),
+                  title: Text('Recipe'),
+                  activeColor: Colors.pink,
+                  textAlign: TextAlign.center),
+            ],
+          ),
         ));
   }
 }
