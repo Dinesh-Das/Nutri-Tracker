@@ -16,7 +16,7 @@ class recipelist extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               // ignore: prefer_const_constructors
               child: Text(
-                'Healthy Veg Recipe',
+                'Healthy Recipe',
                 style: TextStyle(
                     color: Colors.grey,
                     fontSize: 35,
@@ -75,7 +75,7 @@ class recipelist extends StatelessWidget {
                     child: const Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
-                        'Chicken Rost',
+                        'Chicken Roast',
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.w500),
                       ),

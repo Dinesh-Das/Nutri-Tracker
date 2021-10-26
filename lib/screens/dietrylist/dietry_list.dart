@@ -94,7 +94,7 @@ class dietrylist extends StatelessWidget {
                     child: const Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
-                        'Cabage',
+                        'Cabbage',
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.w500),
                       ),
