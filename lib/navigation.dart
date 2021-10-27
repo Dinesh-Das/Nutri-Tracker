@@ -1,3 +1,4 @@
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
@@ -43,9 +44,14 @@ class _homepageState extends State<homepage> {
             curve: Curves.slowMiddle,
             items: [
               BottomNavyBarItem(
-                  icon: Icon(Icons.house),
+                  // ignore: prefer_const_constructors
+                  icon: AvatarGlow(
+                    glowColor: Colors.greenAccent,
+                    child: Icon(Icons.house),
+                    endRadius: 16.0,
+                  ),
                   title: Text('Home'),
-                  activeColor: Colors.red,
+                  activeColor: Colors.green,
                   textAlign: TextAlign.center),
               BottomNavyBarItem(
                   icon: Icon(Icons.health_and_safety),
