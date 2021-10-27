@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/splash.dart';
-import 'constants.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,8 +22,8 @@ class MyApp extends StatelessWidget {
           fillColor: Colors.white70,
           border: InputBorder.none,
           hintStyle: TextStyle(color: Colors.black),
-          contentPadding: EdgeInsets.symmetric(
-              vertical: defpaultPadding * 1.2, horizontal: defpaultPadding),
+          contentPadding:
+              EdgeInsets.symmetric(vertical: 16 * 1.2, horizontal: 16),
         ),
       ),
       home: const Splash(),
