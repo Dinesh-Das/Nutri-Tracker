@@ -2,10 +2,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
-import 'package:nutri_tracker/auth_screen.dart';
 import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/onbparding_components/content_model.dart';
-import 'package:nutri_tracker/screens/home.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({Key? key}) : super(key: key);
