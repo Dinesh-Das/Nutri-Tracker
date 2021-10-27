@@ -70,6 +70,7 @@ class _OnboardingState extends State<Onboarding> {
               itemCount: data.length,
               itemBuilder: (context, index) {
                 return Container(
+                  padding: EdgeInsets.only(left: 20.0, right: 20.0),
                   width: double.infinity,
                   color: data[index].color,
                   child: Column(
