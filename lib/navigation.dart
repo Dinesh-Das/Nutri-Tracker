@@ -46,20 +46,26 @@ class _homepageState extends State<homepage> {
               BottomNavyBarItem(
                   // ignore: prefer_const_constructors
                   icon: AvatarGlow(
-                    glowColor: Colors.greenAccent,
+                    glowColor: Colors.green,
                     child: Icon(Icons.house),
-                    endRadius: 16.0,
+                    endRadius: 14.0,
                   ),
                   title: Text('Home'),
                   activeColor: Colors.green,
                   textAlign: TextAlign.center),
               BottomNavyBarItem(
-                  icon: Icon(Icons.health_and_safety),
+                  icon: AvatarGlow(
+                      glowColor: Colors.purpleAccent,
+                      endRadius: 14.0,
+                      child: Icon(Icons.health_and_safety)),
                   title: Text('Dietry'),
                   activeColor: Colors.purpleAccent,
                   textAlign: TextAlign.center),
               BottomNavyBarItem(
-                  icon: Icon(Icons.food_bank_sharp),
+                  icon: AvatarGlow(
+                      glowColor: Colors.pink,
+                      endRadius: 14.0,
+                      child: Icon(Icons.food_bank_sharp)),
                   title: Text('Recipe'),
                   activeColor: Colors.pink,
                   textAlign: TextAlign.center),

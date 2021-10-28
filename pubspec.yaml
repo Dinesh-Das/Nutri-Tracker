@@ -37,8 +37,12 @@ dependencies:
   flutter_svg: ^0.23.0+1
   liquid_swipe: ^2.1.1
   bottom_navy_bar: ^6.0.0
-  backdrop: ^0.6.2
   avatar_glow: ^2.0.1
+  # pie_chart: ^5.0.1
+  # for pie chart
+  fl_chart: ^0.40.2
+  # for icons
+  font_awesome_flutter: ^9.2.0
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +70,7 @@ flutter:
   assets:
     - assets/images/
     - assets/onboard/
+    - assets/icons/
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
