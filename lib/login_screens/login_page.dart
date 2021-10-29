@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
+import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/screens/home.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -209,7 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   msg: "Login Successful",
                 ),
                 Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const home())),
+                    MaterialPageRoute(builder: (context) => const homepage())),
               })
           .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);
