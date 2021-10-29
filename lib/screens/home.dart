@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nutri_tracker/screens/dietrylist/drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -64,15 +65,15 @@ class home extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(40.0)),
                   child: Container(
-                    padding: EdgeInsets.all(20.0),
+                    // padding: EdgeInsets.all(20.0),
                     color: Colors.deepPurpleAccent.withOpacity(0.3),
                     height: 250,
                     width: 50,
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(left: 60.0),
                           child: Row(
                             children: [
                               IconButton(
@@ -84,7 +85,9 @@ class home extends StatelessWidget {
                               SizedBox(width: 20.0),
                               IconButton(
                                 onPressed: () {},
-                                icon: FaIcon(FontAwesomeIcons.pizzaSlice),
+                                icon: Icon(
+                                  Icons.local_pizza_outlined,
+                                ),
                                 splashColor: Colors.greenAccent[900],
                                 iconSize: 40,
                               ),
@@ -99,7 +102,7 @@ class home extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(left: 60.0, top: 20.0),
                           child: Row(
                             children: [
                               IconButton(
