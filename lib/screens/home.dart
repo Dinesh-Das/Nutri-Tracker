@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nutri_tracker/login_screens/navigation.dart';
 import 'package:nutri_tracker/screens/dietrylist/drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,7 +22,7 @@ class home extends StatelessWidget {
         elevation: 0,
       ),
       // drawer
-      drawer: drawermenu(),
+      drawer: NavigationDrawer(),
       // backgroundColor: const Color(0xFFE9E9E9),
       body: Stack(
         children: [

@@ -2,6 +2,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
+import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/onbparding_components/content_model.dart';
 
@@ -29,9 +30,9 @@ class _OnboardingState extends State<Onboarding> {
     });
   }
 
-  continueToHome() {
+  continueToLogin() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const homepage()));
+        context, MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 
   Widget _buildDot(int index) {
@@ -167,7 +168,7 @@ class _OnboardingState extends State<Onboarding> {
                 child: FlatButton(
                   onPressed: () {
                     liquidController.currentPage + 1 > data.length - 1
-                        ? continueToHome()
+                        ? continueToLogin()
                         : liquidController.jumpToPage(
                             page: liquidController.currentPage + 1);
                   },
