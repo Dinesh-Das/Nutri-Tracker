@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -44,15 +46,16 @@ class _homepageState extends State<homepage> {
             curve: Curves.slowMiddle,
             items: [
               BottomNavyBarItem(
-                  // ignore: prefer_const_constructors
-                  icon: AvatarGlow(
-                    glowColor: Colors.green,
-                    child: Icon(Icons.house),
-                    endRadius: 14.0,
-                  ),
-                  title: Text('Home'),
-                  activeColor: Colors.green,
-                  textAlign: TextAlign.center),
+                // ignore: prefer_const_constructors
+                icon: AvatarGlow(
+                  glowColor: Colors.green,
+                  child: Icon(Icons.house),
+                  endRadius: 14.0,
+                ),
+                title: Text('Home'),
+                activeColor: Colors.green,
+                textAlign: TextAlign.center,
+              ),
               BottomNavyBarItem(
                   icon: AvatarGlow(
                       glowColor: Colors.purpleAccent,
