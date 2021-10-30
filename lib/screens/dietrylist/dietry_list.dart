@@ -111,7 +111,7 @@ class dietrylist extends StatelessWidget {
                     height: 150,
                     width: 350,
                     child: const Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: EdgeInsets.all(16.0),
                       child: Text(
                         'Brokoli',
                         style: TextStyle(

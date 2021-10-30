@@ -27,8 +27,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           .sendPasswordResetEmail(email: emailController.text);
       Fluttertoast.showToast(
           msg: "A Password Reset link is succesfully sent to your email");
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(msg: 'No User found for that Email');
@@ -70,7 +70,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Reset Password",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -117,7 +117,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         children: [
                           ActionChip(
                               backgroundColor: Colors.green,
-                              padding: EdgeInsets.all(13),
+                              padding: const EdgeInsets.all(13),
                               label: const Text(
                                 "Send Email",
                                 style: TextStyle(
@@ -138,7 +138,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           ),
                           ActionChip(
                               backgroundColor: Colors.green,
-                              padding: EdgeInsets.all(13),
+                              padding: const EdgeInsets.all(13),
                               label: const Text(
                                 "Login?",
                                 style: TextStyle(
@@ -150,7 +150,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => LoginScreen()));
+                                        builder: (context) =>
+                                            const LoginScreen()));
                               })
                         ],
                       ),

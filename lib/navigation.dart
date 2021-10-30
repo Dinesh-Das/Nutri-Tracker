@@ -2,7 +2,6 @@
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 

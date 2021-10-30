@@ -4,7 +4,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
 import 'package:nutri_tracker/navigation.dart';
-import 'package:nutri_tracker/screens/home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -164,9 +163,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ForgotPassword()));
+                                    builder: (context) =>
+                                        const ForgotPassword()));
                           },
-                          child: Text("Forgot Password?")),
+                          child: const Text("Forgot Password?")),
                       const SizedBox(
                         height: 5,
                       ),

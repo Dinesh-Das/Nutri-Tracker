@@ -308,8 +308,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     Fluttertoast.showToast(msg: "Account Created succesfully");
 
-    Navigator.pushAndRemoveUntil((context),
-        MaterialPageRoute(builder: (context) => home()), (route) => false);
+    Navigator.pushAndRemoveUntil(
+        (context),
+        MaterialPageRoute(builder: (context) => const home()),
+        (route) => false);
   }
 
   void _togglePasswordView() {

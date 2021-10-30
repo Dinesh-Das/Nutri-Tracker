@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
-import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/onbparding_components/content_model.dart';
 
 class Onboarding extends StatefulWidget {
@@ -69,7 +68,7 @@ class _OnboardingState extends State<Onboarding> {
               itemCount: data.length,
               itemBuilder: (context, index) {
                 return Container(
-                  padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                  padding: const EdgeInsets.only(left: 20.0, right: 20.0),
                   width: double.infinity,
                   color: data[index].color,
                   child: Column(

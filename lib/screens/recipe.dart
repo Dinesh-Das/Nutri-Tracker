@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/screens/dietrylist/dietry_list.dart';
 import 'package:nutri_tracker/screens/dietrylist/recipe_list..dart';
 
 class recipe extends StatelessWidget {
@@ -22,6 +21,6 @@ class recipe extends StatelessWidget {
             style: TextStyle(color: Colors.black, fontSize: 25),
           ),
         ),
-        body: recipelist());
+        body: const recipelist());
   }
 }

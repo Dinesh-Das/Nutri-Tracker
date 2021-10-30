@@ -21,6 +21,6 @@ class diet extends StatelessWidget {
             style: TextStyle(color: Colors.black, fontSize: 25),
           ),
         ),
-        body: dietrylist());
+        body: const dietrylist());
   }
 }
