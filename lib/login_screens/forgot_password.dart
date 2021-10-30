@@ -1,35 +1,39 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:nutri_tracker/login_screens/register_page.dart';
-import 'package:nutri_tracker/navigation.dart';
-import 'package:nutri_tracker/screens/home.dart';
+import 'package:login_signup_email/login_screens/login_page.dart';
+import 'package:login_signup_email/login_screens/register_page.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({Key? key}) : super(key: key);
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _ForgotPasswordState createState() => _ForgotPasswordState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  bool isHiddenPassword = true;
-
-  //form key
+class _ForgotPasswordState extends State<ForgotPassword> {
   final _formKey = GlobalKey<FormState>();
-
-  //editing controller
+  var email = "";
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
-  // firebase
-  final _auth = FirebaseAuth.instance;
-
   @override
   void dispose() {
     super.dispose();
     emailController.dispose();
-    passwordController.dispose();
+  }
+
+  resetPassword() async {
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: emailController.text);
+      Fluttertoast.showToast(
+          msg: "A Password Reset link will be sent to your email");
+
+      Fluttertoast.showToast(msg: "Email Sent Succesfully");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        Fluttertoast.showToast(msg: 'No User found for that Email');
+      }
+    }
   }
 
   @override
@@ -62,61 +66,17 @@ class _LoginScreenState extends State<LoginScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
 
-    //Password Text Field
-    final passwordField = TextFormField(
-      autofocus: false,
-      obscureText: isHiddenPassword,
-      controller: passwordController,
-      validator: (value) {
-        RegExp regex = RegExp(
-            r"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,20}$");
-
-        /* ^                # start-of-string
-          (?=.*[0-9])       # a digit must occur at least once
-          (?=.*[a-z])       # a lower case letter must occur at least once
-          (?=.*[A-Z])       # an upper case letter must occur at least once
-          (?=.*[@#$%^&+=])  # a special character must occur at least once
-          (?=\S+$)          # no whitespace allowed in the entire string
-          .{8,}             # anything, at least eight places though
-          $                 # end-of-string */
-
-        if (value!.isEmpty) {
-          return ("Password Is Required For Login");
-        }
-        if (!regex.hasMatch(value)) {
-          return ("Enter Valid Password(Min.8 Character)");
-        }
-      },
-      onSaved: (value) {
-        passwordController.text = value!;
-      },
-      textInputAction: TextInputAction.done,
-      decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.vpn_key),
-          suffixIcon: InkWell(
-            child: isHiddenPassword
-                ? const Icon(Icons.visibility)
-                : const Icon(Icons.visibility_off),
-            onTap: () {
-              _togglePasswordView();
-            },
-          ),
-          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "Password",
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
-    );
-
     //Buttons
-    final loginButton = Material(
+    final sendOTP = Material(
       color: Colors.green,
       elevation: 5,
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
         onPressed: () {
-          signIn(emailController.text, passwordController.text);
+          // signIn(emailController.text);
         },
         child: const Text(
-          'Login',
+          'Send Otp',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
@@ -127,6 +87,22 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Reset Password",
+          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back),
+          color: Colors.green,
+        ),
+      ),
       backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
@@ -154,11 +130,51 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(
                         height: 25,
                       ),
-                      passwordField,
-                      const SizedBox(
-                        height: 25,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ActionChip(
+                              backgroundColor: Colors.green,
+                              padding: EdgeInsets.all(13),
+                              label: const Text(
+                                "Send Email",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () {
+                                if (_formKey.currentState!.validate()) {
+                                  setState(() {
+                                    email = emailController.text;
+                                  });
+                                }
+                                resetPassword();
+                              }),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          ActionChip(
+                              backgroundColor: Colors.green,
+                              padding: EdgeInsets.all(13),
+                              label: const Text(
+                                "Login?",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginScreen()));
+                              })
+                        ],
                       ),
-                      loginButton,
+                      const SizedBox(
+                        height: 5,
+                      ),
                       const SizedBox(
                         height: 15,
                       ),
@@ -168,7 +184,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           const Text("Dont't have an account? "),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
@@ -191,31 +207,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  //toggle passwordview
-  void _togglePasswordView() {
-    setState(() {
-      isHiddenPassword = !isHiddenPassword;
-    });
-  }
-
-  //login function
-  void signIn(String email, String password) async {
-    if (_formKey.currentState!.validate()) {
-      try {
-        await _auth.signInWithEmailAndPassword(
-            email: email, password: password);
-        Fluttertoast.showToast(msg: "Login Successful");
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const homepage()));
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'user-not-found') {
-          Fluttertoast.showToast(msg: 'No User found for that Email');
-        } else if (e.code == 'wrong-password') {
-          Fluttertoast.showToast(msg: 'Wrong Password ');
-        }
-      }
-    }
   }
 }
