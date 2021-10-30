@@ -275,12 +275,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
-      await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) => {postDetailsToFirestore()})
-          .catchError((e) {
-        Fluttertoast.showToast(msg: e!.message);
-      });
+      try {
+        await _auth.createUserWithEmailAndPassword(
+            email: email, password: password);
+        postDetailsToFirestore();
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-already-in-use') {
+          Fluttertoast.showToast(msg: 'Email is already registered ');
+        } else if (e.code == 'network-request-failed') {
+          Fluttertoast.showToast(msg: 'Poor Internet Connection!');
+        }
+      }
     }
   }
 

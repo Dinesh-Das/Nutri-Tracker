@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:login_signup_email/login_screens/login_page.dart';
-import 'package:login_signup_email/login_screens/register_page.dart';
+import 'package:nutri_tracker/login_screens/login_page.dart';
+import 'package:nutri_tracker/login_screens/register_page.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({Key? key}) : super(key: key);
@@ -26,12 +26,14 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text);
       Fluttertoast.showToast(
-          msg: "A Password Reset link will be sent to your email");
-
-      Fluttertoast.showToast(msg: "Email Sent Succesfully");
+          msg: "A Password Reset link is succesfully sent to your email");
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => LoginScreen()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(msg: 'No User found for that Email');
+      } else if (e.code == 'network-request-failed') {
+        Fluttertoast.showToast(msg: 'Poor Internet Connection!');
       }
     }
   }
@@ -66,31 +68,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
 
-    //Buttons
-    final sendOTP = Material(
-      color: Colors.green,
-      elevation: 5,
-      borderRadius: BorderRadius.circular(30),
-      child: MaterialButton(
-        onPressed: () {
-          // signIn(emailController.text);
-        },
-        child: const Text(
-          'Send Otp',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-        minWidth: MediaQuery.of(context).size.width,
-      ),
-    );
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "Reset Password",
-          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         elevation: 0,
