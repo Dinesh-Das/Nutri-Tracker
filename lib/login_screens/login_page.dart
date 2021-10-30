@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nutri_tracker/login_screens/forgot_password.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
 import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/screens/home.dart';
@@ -156,7 +157,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       passwordField,
                       const SizedBox(
-                        height: 25,
+                        height: 10,
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ForgotPassword()));
+                          },
+                          child: Text("Forgot Password?")),
+                      const SizedBox(
+                        height: 5,
                       ),
                       loginButton,
                       const SizedBox(
@@ -203,18 +215,21 @@ class _LoginScreenState extends State<LoginScreen> {
   //login function
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
-      await _auth
-          .signInWithEmailAndPassword(email: email, password: password)
-          .then((_) => {
-                Fluttertoast.showToast(
-                  msg: "Login Successful",
-                ),
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const homepage())),
-              })
-          .catchError((e) {
-        Fluttertoast.showToast(msg: e!.message);
-      });
+      try {
+        await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
+        Fluttertoast.showToast(msg: "Login Successful");
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => const homepage()));
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'user-not-found') {
+          Fluttertoast.showToast(msg: 'No User found for that Email');
+        } else if (e.code == 'wrong-password') {
+          Fluttertoast.showToast(msg: 'Wrong Password ');
+        } else if (e.code == 'network-request-failed') {
+          Fluttertoast.showToast(msg: 'Poor Internet Connection!');
+        }
+      }
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
+import 'package:nutri_tracker/drawer/drawermenu.dart';
 
 import 'screens/diet.dart';
 import 'screens/home.dart';
@@ -32,6 +33,7 @@ class _homepageState extends State<homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: NavigationDrawer(),
         body: listOfPages[_selectedIndex],
         bottomNavigationBar: ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Radius.circular(40.0)),
