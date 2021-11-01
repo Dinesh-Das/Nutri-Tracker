@@ -383,7 +383,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.mobile = phoneEditingController.text;
 
     await firebaseFirestore
-        .collection("users")
+        .collection("user_details")
         .doc(user.uid)
         .set(userModel.toMap());
 
