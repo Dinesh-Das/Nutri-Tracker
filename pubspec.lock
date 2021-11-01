@@ -85,13 +85,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.3"
-  email_auth:
-    dependency: "direct main"
-    description:
-      name: email_auth
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   equatable:
     dependency: transitive
     description:
@@ -199,7 +192,7 @@ packages:
     source: hosted
     version: "9.2.0"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       url: "https://pub.dartlang.org"
