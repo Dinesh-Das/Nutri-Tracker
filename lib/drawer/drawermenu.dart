@@ -38,8 +38,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     final name = '${loggedInUser.name}';
     final email = '${loggedInUser.email}';
     final mobile = '${loggedInUser.mobile}';
-    final urlImage =
-        'https://i.guim.co.uk/img/media/569482766443924ffb15e7ac6ab35adffd6872c6/109_13_2891_1734/master/2891.jpg?width=1200&height=1200&quality=85&auto=format&fit=crop&s=e771b8693164168ed269a859a5639f61';
+    final urlImage = 'https://avatarfiles.alphacoders.com/473/47339.jpg';
 
     return Drawer(
       child: Material(
