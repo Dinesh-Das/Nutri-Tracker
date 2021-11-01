@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/auth.config.dart';
 import 'package:nutri_tracker/login_screens/user_model.dart';
-import 'package:nutri_tracker/login_screens/verify_email.dart';
 import 'package:nutri_tracker/navigation.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -35,7 +34,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   void initState() {
     super.initState();
-    emailAuth = new EmailAuth(sessionName: "Sample session");
+    emailAuth = EmailAuth(sessionName: "Nutri-Tracker");
     emailAuth.config(remoteServerConfiguration);
   }
 
@@ -157,7 +156,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   isSendOTP = true;
                   sendOTP();
                 },
-                child: Text("Send OTP"),
+                child: const Text("Send OTP"),
               )),
           prefixIcon: const Icon(Icons.email),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -193,7 +192,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 onPressed: () {
                   verifyOTP();
                 },
-                child: Text("Verify OTP"),
+                child: const Text("Verify OTP"),
               )),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "OTP",
@@ -271,7 +270,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
         onPressed: () {
-          const VerifyEmail();
           signUp(emailEditingController.text, passwordEditingController.text);
         },
         child: const Text(
@@ -391,8 +389,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     Fluttertoast.showToast(msg: "Account Created succesfully");
 
-    Navigator.pushAndRemoveUntil((context),
-        MaterialPageRoute(builder: (context) => homepage()), (route) => false);
+    Navigator.pushAndRemoveUntil(
+        (context),
+        MaterialPageRoute(builder: (context) => const homepage()),
+        (route) => false);
   }
 
   void _togglePasswordView() {
