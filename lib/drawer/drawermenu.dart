@@ -181,7 +181,7 @@ Widget buildHeader({
               ),
               Text(
                 email,
-                style: const TextStyle(fontSize: 14, color: Colors.white),
+                style: const TextStyle(fontSize: 12, color: Colors.white),
               ),
               Text(
                 mobile.toString(),
