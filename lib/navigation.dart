@@ -27,7 +27,7 @@ class _homepageState extends State<homepage> {
   List listOfPages = [
     const home(),
     const diet(),
-    const recipe(),
+    recipe(),
   ];
   @override
   Widget build(BuildContext context) {
