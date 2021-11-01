@@ -18,7 +18,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   late EmailAuth emailAuth;
   bool isHiddenPassword = true;
   bool isHiddenConfirmPassword = true;
-  bool isSendOTP = false;
   final _auth = FirebaseAuth.instance;
 
   // form key
@@ -153,7 +152,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               height: 30,
               child: TextButton(
                 onPressed: () {
-                  isSendOTP = true;
                   sendOTP();
                 },
                 child: const Text("Send OTP"),
@@ -330,11 +328,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      if (isSendOTP) otpField,
-                      if (isSendOTP)
-                        const SizedBox(
-                          height: 20,
-                        ),
+                      otpField,
+                      const SizedBox(
+                        height: 20,
+                      ),
                       passwordField,
                       const SizedBox(
                         height: 20,
