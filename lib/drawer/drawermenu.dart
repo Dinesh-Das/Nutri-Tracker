@@ -173,14 +173,14 @@ Widget buildHeader({
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
                 name,
-                style: const TextStyle(fontSize: 20, color: Colors.white),
+                style: const TextStyle(fontSize: 18, color: Colors.white),
               ),
               const SizedBox(
                 height: 4,
               ),
               Text(
                 email,
-                style: const TextStyle(fontSize: 12, color: Colors.white),
+                style: const TextStyle(fontSize: 11, color: Colors.white),
               ),
               Text(
                 mobile.toString(),
