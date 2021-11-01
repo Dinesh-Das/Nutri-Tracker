@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:email_auth/email_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nutri_tracker/login_screens/auth.config.dart';
 import 'package:nutri_tracker/login_screens/user_model.dart';
-import 'package:nutri_tracker/screens/home.dart';
+import 'package:nutri_tracker/navigation.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -13,8 +15,10 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  late EmailAuth emailAuth;
   bool isHiddenPassword = true;
   bool isHiddenConfirmPassword = true;
+  bool isSendOTP = false;
   final _auth = FirebaseAuth.instance;
 
   // form key
@@ -25,6 +29,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final passwordEditingController = TextEditingController();
   final confirmPasswordEditingController = TextEditingController();
   final phoneEditingController = TextEditingController();
+  final otpEditingController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    emailAuth = EmailAuth(sessionName: "Nutri-Tracker");
+    emailAuth.config(remoteServerConfiguration);
+  }
 
   @override
   void dispose() {
@@ -34,6 +46,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     passwordEditingController.dispose();
     confirmPasswordEditingController.dispose();
     phoneEditingController.dispose();
+    otpEditingController.dispose();
+  }
+
+  void sendOTP() async {
+    var res = await emailAuth.sendOtp(
+        recipientMail: emailEditingController.text, otpLength: 6);
+    if (res) {
+      Fluttertoast.showToast(msg: "OTP Sent Succesfully ");
+    } else {
+      Fluttertoast.showToast(msg: "Problem With Sending OTP");
+    }
+  }
+
+  void verifyOTP() {
+    var res = emailAuth.validateOtp(
+        recipientMail: emailEditingController.text,
+        userOtp: otpEditingController.value.text);
+    if (res) {
+      Fluttertoast.showToast(msg: "OTP verified!");
+    } else {
+      Fluttertoast.showToast(msg: "Invalid OTP");
+    }
   }
 
   @override
@@ -82,7 +116,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         return null;
       },
       onSaved: (value) {
-        nameEditingController.text = value!;
+        phoneEditingController.text = value!;
       },
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
@@ -93,6 +127,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
 
     //email Text Field
+
     final emailField = TextFormField(
       autofocus: false,
       controller: emailEditingController,
@@ -114,12 +149,55 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       },
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
+          suffix: SizedBox(
+              height: 30,
+              child: TextButton(
+                onPressed: () {
+                  isSendOTP = true;
+                  sendOTP();
+                },
+                child: const Text("Send OTP"),
+              )),
           prefixIcon: const Icon(Icons.email),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Email",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
-
+    //otp text field
+    final otpField = TextFormField(
+      autofocus: false,
+      controller: otpEditingController,
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return ("Enter OTP !");
+        }
+        //Regular Expression for name validation
+        if (!RegExp(r"^[0-9]*$").hasMatch(value)) {
+          return ("Enter Valid OTP ");
+        } else if (value.length > 6 || value.length < 6) {
+          return ("Enter Valid OTP");
+        }
+        return null;
+      },
+      onSaved: (value) {
+        otpEditingController.text = value!;
+      },
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.sentiment_very_satisfied_outlined),
+          suffix: SizedBox(
+              height: 30,
+              child: TextButton(
+                onPressed: () {
+                  verifyOTP();
+                },
+                child: const Text("Verify OTP"),
+              )),
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+          hintText: "OTP",
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+    );
     //Password Text Field
     final passwordField = TextFormField(
       autofocus: false,
@@ -252,6 +330,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       const SizedBox(
                         height: 20,
                       ),
+                      if (isSendOTP) otpField,
+                      if (isSendOTP)
+                        const SizedBox(
+                          height: 20,
+                        ),
                       passwordField,
                       const SizedBox(
                         height: 20,
@@ -282,8 +365,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       } on FirebaseAuthException catch (e) {
         if (e.code == 'email-already-in-use') {
           Fluttertoast.showToast(msg: 'Email is already registered ');
-        } else if (e.code == 'network-request-failed') {
-          Fluttertoast.showToast(msg: 'Poor Internet Connection!');
         }
       }
     }
@@ -302,7 +383,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.mobile = phoneEditingController.text;
 
     await firebaseFirestore
-        .collection("user_details")
+        .collection("users")
         .doc(user.uid)
         .set(userModel.toMap());
 
@@ -310,7 +391,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => const home()),
+        MaterialPageRoute(builder: (context) => const homepage()),
         (route) => false);
   }
 
