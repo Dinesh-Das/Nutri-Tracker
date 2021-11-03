@@ -1,4 +1,4 @@
-# nutri_tracker
+# Nutri-Tracker
 
 A new Flutter project.
 
