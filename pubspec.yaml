@@ -49,6 +49,8 @@ dependencies:
   firebase_core: ^1.8.0
   http: ^0.13.4
   email_auth: ^1.0.0
+  google_sign_in: ^5.2.1
+  provider: ^6.0.1
 
 dev_dependencies:
   flutter_test:
