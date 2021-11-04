@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
+import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
 import 'package:nutri_tracker/navigation.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -126,6 +128,16 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
 
+    //Icon button For google Signin
+    final googleIcon = IconButton(
+        onPressed: () {
+          final provider =
+              Provider.of<GoogleSignInProvider>(context, listen: false);
+          provider.googleLogin().whenComplete(() => Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => homepage())));
+        },
+        icon: Image.asset("assets/images/google.png"));
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -195,7 +207,29 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           )
                         ],
-                      )
+                      ),
+                      const SizedBox(
+                        height: 35,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          googleIcon,
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          IconButton(
+                              onPressed: () {},
+                              icon: Image.asset("assets/images/google.png")),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          IconButton(
+                              onPressed: () {},
+                              icon: Image.asset("assets/images/google.png"))
+                        ],
+                      ),
                     ],
                   )),
             ),

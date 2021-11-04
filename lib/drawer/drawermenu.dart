@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/login_screens/user.dart';
 import 'package:nutri_tracker/login_screens/user_model.dart';
 import 'package:nutri_tracker/screens/home.dart';
+import 'package:provider/provider.dart';
 
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
@@ -35,11 +37,23 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final name = '${loggedInUser.name}';
-    final email = '${loggedInUser.email}';
-    final mobile = '${loggedInUser.mobile}';
-    final urlImage = 'https://avatarfiles.alphacoders.com/473/47339.jpg';
+    bool isGoogleSignin = false;
+    var name = isGoogleSignin ? '' : '${loggedInUser.name}';
+    var email = isGoogleSignin ? '' : '${loggedInUser.email}';
+    var mobile = isGoogleSignin ? '' : '${loggedInUser.mobile}';
+    var urlImage = isGoogleSignin
+        ? ''
+        : 'https://avatarfiles.alphacoders.com/473/47339.jpg';
+    user = FirebaseAuth.instance.currentUser!;
 
+    if (user!.providerData[0].providerId == "google.com") {
+      final provider =
+          Provider.of<GoogleSignInProvider>(context, listen: false);
+      isGoogleSignin = true;
+      email = provider.userModel!.email!;
+      name = provider.userModel!.name!;
+      urlImage = provider.userModel!.photoURL!;
+    }
     return Drawer(
       child: Material(
         color: Colors.green,
@@ -147,6 +161,12 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   }
 
   Future<void> logout(BuildContext context) async {
+    user = await FirebaseAuth.instance.currentUser!;
+    if (user!.providerData[0].providerId == "google.com") {
+      final provider =
+          Provider.of<GoogleSignInProvider>(context, listen: false);
+      provider.googleLogOut();
+    }
     await FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => const LoginScreen()));
