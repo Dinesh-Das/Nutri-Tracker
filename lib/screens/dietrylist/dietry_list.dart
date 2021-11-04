@@ -31,18 +31,23 @@ class dietrylist extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(25)),
                   child: Container(
-                    color: Colors.blueGrey.withOpacity(0.2),
-                    height: 150,
-                    width: 350,
-                    child: const Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Sprouts',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ),
+                      color: Colors.blueGrey.withOpacity(0.2),
+                      height: 150,
+                      width: 350,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            colorFilter: ColorFilter.mode(
+                                Colors.black.withOpacity(0.35),
+                                BlendMode.multiply),
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                                "https://picsum.photos/250?image=9"),
+                          ),
+                        ),
+                      )),
                 ),
                 SizedBox(
                   height: 20,
