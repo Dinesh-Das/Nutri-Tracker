@@ -53,9 +53,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     var res = await emailAuth.sendOtp(
         recipientMail: emailEditingController.text, otpLength: 6);
     if (res) {
-      Fluttertoast.showToast(msg: "OTP Sent Succesfully ");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('OTP Sent Succesfully'),
+        ),
+      );
     } else {
-      Fluttertoast.showToast(msg: "Problem With Sending OTP");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Problem With Sending OTP'),
+        ),
+      );
     }
   }
 
@@ -66,12 +74,24 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           userOtp: otpEditingController.value.text);
       if (res) {
         isOtpVerified = true;
-        Fluttertoast.showToast(msg: "OTP verified!");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('OTP Verified'),
+          ),
+        );
       } else {
-        Fluttertoast.showToast(msg: "Invalid OTP");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Invalid OTP'),
+          ),
+        );
       }
     } catch (e) {
-      const SnackBar(content: Text("Click on send otp first"));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please Send OTP Before Verifying'),
+        ),
+      );
     }
   }
 
@@ -274,10 +294,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
         onPressed: () {
-          isOtpVerified
-              ? signUp(
-                  emailEditingController.text, passwordEditingController.text)
-              : Fluttertoast.showToast(msg: "Verify The OTP First");
+          signUp(emailEditingController.text, passwordEditingController.text);
         },
         child: const Text(
           'Signup',
@@ -364,14 +381,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
-      try {
-        await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        postDetailsToFirestore();
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'email-already-in-use') {
-          Fluttertoast.showToast(msg: 'Email is already registered ');
+      if (isOtpVerified) {
+        try {
+          await _auth.createUserWithEmailAndPassword(
+              email: email, password: password);
+          postDetailsToFirestore();
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'email-already-in-use') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Email Already in use'),
+              ),
+            );
+          }
         }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please Verify OTP Before Signing In'),
+          ),
+        );
       }
     }
   }
