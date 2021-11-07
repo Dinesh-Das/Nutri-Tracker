@@ -15,6 +15,7 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  bool isOtpVerified = false;
   late EmailAuth emailAuth;
   bool isHiddenPassword = true;
   bool isHiddenConfirmPassword = true;
@@ -59,13 +60,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void verifyOTP() {
-    var res = emailAuth.validateOtp(
-        recipientMail: emailEditingController.text,
-        userOtp: otpEditingController.value.text);
-    if (res) {
-      Fluttertoast.showToast(msg: "OTP verified!");
-    } else {
-      Fluttertoast.showToast(msg: "Invalid OTP");
+    try {
+      var res = emailAuth.validateOtp(
+          recipientMail: emailEditingController.text,
+          userOtp: otpEditingController.value.text);
+      if (res) {
+        isOtpVerified = true;
+        Fluttertoast.showToast(msg: "OTP verified!");
+      } else {
+        Fluttertoast.showToast(msg: "Invalid OTP");
+      }
+    } catch (e) {
+      const SnackBar(content: Text("Click on send otp first"));
     }
   }
 
@@ -268,7 +274,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
         onPressed: () {
-          signUp(emailEditingController.text, passwordEditingController.text);
+          isOtpVerified
+              ? signUp(
+                  emailEditingController.text, passwordEditingController.text)
+              : Fluttertoast.showToast(msg: "Verify The OTP First");
         },
         child: const Text(
           'Signup',
