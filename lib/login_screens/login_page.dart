@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
 import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
@@ -73,15 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
         RegExp regex = RegExp(
             r"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,20}$");
 
-        /* ^                # start-of-string
-          (?=.*[0-9])       # a digit must occur at least once
-          (?=.*[a-z])       # a lower case letter must occur at least once
-          (?=.*[A-Z])       # an upper case letter must occur at least once
-          (?=.*[@#$%^&+=])  # a special character must occur at least once
-          (?=\S+$)          # no whitespace allowed in the entire string
-          .{8,}             # anything, at least eight places though
-          $                 # end-of-string */
-
         if (value!.isEmpty) {
           return ("Password Is Required For Login");
         }
@@ -127,16 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
         minWidth: MediaQuery.of(context).size.width,
       ),
     );
-
-    //Icon button For google Signin
-    final googleIcon = IconButton(
-        onPressed: () {
-          final provider =
-              Provider.of<GoogleSignInProvider>(context, listen: false);
-          provider.googleLogin().whenComplete(() => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => homepage())));
-        },
-        icon: Image.asset("assets/images/google.png"));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -209,27 +191,39 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                       const SizedBox(
-                        height: 35,
+                        height: 20,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          googleIcon,
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          IconButton(
-                              onPressed: () {},
-                              icon: Image.asset("assets/images/google.png")),
-                          const SizedBox(
-                            width: 15,
-                          ),
-                          IconButton(
-                              onPressed: () {},
-                              icon: Image.asset("assets/images/google.png"))
-                        ],
+                      const Text(
+                        "OR",
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //Signin With Google Button
+                      ElevatedButton.icon(
+                          onPressed: () {
+                            final provider = Provider.of<GoogleSignInProvider>(
+                                context,
+                                listen: false);
+                            provider.googleLogin().whenComplete(() =>
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => homepage())));
+                          },
+                          style: ElevatedButton.styleFrom(
+                              primary: Colors.blueAccent,
+                              fixedSize: const Size(double.maxFinite, 55),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50))),
+                          icon: Image.asset(
+                            "assets/images/google_logo.png",
+                            fit: BoxFit.fill,
+                            height: 25,
+                          ),
+                          label: const Text("Sign Up With Google")),
                     ],
                   )),
             ),
@@ -257,12 +251,30 @@ class _LoginScreenState extends State<LoginScreen> {
             context, MaterialPageRoute(builder: (context) => const homepage()));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
-          Fluttertoast.showToast(msg: 'No User found for that Email');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No user found with that email.'),
+            ),
+          );
         } else if (e.code == 'wrong-password') {
-          Fluttertoast.showToast(msg: 'Wrong Password ');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Wrong Password. Try again.'),
+            ),
+          );
         } else if (e.code == 'network-request-failed') {
-          Fluttertoast.showToast(msg: 'Poor Internet Connection!');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Poor Internet Connection. Try again.'),
+            ),
+          );
         }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error occurred while signing in. Try again.'),
+          ),
+        );
       }
     }
   }

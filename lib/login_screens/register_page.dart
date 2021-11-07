@@ -15,6 +15,7 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
+  bool isOtpVerified = false;
   late EmailAuth emailAuth;
   bool isHiddenPassword = true;
   bool isHiddenConfirmPassword = true;
@@ -52,20 +53,45 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     var res = await emailAuth.sendOtp(
         recipientMail: emailEditingController.text, otpLength: 6);
     if (res) {
-      Fluttertoast.showToast(msg: "OTP Sent Succesfully ");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('OTP Sent Succesfully'),
+        ),
+      );
     } else {
-      Fluttertoast.showToast(msg: "Problem With Sending OTP");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Problem With Sending OTP'),
+        ),
+      );
     }
   }
 
   void verifyOTP() {
-    var res = emailAuth.validateOtp(
-        recipientMail: emailEditingController.text,
-        userOtp: otpEditingController.value.text);
-    if (res) {
-      Fluttertoast.showToast(msg: "OTP verified!");
-    } else {
-      Fluttertoast.showToast(msg: "Invalid OTP");
+    try {
+      var res = emailAuth.validateOtp(
+          recipientMail: emailEditingController.text,
+          userOtp: otpEditingController.value.text);
+      if (res) {
+        isOtpVerified = true;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('OTP Verified'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Invalid OTP'),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please Send OTP Before Verifying'),
+        ),
+      );
     }
   }
 
@@ -355,14 +381,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
-      try {
-        await _auth.createUserWithEmailAndPassword(
-            email: email, password: password);
-        postDetailsToFirestore();
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'email-already-in-use') {
-          Fluttertoast.showToast(msg: 'Email is already registered ');
+      if (isOtpVerified) {
+        try {
+          await _auth.createUserWithEmailAndPassword(
+              email: email, password: password);
+          postDetailsToFirestore();
+        } on FirebaseAuthException catch (e) {
+          if (e.code == 'email-already-in-use') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Email Already in use'),
+              ),
+            );
+          }
         }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please Verify OTP Before Signing In'),
+          ),
+        );
       }
     }
   }
