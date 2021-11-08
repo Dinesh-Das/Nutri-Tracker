@@ -24,109 +24,112 @@ class dietrylist extends StatelessWidget {
                     fontWeight: FontWeight.w900),
               ),
             ),
-            Column(
-              children: [
-                SizedBox(
-                  height: 20,
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                  child: Container(
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    child: Container(
+                        color: Colors.blueGrey.withOpacity(0.2),
+                        height: 150,
+                        width: 350,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 100,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              colorFilter: ColorFilter.mode(
+                                  Colors.black.withOpacity(0.35),
+                                  BlendMode.multiply),
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                  "https://picsum.photos/250?image=9"),
+                            ),
+                          ),
+                        )),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    child: Container(
                       color: Colors.blueGrey.withOpacity(0.2),
                       height: 150,
                       width: 350,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 100,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            colorFilter: ColorFilter.mode(
-                                Colors.black.withOpacity(0.35),
-                                BlendMode.multiply),
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                                "https://picsum.photos/250?image=9"),
-                          ),
+                      child: const Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          'Snow Peas',
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.w500),
                         ),
-                      )),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                  child: Container(
-                    color: Colors.blueGrey.withOpacity(0.2),
-                    height: 150,
-                    width: 350,
-                    child: const Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Snow Peas',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                  child: Container(
-                    color: Colors.blueGrey.withOpacity(0.2),
-                    height: 150,
-                    width: 350,
-                    child: const Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Cucumber',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    child: Container(
+                      color: Colors.blueGrey.withOpacity(0.2),
+                      height: 150,
+                      width: 350,
+                      child: const Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          'Cucumber',
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.w500),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                  child: Container(
-                    color: Colors.blueGrey.withOpacity(0.2),
-                    height: 150,
-                    width: 350,
-                    child: const Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Cabbage',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    child: Container(
+                      color: Colors.blueGrey.withOpacity(0.2),
+                      height: 150,
+                      width: 350,
+                      child: const Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          'Cabbage',
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.w500),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                  child: Container(
-                    color: Colors.blueGrey.withOpacity(0.2),
-                    height: 150,
-                    width: 350,
-                    child: const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text(
-                        'Brokoli',
-                        style: TextStyle(
-                            fontSize: 22, fontWeight: FontWeight.w500),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    child: Container(
+                      color: Colors.blueGrey.withOpacity(0.2),
+                      height: 150,
+                      width: 350,
+                      child: const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'Brokoli',
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.w500),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             )
           ],
         ),
