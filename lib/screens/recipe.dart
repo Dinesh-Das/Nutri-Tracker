@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/screens/RecipePage/models/recipe.api.dart';
 import 'package:nutri_tracker/screens/RecipePage/models/recipe.dart';
 import 'package:nutri_tracker/screens/RecipePage/widgets/recipe_card.dart';
+import 'package:nutri_tracker/screens/themes.dart';
 
 class recipe extends StatefulWidget {
   @override
@@ -35,11 +36,11 @@ class _recipeState extends State<recipe> {
             mainAxisAlignment: MainAxisAlignment.center,
             // ignore: prefer_const_literals_to_create_immutables
             children: [
-              Icon(Icons.restaurant_menu, color: Colors.black),
+              Icon(Icons.restaurant_menu, color: MyColors.iconsColor),
               SizedBox(width: 10),
               Text(
                 'Food Recipe',
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: MyColors.subHeading),
               )
             ],
           ),

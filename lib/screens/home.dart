@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:nutri_tracker/screens/themes.dart';
 
 class home extends StatelessWidget {
   const home({Key? key}) : super(key: key);
@@ -13,10 +14,13 @@ class home extends StatelessWidget {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        title: Text('N U T R I T R A C K E R'),
+        title: Text(
+          'N U T R I T R A C K E R',
+          // style: TextStyle(color: MyColors.heading),
+        ),
         centerTitle: true,
-        foregroundColor: Colors.green[900],
-        backgroundColor: Colors.grey.withOpacity(0.8),
+        foregroundColor: MyColors.shortDesc,
+        backgroundColor: MyColors.backColor,
         elevation: 0,
       ),
       // drawer
@@ -30,12 +34,10 @@ class home extends StatelessWidget {
                 bottomLeft: Radius.circular(40.0)),
             child: Container(
               height: 300,
-              color: Colors.grey.withOpacity(0.8),
-              child: PieChart(PieChartData(
-                  // sections: getSections(),
-                  )),
+              color: MyColors.backColor,
             ),
           ),
+
           // Section for additional logos
           ListView(
             padding: EdgeInsets.only(left: 20.0, right: 20.0),
@@ -55,7 +57,7 @@ class home extends StatelessWidget {
                       fontFamily: 'lato',
                       fontSize: 28.0,
                       fontWeight: FontWeight.w800,
-                      color: Colors.grey),
+                      color: MyColors.heading),
                 ),
               ),
               Container(

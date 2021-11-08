@@ -4,26 +4,21 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:bottom_navy_bar/bottom_navy_bar.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
-
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:nutri_tracker/screens/themes.dart';
 import 'screens/diet.dart';
 import 'screens/home.dart';
 import 'screens/recipe.dart';
 
-class homepage extends StatefulWidget {
-  const homepage({Key? key}) : super(key: key);
+class navPage extends StatefulWidget {
+  const navPage({Key? key}) : super(key: key);
 
   @override
-  _homepageState createState() => _homepageState();
+  _navPageState createState() => _navPageState();
 }
 
-class _homepageState extends State<homepage> {
+class _navPageState extends State<navPage> {
   int _selectedIndex = 0;
-  // List listOfPages = [
-  //   Container(
-  //     color: Color(Colors.accents),
-  //   )
-  // ];
-
   List listOfPages = [
     const home(),
     const diet(),
@@ -32,49 +27,36 @@ class _homepageState extends State<homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: NavigationDrawer(),
-        body: listOfPages[_selectedIndex],
-        bottomNavigationBar: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(40.0)),
-          child: BottomNavyBar(
-            selectedIndex: _selectedIndex,
-            showElevation: true, // use this to remove appBar's elevation
-            onItemSelected: (index) => setState(() {
+      bottomNavigationBar: CurvedNavigationBar(
+          height: 50,
+          buttonBackgroundColor: MyColors.iconsColor,
+          backgroundColor: Colors.transparent,
+          color: MyColors.backColor,
+          animationDuration: Duration(milliseconds: 500),
+          animationCurve: Curves.ease,
+          index: _selectedIndex,
+          // key: Key(value),
+          onTap: (index) {
+            setState(() {
               _selectedIndex = index;
-            }),
-            backgroundColor: Colors.transparent,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            curve: Curves.slowMiddle,
-            items: [
-              BottomNavyBarItem(
-                // ignore: prefer_const_constructors
-                icon: AvatarGlow(
-                  glowColor: Colors.green,
-                  child: Icon(Icons.house),
-                  endRadius: 14.0,
-                ),
-                title: Text('Home'),
-                activeColor: Colors.green,
-                textAlign: TextAlign.center,
-              ),
-              BottomNavyBarItem(
-                  icon: AvatarGlow(
-                      glowColor: Colors.purpleAccent,
-                      endRadius: 14.0,
-                      child: Icon(Icons.health_and_safety)),
-                  title: Text('Dietry'),
-                  activeColor: Colors.purpleAccent,
-                  textAlign: TextAlign.center),
-              BottomNavyBarItem(
-                  icon: AvatarGlow(
-                      glowColor: Colors.pink,
-                      endRadius: 14.0,
-                      child: Icon(Icons.food_bank_sharp)),
-                  title: Text('Recipe'),
-                  activeColor: Colors.pink,
-                  textAlign: TextAlign.center),
-            ],
-          ),
-        ));
+            });
+          },
+          // ignore: prefer_const_literals_to_create_immutables
+          items: [
+            Icon(
+              Icons.home,
+              size: 30,
+            ),
+            Icon(
+              Icons.fitness_center_outlined,
+              size: 30,
+            ),
+            Icon(
+              Icons.food_bank,
+              size: 30,
+            )
+          ]),
+      body: listOfPages[_selectedIndex],
+    );
   }
 }

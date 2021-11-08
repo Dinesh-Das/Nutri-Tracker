@@ -211,7 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => homepage())));
+                                        builder: (context) => navPage())));
                           },
                           style: ElevatedButton.styleFrom(
                               primary: Colors.blueAccent,
@@ -248,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
             email: email, password: password);
         Fluttertoast.showToast(msg: "Login Successful");
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const homepage()));
+            context, MaterialPageRoute(builder: (context) => const navPage()));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           ScaffoldMessenger.of(context).showSnackBar(

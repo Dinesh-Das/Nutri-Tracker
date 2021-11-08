@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-
 import 'login_screens/google_signin/google_signin.dart';
 
 Future<void> main() async {
@@ -10,7 +9,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
-   
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 

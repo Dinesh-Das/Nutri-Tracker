@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/screens/themes.dart';
 
 class dietrylist extends StatelessWidget {
   const dietrylist({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class dietrylist extends StatelessWidget {
               child: Text(
                 'Veggies',
                 style: TextStyle(
-                    color: Colors.grey,
+                    color: MyColors.heading,
                     fontSize: 35,
                     fontWeight: FontWeight.w900),
               ),

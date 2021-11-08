@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/screens/themes.dart';
 import 'dietrylist/dietry_list.dart';
+import 'themes.dart';
 
 class diet extends StatelessWidget {
   const diet({Key? key}) : super(key: key);
@@ -11,14 +13,14 @@ class diet extends StatelessWidget {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          leading: const Icon(
+          leading: Icon(
             Icons.local_hospital,
-            color: Colors.green,
+            color: MyColors.iconsColor,
             size: 35.0,
           ),
-          title: const Text(
+          title: Text(
             'Diet',
-            style: TextStyle(color: Colors.black, fontSize: 25),
+            style: TextStyle(color: MyColors.subHeading, fontSize: 25),
           ),
         ),
         body: const dietrylist());
