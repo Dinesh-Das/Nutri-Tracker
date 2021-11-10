@@ -80,6 +80,7 @@ flutter:
   assets:
     - assets/images/
     - assets/onboard/
+    - assets/dev/
 
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

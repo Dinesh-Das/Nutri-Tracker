@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/drawer/AboutUs/aboutus01.dart';
+import 'package:nutri_tracker/drawer/AboutUs/data_developers.dart';
 import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/login_screens/user.dart';
@@ -54,6 +56,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       name = provider.userModel!.name!;
       urlImage = provider.userModel!.photoURL!;
     }
+
     return Drawer(
       child: Material(
         color: Colors.black45,
@@ -67,7 +70,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                       urlImage: urlImage,
                       name: name,
                       email: email,
-                      mobile: mobile,
                       onClicked: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -76,15 +78,15 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                                     urlImage: urlImage,
                                   )))),
                   const SizedBox(
-                    height: 12,
+                    height: 10,
                   ),
                   buildMenuItem(
-                    text: 'People',
-                    icon: Icons.people,
+                    text: 'Edit Profile',
+                    icon: Icons.edit,
                     onClicked: () => selectedItem(context, 0),
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 15,
                   ),
                   buildMenuItem(
                     text: 'Favourites',
@@ -92,7 +94,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     onClicked: () => selectedItem(context, 1),
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 15,
                   ),
                   buildMenuItem(
                     text: 'Workflow',
@@ -100,15 +102,15 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     onClicked: () => selectedItem(context, 2),
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 15,
                   ),
                   buildMenuItem(
-                    text: 'Updates',
-                    icon: Icons.update,
+                    text: 'Settings',
+                    icon: Icons.settings,
                     onClicked: () => selectedItem(context, 3),
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 15,
                   ),
                   buildMenuItem(
                     text: 'Logout',
@@ -116,40 +118,44 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     onClicked: () => logout(context),
                   ),
                   const SizedBox(
-                    height: 24,
+                    height: 20,
                   ),
                   const Divider(
                     color: Colors.white70,
                   ),
                   const SizedBox(
-                    height: 24,
+                    height: 20,
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 10,
                   ),
                   buildMenuItem(
-                    text: 'Favourites',
-                    icon: Icons.favorite_border,
+                    text: 'Share',
+                    icon: Icons.share,
                     onClicked: () => selectedItem(context, 5),
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 10,
                   ),
                   buildMenuItem(
-                    text: 'Workflow',
+                    text: 'About App',
                     icon: Icons.workspaces_outline,
                     onClicked: () => selectedItem(context, 6),
                   ),
                   const SizedBox(
-                    height: 16,
+                    height: 10,
                   ),
                   buildMenuItem(
-                    text: 'Updates',
-                    icon: Icons.update,
-                    onClicked: () => selectedItem(context, 7),
-                  ),
+                      text: 'About Us',
+                      icon: Icons.developer_mode,
+                      onClicked: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Aboutus01()));
+                      }),
                   const SizedBox(
-                    height: 16,
+                    height: 10,
                   ),
                 ],
               ),
@@ -177,7 +183,6 @@ Widget buildHeader({
   required String urlImage,
   required String name,
   required String email,
-  String? mobile,
   required VoidCallback onClicked,
 }) =>
     InkWell(
@@ -202,10 +207,6 @@ Widget buildHeader({
                 email,
                 style: const TextStyle(fontSize: 11, color: Colors.white),
               ),
-              Text(
-                mobile.toString(),
-                style: const TextStyle(fontSize: 14, color: Colors.white),
-              )
             ])
           ],
         ),
@@ -258,10 +259,6 @@ void selectedItem(BuildContext context, int index) {
           context, MaterialPageRoute(builder: (context) => const home()));
       break;
     case 6:
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const home()));
-      break;
-    case 7:
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const home()));
       break;
