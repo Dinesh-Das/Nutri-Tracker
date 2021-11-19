@@ -22,7 +22,7 @@ class _navPageState extends State<navPage> {
   List listOfPages = [
     const home(),
     const diet(),
-    recipe(),
+    // recipe(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -51,10 +51,10 @@ class _navPageState extends State<navPage> {
               Icons.fitness_center_outlined,
               size: 30,
             ),
-            Icon(
-              Icons.food_bank,
-              size: 30,
-            )
+            // Icon(
+            //   Icons.food_bank,
+            //   size: 30,
+            // )
           ]),
       body: listOfPages[_selectedIndex],
     );
