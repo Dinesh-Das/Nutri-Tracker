@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "244672019672-5i7mi8dvcs3d2ko6s8hta0t6pdsnp1vl.apps.googleusercontent.com",
+          "client_id": "244672019672-269024tfvdjjbv5r4g10qdnjvepbfreu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.nutri_tracker",
-            "certificate_hash": "1bab633ebbeaf987a74bcb37d04831bcea756b36"
+            "certificate_hash": "312ee903a7aa2b5905bb1f20975f686485e613c8"
           }
         },
         {
