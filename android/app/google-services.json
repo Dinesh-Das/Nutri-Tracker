@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "244672019672-q1f9qmbau9rpkkoa92i7n131bia3bvr7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.nutri_tracker",
+            "certificate_hash": "1bab633ebbeaf987a74bcb37d04831bcea756b36"
+          }
+        },
+        {
           "client_id": "244672019672-a362683mgaqqv6bee61n3c8j0go3ob5s.apps.googleusercontent.com",
           "client_type": 3
         }
