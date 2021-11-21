@@ -20,7 +20,7 @@ class navPage extends StatefulWidget {
 class _navPageState extends State<navPage> {
   int _selectedIndex = 0;
   List listOfPages = [
-    const home(),
+    home(),
     const diet(),
     // recipe(),
   ];

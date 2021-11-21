@@ -239,28 +239,22 @@ void selectedItem(BuildContext context, int index) {
   Navigator.of(context).pop();
   switch (index) {
     case 0:
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
       break;
     case 1:
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
       break;
     case 2:
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
       break;
     case 3:
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
       break;
     case 5:
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
       break;
     case 6:
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const home()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
       break;
   }
 }
