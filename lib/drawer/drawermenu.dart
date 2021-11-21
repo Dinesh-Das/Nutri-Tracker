@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/drawer/AboutUs/aboutus01.dart';
-import 'package:nutri_tracker/drawer/AboutUs/data_developers.dart';
+import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
+import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/login_screens/user.dart';
@@ -239,7 +240,8 @@ void selectedItem(BuildContext context, int index) {
   Navigator.of(context).pop();
   switch (index) {
     case 0:
-      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const EditProfile()));
       break;
     case 1:
       Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
@@ -248,7 +250,8 @@ void selectedItem(BuildContext context, int index) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
       break;
     case 3:
-      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const SettingsPage()));
       break;
     case 5:
       Navigator.push(context, MaterialPageRoute(builder: (context) => home()));

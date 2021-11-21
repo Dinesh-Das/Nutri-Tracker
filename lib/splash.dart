@@ -1,5 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/login_screens/login_page.dart';
+import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/onbparding_components/Onboarding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+String finalEmail = '';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -12,7 +19,25 @@ class _SplashState extends State<Splash> {
   @override
   void initState() {
     super.initState();
-    _navigateToHome();
+    getValidationData().whenComplete(() async {
+      Timer(
+          Duration(seconds: 2),
+          () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      finalEmail == '' ? Onboarding() : navPage())));
+    });
+    // _navigateToHome();
+  }
+
+  Future getValidationData() async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    var obtainedEmail = sharedPreferences.getString('email');
+    setState(() {
+      finalEmail = obtainedEmail!;
+    });
   }
 
   _navigateToHome() async {

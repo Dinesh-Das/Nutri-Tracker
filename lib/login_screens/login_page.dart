@@ -7,6 +7,7 @@ import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
 import 'package:nutri_tracker/navigation.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -196,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       const Text(
                         "OR",
                         style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
                         height: 20,
@@ -207,14 +208,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             final provider = Provider.of<GoogleSignInProvider>(
                                 context,
                                 listen: false);
-                            provider.googleLogin().whenComplete(() =>
-                                Navigator.pushReplacement(
+                            provider
+                                .googleLogin()
+                                .whenComplete(() => Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => navPage())));
+                                        builder: (context) => navPage())))
+                                .catchError((error) {
+                              Fluttertoast.showToast(msg: "Error....");
+                            });
                           },
                           style: ElevatedButton.styleFrom(
-                              primary: Colors.blueAccent,
+                              primary: Colors.white54,
                               fixedSize: const Size(double.maxFinite, 55),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50))),
@@ -223,7 +228,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             fit: BoxFit.fill,
                             height: 25,
                           ),
-                          label: const Text("Sign Up With Google")),
+                          label: const Text(
+                            "Sign Up With Google",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18),
+                          )),
                     ],
                   )),
             ),
@@ -244,9 +255,16 @@ class _LoginScreenState extends State<LoginScreen> {
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
+        final SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
+        sharedPreferences.setString('email', emailController.text);
+        sharedPreferences.setString('password', passwordController.text);
+
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-        Fluttertoast.showToast(msg: "Login Successful");
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Login Successful'),
+        ));
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const navPage()));
       } on FirebaseAuthException catch (e) {
