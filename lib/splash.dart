@@ -6,7 +6,7 @@ import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/onbparding_components/Onboarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-String finalEmail = '';
+String? finalEmail;
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -21,12 +21,12 @@ class _SplashState extends State<Splash> {
     super.initState();
     getValidationData().whenComplete(() async {
       Timer(
-          Duration(seconds: 2),
+          Duration(milliseconds: 6500),
           () => Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      finalEmail == '' ? Onboarding() : navPage())));
+                      finalEmail == null ? Onboarding() : navPage())));
     });
     // _navigateToHome();
   }
@@ -36,7 +36,7 @@ class _SplashState extends State<Splash> {
         await SharedPreferences.getInstance();
     var obtainedEmail = sharedPreferences.getString('email');
     setState(() {
-      finalEmail = obtainedEmail!;
+      finalEmail = obtainedEmail;
     });
   }
 

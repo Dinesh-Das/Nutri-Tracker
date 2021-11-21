@@ -10,6 +10,7 @@ import 'package:nutri_tracker/login_screens/user.dart';
 import 'package:nutri_tracker/login_screens/user_model.dart';
 import 'package:nutri_tracker/screens/home.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({Key? key}) : super(key: key);
@@ -168,6 +169,11 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   }
 
   Future<void> logout(BuildContext context) async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
+    // sharedPreferences.clear(); for all data
+    sharedPreferences.remove('email');
+
     user = await FirebaseAuth.instance.currentUser!;
     if (user!.providerData[0].providerId == "google.com") {
       final provider =
