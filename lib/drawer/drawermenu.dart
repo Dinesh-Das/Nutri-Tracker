@@ -11,6 +11,7 @@ import 'package:nutri_tracker/login_screens/user.dart';
 import 'package:nutri_tracker/login_screens/user_model.dart';
 import 'package:nutri_tracker/screens/home.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NavigationDrawer extends StatefulWidget {
@@ -174,6 +175,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
         await SharedPreferences.getInstance();
     // sharedPreferences.clear(); for all data
     sharedPreferences.remove('email');
+    sharedPreferences.remove('gemail');
 
     user = await FirebaseAuth.instance.currentUser!;
     if (user!.providerData[0].providerId == "google.com") {
@@ -261,7 +263,8 @@ void selectedItem(BuildContext context, int index) {
           MaterialPageRoute(builder: (context) => const SettingsPage()));
       break;
     case 5:
-      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
+      Share.share(
+          'https://drive.google.com/file/d/18XAjRC9_k825xVOZMFBFTpMPzi4xBvOm/view?usp=sharing');
       break;
     case 6:
       Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
