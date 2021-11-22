@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 showAlertDialog(BuildContext context) {
   // set up the buttons
@@ -12,7 +13,11 @@ showAlertDialog(BuildContext context) {
   );
   Widget continueButton = TextButton(
     child: const Text("Continue"),
-    onPressed: () {
+    onPressed: () async {
+      final SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      // sharedPreferences.clear(); for all data
+      sharedPreferences.remove('email');
       FirebaseAuth.instance.currentUser!.delete();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

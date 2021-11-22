@@ -21,7 +21,7 @@ class _SplashState extends State<Splash> {
     super.initState();
     getValidationData().whenComplete(() async {
       Timer(
-          Duration(milliseconds: 6500),
+          Duration(milliseconds: 6000),
           () => Navigator.push(
               context,
               MaterialPageRoute(

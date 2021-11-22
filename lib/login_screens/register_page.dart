@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/auth.config.dart';
 import 'package:nutri_tracker/login_screens/user_model.dart';
 import 'package:nutri_tracker/navigation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
@@ -383,6 +384,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     if (_formKey.currentState!.validate()) {
       if (isOtpVerified) {
         try {
+          final SharedPreferences sharedPreferences =
+              await SharedPreferences.getInstance();
+          sharedPreferences.setString('email', emailEditingController.text);
+          sharedPreferences.setString(
+              'password', passwordEditingController.text);
+
           await _auth.createUserWithEmailAndPassword(
               email: email, password: password);
           postDetailsToFirestore();

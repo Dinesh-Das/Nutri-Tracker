@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/drawer/AboutUs/aboutus01.dart';
 import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
+import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
@@ -75,9 +76,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                       onClicked: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => UserPage(
-                                    name: name,
-                                    urlImage: urlImage,
+                              builder: (context) => ViewProfile(
+                                  // name: name,
+                                  // urlImage: urlImage,
                                   )))),
                   const SizedBox(
                     height: 10,
