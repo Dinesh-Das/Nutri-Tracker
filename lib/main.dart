@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/sharedPreferences/shared.dart';
 import 'package:nutri_tracker/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import 'login_screens/google_signin/google_signin.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   runApp(const MyApp());
 }
 

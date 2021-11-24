@@ -6,13 +6,12 @@ import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/login_screens/user_model.dart';
 import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/onbparding_components/Onboarding.dart';
+import 'package:nutri_tracker/sharedPreferences/constant.dart';
+import 'package:nutri_tracker/sharedPreferences/shared.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'login_screens/google_signin/google_signin.dart';
-
-String? finalEmail;
-String? Gmail;
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);
@@ -26,41 +25,29 @@ class _SplashState extends State<Splash> {
   void initState() {
     super.initState();
     checkGoogleUser();
-    getValidationData().whenComplete(() async {
-      Timer(
-          Duration(milliseconds: 6000),
-          () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      finalEmail == null ? Onboarding() : navPage())));
-    });
-    // _navigateToHome();
   }
 
   void checkGoogleUser() async {
     final FirebaseAuth auth = FirebaseAuth.instance;
     final user = await auth.currentUser;
     if (user != null) {
-      // UserModel.fromMap("user_details").email = await LocalDataSaver
+      DataConstant.gname = (await UserLocalData.getGName());
+      DataConstant.gmail = (await UserLocalData.getGEmail());
+      DataConstant.gimg = (await UserLocalData.getGImg());
+      DataConstant.name = (await UserLocalData.getName());
+      DataConstant.mail = (await UserLocalData.getEmail());
+      DataConstant.photo = (await UserLocalData.getImg());
 
+      Timer(
+          const Duration(milliseconds: 6000),
+          () => Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => navPage())));
+    } else {
+      Timer(
+          const Duration(milliseconds: 6000),
+          () => Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => Onboarding())));
     }
-  }
-
-  Future getValidationData() async {
-    final SharedPreferences sharedPreferences =
-        await SharedPreferences.getInstance();
-    var obtainedEmail = sharedPreferences.getString('email');
-
-    setState(() {
-      finalEmail = obtainedEmail;
-    });
-  }
-
-  _navigateToHome() async {
-    await Future.delayed(const Duration(milliseconds: 6500), () {});
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const Onboarding()));
   }
 
   @override

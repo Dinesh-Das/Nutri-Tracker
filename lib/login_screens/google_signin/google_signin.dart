@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nutri_tracker/login_screens/user_model.dart';
+import 'package:nutri_tracker/sharedPreferences/shared.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
@@ -29,16 +30,18 @@ class GoogleSignInProvider extends ChangeNotifier {
           uid: this._user!.id,
           photoURL: this._user!.photoUrl);
 
+      //Local Data Shared Preference
+      UserLocalData.saveGLoginData(true);
+      UserLocalData.saveGImg(_user?.photoUrl);
+      UserLocalData.saveGMail(_user?.email);
+      UserLocalData.saveGName(_user?.displayName);
+
       final googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
       await FirebaseAuth.instance.signInWithCredential(credential);
 
-      final SharedPreferences sharedPreferences =
-          await SharedPreferences.getInstance();
-      var gmail = googleAuth.idToken.toString();
-      sharedPreferences.setString('gmail', gmail);
       notifyListeners();
     } catch (error) {
       print(error);
@@ -46,6 +49,7 @@ class GoogleSignInProvider extends ChangeNotifier {
   }
 
   googleLogOut() async {
+    UserLocalData.saveGLoginData(false);
     this._user = await googleSignIn.disconnect();
     userModel = null;
     notifyListeners();
