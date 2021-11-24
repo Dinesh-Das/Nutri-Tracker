@@ -6,6 +6,7 @@ import 'package:nutri_tracker/login_screens/forgot_password.dart';
 import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
 import 'package:nutri_tracker/navigation.dart';
+import 'package:nutri_tracker/sharedPreferences/shared.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -204,7 +205,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       //Signin With Google Button
                       ElevatedButton.icon(
-                          onPressed: () {
+                          onPressed: () async {
+                            ;
                             final provider = Provider.of<GoogleSignInProvider>(
                                 context,
                                 listen: false);
@@ -255,10 +257,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
-        final SharedPreferences sharedPreferences =
-            await SharedPreferences.getInstance();
-        sharedPreferences.setString('email', emailController.text);
-        sharedPreferences.setString('password', passwordController.text);
+        UserLocalData.savePass(passwordController.text);
+        UserLocalData.saveMail(emailController.text);
 
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
