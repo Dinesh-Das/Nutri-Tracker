@@ -1,14 +1,8 @@
-// ignore_for_file: unnecessary_this
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:nutri_tracker/login_screens/user_model.dart';
-import 'package:nutri_tracker/sharedPreferences/shared.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();

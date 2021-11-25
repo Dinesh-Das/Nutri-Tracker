@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/sharedPreferences/constant.dart';
-import 'package:nutri_tracker/sharedPreferences/shared.dart';
+import 'package:nutri_tracker/sharedPreferences/LocalData.dart';
+import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
 
 class Chk extends StatefulWidget {
   const Chk({Key? key}) : super(key: key);

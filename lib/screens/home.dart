@@ -7,8 +7,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nutri_tracker/screens/detail.dart';
 import 'package:nutri_tracker/screens/foodmodel.dart';
 import 'package:nutri_tracker/screens/themes.dart';
-import 'package:nutri_tracker/sharedPreferences/constant.dart';
-import 'package:nutri_tracker/sharedPreferences/shared.dart';
+import 'package:nutri_tracker/sharedPreferences/LocalData.dart';
+import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
 
 class home extends StatelessWidget {
   home({Key? key}) : super(key: key);

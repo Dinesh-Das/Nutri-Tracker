@@ -1,19 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/drawer/AboutUs/aboutus01.dart';
 import 'package:nutri_tracker/drawer/chk.dart';
 import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
-import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
+import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
-import 'package:nutri_tracker/login_screens/user.dart';
-import 'package:nutri_tracker/login_screens/user_model.dart';
-import 'package:nutri_tracker/onbparding_components/content_model.dart';
+import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/screens/home.dart';
-import 'package:nutri_tracker/sharedPreferences/constant.dart';
-import 'package:nutri_tracker/sharedPreferences/shared.dart';
+import 'package:nutri_tracker/sharedPreferences/LocalData.dart';
+import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,9 +28,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   //Displaying data from database
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
-  late String? name;
-  late String? email;
-  late String? urlImage;
+  String? name = '';
+  String? email = '';
+  String? urlImage = '';
   @override
   void initState() {
     super.initState();
@@ -46,32 +45,26 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     });
   }
 
-  Future<bool?> setValues() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    int log = sharedPreferences.getInt('logintype')!;
-    if (log == 2) return true;
-    return false;
-  }
-
   final padding = const EdgeInsets.symmetric(horizontal: 20);
 
   @override
   Widget build(BuildContext context) {
-    bool logintype = true;
-    name = logintype ? '${loggedInUser.name}' : '${DataConstant.gname}';
-    email = logintype ? '${loggedInUser.email}' : '${DataConstant.gmail}';
-    urlImage = logintype ? '${loggedInUser.photoURL}' : '${DataConstant.gimg}';
+    //Email Passward data
+    name = '${loggedInUser.name}';
+    email = '${loggedInUser.email}';
+    urlImage = defaultProfileUrl;
+
+    //google account data
     user = FirebaseAuth.instance.currentUser!;
     if (user!.providerData[0].providerId == "google.com") {
       final provider =
           Provider.of<GoogleSignInProvider>(context, listen: false);
-      email = provider.userModel?.email;
-      name = provider.userModel?.name;
-      urlImage = provider.userModel?.photoURL;
+      email = provider.userModel?.email!;
+      name = provider.userModel?.name!;
+      urlImage = provider.userModel?.photoURL!;
     }
-    Future<bool?> balue = setValues();
-    String val = balue.toString();
-    if (val == balue) {
+
+    if (email == null) {
       name = DataConstant.gname.toString();
       email = DataConstant.gmail.toString();
       urlImage = DataConstant.gimg.toString();

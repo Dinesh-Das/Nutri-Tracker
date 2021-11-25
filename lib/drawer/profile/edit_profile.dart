@@ -1,6 +1,8 @@
-// ignore_for_file: deprecated_member_use
-
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 
 class EditProfile extends StatefulWidget {
@@ -11,6 +13,76 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  PickedFile? imageFile;
+  Future<void> _showChoiceDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text(
+              "Choose option",
+              style: TextStyle(color: Colors.blue),
+            ),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: [
+                  const Divider(
+                    height: 1,
+                    color: Colors.blue,
+                  ),
+                  ListTile(
+                    onTap: () {
+                      _openGallery(context);
+                    },
+                    title: const Text("Gallery"),
+                    leading: const Icon(
+                      Icons.account_box,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  const Divider(
+                    height: 1,
+                    color: Colors.blue,
+                  ),
+                  ListTile(
+                    onTap: () {
+                      _openCamera(context);
+                    },
+                    title: const Text("Camera"),
+                    leading: const Icon(
+                      Icons.camera,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  void _openGallery(BuildContext context) async {
+    final pickedFile = await ImagePicker().getImage(
+      source: ImageSource.gallery,
+    );
+
+    setState(() {
+      imageFile = pickedFile!;
+    });
+
+    Navigator.pop(context);
+  }
+
+  void _openCamera(BuildContext context) async {
+    final pickedFile = await ImagePicker().getImage(
+      source: ImageSource.camera,
+    );
+    setState(() {
+      imageFile = pickedFile!;
+    });
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,39 +127,49 @@ class _EditProfileState extends State<EditProfile> {
               Center(
                 child: Stack(
                   children: [
-                    Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 4, color: Colors.green),
-                        boxShadow: [
-                          BoxShadow(
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                              color: Colors.black.withOpacity(0.1),
-                              offset: Offset(0, 10)),
+                    Align(
+                      alignment: const Alignment(0, 1),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(80.0),
+                            child: (imageFile == null)
+                                ? Image.network(
+                                    defaultProfileUrl,
+                                    fit: BoxFit.cover,
+                                    width: 120,
+                                    height: 120,
+                                  )
+                                : Image.file(
+                                    File(imageFile!.path),
+                                    fit: BoxFit.cover,
+                                    width: 120,
+                                    height: 120,
+                                  ),
+                          ),
                         ],
-                        shape: BoxShape.circle,
-                        image: const DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROZTgJiqRWL5wWednBz8zyRUhSuEDTzefieg&usqp=CAU"),
-                        ),
                       ),
                     ),
                     Positioned(
                       bottom: 0,
-                      right: 0,
+                      right: 120,
                       child: Container(
                         height: 40,
                         width: 40,
                         decoration: BoxDecoration(
-                            color: Colors.red,
+                            color: Colors.deepOrangeAccent,
                             shape: BoxShape.circle,
-                            border: Border.all(width: 4, color: Colors.green)),
-                        child: const Icon(
-                          Icons.edit,
-                          color: Colors.white,
+                            border: Border.all(width: 4, color: Colors.white)),
+                        child: IconButton(
+                          onPressed: () {
+                            _showChoiceDialog(context);
+                          },
+                          padding: EdgeInsets.only(right: 2),
+                          icon: const Icon(
+                            Icons.add_a_photo,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),

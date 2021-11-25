@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
-import 'package:nutri_tracker/login_screens/google_signin/google_signin.dart';
+import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
 import 'package:nutri_tracker/navigation.dart';
-import 'package:nutri_tracker/sharedPreferences/shared.dart';
+import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

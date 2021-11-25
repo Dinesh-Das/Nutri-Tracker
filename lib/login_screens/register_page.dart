@@ -4,9 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/auth.config.dart';
-import 'package:nutri_tracker/login_screens/user_model.dart';
+import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/navigation.dart';
-import 'package:nutri_tracker/sharedPreferences/shared.dart';
+import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationScreen extends StatefulWidget {
