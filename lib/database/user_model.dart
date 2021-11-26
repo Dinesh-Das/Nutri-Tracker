@@ -2,9 +2,23 @@ class UserModel {
   String? uid;
   String? email;
   String? name;
-  String? mobile;
   String? photoURL;
-  UserModel({this.uid, this.email, this.name, this.mobile, this.photoURL});
+  String? username;
+  String? gender, height, mobile, weight, birthdate, bio, location;
+  UserModel({
+    this.uid,
+    this.email,
+    this.name,
+    this.mobile,
+    this.photoURL,
+    this.gender,
+    this.height,
+    this.username,
+    this.weight,
+    this.birthdate,
+    this.bio,
+    this.location,
+  });
 
   //reciving data from server
   factory UserModel.fromMap(map) {
@@ -14,6 +28,13 @@ class UserModel {
       name: map['name'],
       mobile: map['mobile'],
       photoURL: map['photoURL'],
+      gender: map['gender'],
+      height: map['height'],
+      weight: map['weight'],
+      username: map['username'],
+      birthdate: map['birthdate'],
+      bio: map['bio'],
+      location: map['location'],
     );
   }
 
@@ -24,7 +45,14 @@ class UserModel {
       'email': email,
       'name': name,
       'mobile': mobile,
-      'photoURL': photoURL
+      'photoURL': photoURL,
+      'gender': gender,
+      'height': height,
+      'weight': weight,
+      'username': username,
+      'birthdate': birthdate,
+      'bio': bio,
+      'location': location,
     };
   }
 }
