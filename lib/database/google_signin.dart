@@ -19,10 +19,11 @@ class GoogleSignInProvider extends ChangeNotifier {
       _user = googleUser;
 
       this.userModel = UserModel(
-          name: this._user!.displayName,
-          email: this._user!.email,
-          uid: this._user!.id,
-          photoURL: this._user!.photoUrl);
+        name: this._user!.displayName,
+        email: this._user!.email,
+        uid: this._user!.id,
+        photoURL: this._user!.photoUrl,
+      );
 
       //Local Data Shared Preference
       UserLocalData.saveGLoginData(true);

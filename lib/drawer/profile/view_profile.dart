@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/constants.dart';
+import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 
 class ViewProfile extends StatefulWidget {
@@ -9,6 +13,14 @@ class ViewProfile extends StatefulWidget {
 }
 
 class _ViewProfileState extends State<ViewProfile> {
+  // String name = userData!.name.toString();
+
+  @override
+  void initState() {
+    super.initState();
+    // getDataFromFirestore();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,6 +53,24 @@ class _ViewProfileState extends State<ViewProfile> {
                         Container(
                           width: 120,
                           height: 120,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(80.0),
+                              child:
+                                  //  (userData!.photoURL == null)
+                                  //     ?
+                                  Image.network(
+                                defaultProfileUrl,
+                                fit: BoxFit.cover,
+                                width: 120,
+                                height: 120,
+                              )
+                              // : Image.network(
+                              //     userData!.photoURL.toString(),
+                              //     fit: BoxFit.cover,
+                              //     width: 120,
+                              //     height: 120,
+                              //   ),
+                              ),
                           decoration: BoxDecoration(
                             border: Border.all(width: 4, color: Colors.white),
                             boxShadow: [
@@ -53,8 +83,7 @@ class _ViewProfileState extends State<ViewProfile> {
                             shape: BoxShape.circle,
                             image: const DecorationImage(
                               fit: BoxFit.cover,
-                              image: NetworkImage(
-                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROZTgJiqRWL5wWednBz8zyRUhSuEDTzefieg&usqp=CAU"),
+                              image: NetworkImage(''),
                             ),
                           ),
                         ),
@@ -62,7 +91,7 @@ class _ViewProfileState extends State<ViewProfile> {
                           height: 4,
                         ),
                         const Text(
-                          "User Name",
+                          "User Full Name",
                           style: TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
