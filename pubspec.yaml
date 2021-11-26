@@ -55,7 +55,7 @@ dependencies:
   shared_preferences: ^2.0.9
   share_plus: ^3.0.4
   image_picker: ^0.8.4+4
-
+  percent_indicator: ^3.4.0
 
 dev_dependencies:
   flutter_test:
