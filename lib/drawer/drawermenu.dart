@@ -52,16 +52,16 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     //Email Passward data
     name = '${loggedInUser.name}';
     email = '${loggedInUser.email}';
-    urlImage = defaultProfileUrl;
+    urlImage = loggedInUser.photoURL ?? defaultProfileUrl;
 
     //google account data
     user = FirebaseAuth.instance.currentUser!;
     if (user!.providerData[0].providerId == "google.com") {
       final provider =
           Provider.of<GoogleSignInProvider>(context, listen: false);
-      email = provider.userModel?.email!;
-      name = provider.userModel?.name!;
-      urlImage = provider.userModel?.photoURL!;
+      email = provider.userModel!.email!;
+      name = provider.userModel!.name!;
+      urlImage = provider.userModel!.photoURL!;
     }
 
     if (email == null) {
