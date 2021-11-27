@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class DataConstant {
   static String? gname = "";
   static String? gmail = "";
