@@ -21,7 +21,7 @@ class home extends StatelessWidget {
   static List<String> time = ['44', '43', '42'];
   final List<FoodModel> foodlist = List.generate(
       foodName.length,
-          (index) => FoodModel(
+      (index) => FoodModel(
           name: foodName[index],
           foodImage: foodImage[index],
           time: time[index]));
@@ -80,11 +80,15 @@ class home extends StatelessWidget {
                       radius: 150,
                       backgroundColor: Colors.white,
                       progressColor: MyColors.iconsColor,
-                      percent: 0.7,
+                      percent: 0.4,
                       lineWidth: 10,
                       circularStrokeCap: CircularStrokeCap.round,
                       animation: true,
                       animationDuration: 2000,
+                      center: Text(
+                        "0.4",
+                        style: TextStyle(fontSize: 24),
+                      ),
                     ),
                   ],
                 ),

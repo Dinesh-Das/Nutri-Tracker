@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
 
@@ -25,15 +24,28 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     try {
       await FirebaseAuth.instance
           .sendPasswordResetEmail(email: emailController.text);
-      Fluttertoast.showToast(
-          msg: "A Password Reset link is succesfully sent to your email");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content:
+              Text('A Password Reset link is succesfully sent to your email'),
+        ),
+      );
+
       Navigator.pushReplacement(context,
           MaterialPageRoute(builder: (context) => const LoginScreen()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        Fluttertoast.showToast(msg: 'No User found for that Email');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No User found for that Email'),
+          ),
+        );
       } else if (e.code == 'network-request-failed') {
-        Fluttertoast.showToast(msg: 'Poor Internet Connection!');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Poor Internet Connection!'),
+          ),
+        );
       }
     }
   }

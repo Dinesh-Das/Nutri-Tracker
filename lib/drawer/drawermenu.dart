@@ -10,6 +10,7 @@ import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/navigation.dart';
 import 'package:nutri_tracker/screens/home.dart';
 import 'package:nutri_tracker/sharedPreferences/LocalData.dart';
 import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
@@ -260,7 +261,8 @@ void selectedItem(BuildContext context, int index) {
           MaterialPageRoute(builder: (context) => const EditProfile()));
       break;
     case 1:
-      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => navPage()));
       break;
     case 2:
       Navigator.push(context, MaterialPageRoute(builder: (context) => Chk()));
@@ -274,7 +276,8 @@ void selectedItem(BuildContext context, int index) {
           'https://drive.google.com/file/d/18XAjRC9_k825xVOZMFBFTpMPzi4xBvOm/view?usp=sharing');
       break;
     case 6:
-      Navigator.push(context, MaterialPageRoute(builder: (context) => home()));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => navPage()));
       break;
   }
 }

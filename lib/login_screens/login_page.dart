@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
 import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
@@ -217,7 +216,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                     MaterialPageRoute(
                                         builder: (context) => navPage())))
                                 .catchError((error) {
-                              Fluttertoast.showToast(msg: "Error....");
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Error .......'),
+                                ),
+                              );
                             });
                           },
                           style: ElevatedButton.styleFrom(

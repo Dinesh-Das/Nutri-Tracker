@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
