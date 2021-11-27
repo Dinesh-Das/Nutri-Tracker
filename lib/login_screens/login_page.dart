@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
 import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
-import 'package:nutri_tracker/navigation.dart';
+import 'package:nutri_tracker/bottomNavigation.dart';
 import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -214,7 +214,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 .whenComplete(() => Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => navPage())))
+                                        builder: (context) =>
+                                            BottomNavigation())))
                                 .catchError((error) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -268,8 +269,8 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Login Successful'),
         ));
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const navPage()));
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const BottomNavigation()));
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           ScaffoldMessenger.of(context).showSnackBar(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/screens/foodmodel.dart';
+import 'package:nutri_tracker/screens/home/foodmodel.dart';
 
 class foodDetail extends StatelessWidget {
   final FoodModel foodModel;

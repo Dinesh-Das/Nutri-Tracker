@@ -10,8 +10,8 @@ import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/navigation.dart';
-import 'package:nutri_tracker/screens/home.dart';
+import 'package:nutri_tracker/bottomNavigation.dart';
+import 'package:nutri_tracker/screens/home/home.dart';
 import 'package:nutri_tracker/sharedPreferences/LocalData.dart';
 import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
 import 'package:provider/provider.dart';
@@ -262,7 +262,7 @@ void selectedItem(BuildContext context, int index) {
       break;
     case 1:
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => navPage()));
+          context, MaterialPageRoute(builder: (context) => BottomNavigation()));
       break;
     case 2:
       Navigator.push(context, MaterialPageRoute(builder: (context) => Chk()));
@@ -277,7 +277,7 @@ void selectedItem(BuildContext context, int index) {
       break;
     case 6:
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => navPage()));
+          context, MaterialPageRoute(builder: (context) => BottomNavigation()));
       break;
   }
 }

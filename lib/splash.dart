@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/navigation.dart';
+import 'package:nutri_tracker/bottomNavigation.dart';
 import 'package:nutri_tracker/onbparding_components/Onboarding.dart';
 import 'package:nutri_tracker/sharedPreferences/LocalData.dart';
 import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
@@ -40,8 +40,8 @@ class _SplashState extends State<Splash> {
 
       Timer(
           const Duration(milliseconds: 6000),
-          () => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => navPage())));
+          () => Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => BottomNavigation())));
     } else {
       Timer(
           const Duration(milliseconds: 6000),

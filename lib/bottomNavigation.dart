@@ -1,23 +1,19 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: file_names
 
-import 'package:avatar_glow/avatar_glow.dart';
-import 'package:flutter/material.dart';
-import 'package:bottom_navy_bar/bottom_navy_bar.dart';
-import 'package:nutri_tracker/drawer/drawermenu.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:nutri_tracker/screens/dietrylist/diet.dart';
+import 'package:nutri_tracker/screens/home/home.dart';
 import 'package:nutri_tracker/screens/themes.dart';
-import 'screens/diet.dart';
-import 'screens/home.dart';
-import 'screens/recipe.dart';
 
-class navPage extends StatefulWidget {
-  const navPage({Key? key}) : super(key: key);
+class BottomNavigation extends StatefulWidget {
+  const BottomNavigation({Key? key}) : super(key: key);
 
   @override
-  _navPageState createState() => _navPageState();
+  _BottomNavigationState createState() => _BottomNavigationState();
 }
 
-class _navPageState extends State<navPage> {
+class _BottomNavigationState extends State<BottomNavigation> {
   int _selectedIndex = 0;
   List listOfPages = [
     home(),

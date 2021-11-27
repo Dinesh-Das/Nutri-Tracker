@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 // import 'package:fl_chart/fl_chart.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nutri_tracker/screens/detail.dart';
-import 'package:nutri_tracker/screens/foodmodel.dart';
+import 'package:nutri_tracker/screens/home/detail.dart';
+import 'package:nutri_tracker/screens/home/foodmodel.dart';
 import 'package:nutri_tracker/screens/themes.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
