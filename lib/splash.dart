@@ -4,10 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/bottomNavigation.dart';
-import 'package:nutri_tracker/onbparding_components/Onboarding.dart';
-import 'package:nutri_tracker/sharedPreferences/LocalData.dart';
-import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
+import 'package:nutri_tracker/bottom_navigation.dart';
+import 'package:nutri_tracker/onbparding_components/onboard.dart';
+import 'package:nutri_tracker/sharedPreferences/local_data.dart';
+import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

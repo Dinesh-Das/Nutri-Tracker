@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
+import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignIn = GoogleSignIn();

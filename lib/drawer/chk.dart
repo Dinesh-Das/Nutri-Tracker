@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/constants.dart';
-import 'package:nutri_tracker/database/updateData.dart';
+import 'package:nutri_tracker/database/update_data.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/sharedPreferences/LocalData.dart';
-import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
+import 'package:nutri_tracker/sharedPreferences/local_data.dart';
+import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 
 class Chk extends StatefulWidget {
   const Chk({Key? key}) : super(key: key);

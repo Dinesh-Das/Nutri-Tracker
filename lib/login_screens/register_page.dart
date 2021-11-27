@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 
 import 'package:nutri_tracker/login_screens/auth.config.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/bottomNavigation.dart';
-import 'package:nutri_tracker/sharedPreferences/SharedPreferences.dart';
+import 'package:nutri_tracker/bottom_navigation.dart';
+import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationScreen extends StatefulWidget {
