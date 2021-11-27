@@ -113,7 +113,7 @@ class _EditProfileState extends State<EditProfile> {
         ],
       ),
       body: Container(
-        padding: const EdgeInsets.only(left: 16, top: 25, right: 16),
+        padding: const EdgeInsets.only(left: 16, right: 16),
         child: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -124,66 +124,79 @@ class _EditProfileState extends State<EditProfile> {
                 height: 15,
               ),
               Center(
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: const Alignment(0, 1),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(80.0),
-                            child: (imageFile == null)
-                                ? Image.network(
-                                    defaultProfileUrl,
-                                    fit: BoxFit.cover,
-                                    width: 120,
-                                    height: 120,
-                                  )
-                                : Image.file(
-                                    File(imageFile!.path),
-                                    fit: BoxFit.cover,
-                                    width: 120,
-                                    height: 120,
-                                  ),
-                          ),
-                        ],
+                child: SingleChildScrollView(
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: const Alignment(0, 1),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(80.0),
+                              child: (imageFile == null)
+                                  ? Image.network(
+                                      defaultProfileUrl,
+                                      fit: BoxFit.cover,
+                                      width: 120,
+                                      height: 120,
+                                    )
+                                  : Image.file(
+                                      File(imageFile!.path),
+                                      fit: BoxFit.cover,
+                                      width: 120,
+                                      height: 120,
+                                    ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 120,
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                            color: Colors.deepOrangeAccent,
-                            shape: BoxShape.circle,
-                            border: Border.all(width: 4, color: Colors.white)),
-                        child: IconButton(
-                          onPressed: () {
-                            _showChoiceDialog(context);
-                          },
-                          padding: EdgeInsets.only(right: 2),
-                          icon: const Icon(
-                            Icons.add_a_photo,
-                            color: Colors.white,
+                      Positioned(
+                        bottom: 0,
+                        right: 120,
+                        child: Container(
+                          height: 40,
+                          width: 40,
+                          decoration: BoxDecoration(
+                              color: Colors.deepOrangeAccent,
+                              shape: BoxShape.circle,
+                              border:
+                                  Border.all(width: 4, color: Colors.white)),
+                          child: IconButton(
+                            onPressed: () {
+                              _showChoiceDialog(context);
+                            },
+                            padding: EdgeInsets.only(right: 2),
+                            icon: const Icon(
+                              Icons.add_a_photo,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(
                 height: 35,
               ),
-              buildTextField("User Name", "UserUnknown"),
-              buildTextField("Full Name", "Dinesh Das"),
-              buildTextField("Phone Number", "9284425491"),
-              buildTextField("Location", "Aurnagabad, Maharashtra"),
+              buildTextField(
+                  "User Name", "UserUnknown", Icons.account_circle_outlined),
+              buildTextField("Full Name", "Dinesh Das",
+                  Icons.face_retouching_natural_outlined),
+              buildTextField(
+                  "Phone Number", "9284425491", Icons.mobile_screen_share),
+              buildTextField("Email ", "email@gmail.com", Icons.mail_outline),
+              buildTextField(
+                  "BirthDate", "16-10=-1999", Icons.date_range_outlined),
+              buildTextField("Gender", "Male", Icons.group_outlined),
+              buildTextField("height", "182cm", Icons.height),
+              buildTextField("weight", "73", Icons.ac_unit),
+              buildTextField(
+                  "Location", "Aurnagabad, Maharashtra", Icons.location_city),
               const SizedBox(
-                height: 20,
+                height: 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -217,8 +230,11 @@ class _EditProfileState extends State<EditProfile> {
                           letterSpacing: 2.2,
                           color: Colors.white),
                     ),
-                  )
+                  ),
                 ],
+              ),
+              const SizedBox(
+                height: 20,
               ),
             ],
           ),
@@ -227,19 +243,20 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget buildTextField(String lableText, String placeHolder) {
+  Widget buildTextField(String lableText, String placeHolder, IconData icon) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 35),
-      child: TextField(
+      child: TextFormField(
         decoration: InputDecoration(
-            contentPadding: const EdgeInsets.only(bottom: 3),
-            labelText: lableText,
-            floatingLabelBehavior: FloatingLabelBehavior.always,
-            hintText: placeHolder,
-            hintStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.black)),
+          prefixIcon: Icon(icon),
+          suffixIcon: Icon(Icons.edit),
+          contentPadding: const EdgeInsets.only(bottom: 3),
+          labelText: lableText,
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+          hintText: placeHolder,
+          hintStyle: const TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+        ),
       ),
     );
   }

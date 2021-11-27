@@ -60,9 +60,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     if (user!.providerData[0].providerId == "google.com") {
       final provider =
           Provider.of<GoogleSignInProvider>(context, listen: false);
-      email = provider.userModel!.email!;
-      name = provider.userModel!.name!;
-      urlImage = provider.userModel!.photoURL!;
+      email = provider.userModel?.email!;
+      name = provider.userModel?.name!;
+      urlImage = provider.userModel?.photoURL!;
     }
 
     if (email == null) {
