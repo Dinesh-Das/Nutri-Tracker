@@ -30,16 +30,6 @@ class _ChkState extends State<Chk> {
   @override
   void initState() {
     super.initState();
-    updateDetailsToFirestore('DinuSir', 'Debu', '9156744441', 'Abad',
-        'Kya kar lega bro', 'Tujhse na ho payega', '6inch', 'mota', context);
-    FirebaseFirestore.instance
-        .collection("user_details")
-        .doc(user!.uid)
-        .get()
-        .then((value) {
-      userData = UserModel.fromMap(value.data());
-      setState(() {});
-    });
   }
 
   @override

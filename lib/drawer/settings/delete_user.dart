@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,8 +18,21 @@ showAlertDialog(BuildContext context) {
       final SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
       // sharedPreferences.clear(); for all data
-      sharedPreferences.remove('email');
-      FirebaseAuth.instance.currentUser!.delete();
+
+      try {
+        FirebaseAuth.instance.currentUser!.delete();
+        GoogleSignIn().signOut();
+        sharedPreferences.remove('email');
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'requires-recent-login') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'The user must reauthenticate before this operation can be executed.'),
+            ),
+          );
+        }
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Account Deleted Successfully!'),

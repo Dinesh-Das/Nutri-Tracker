@@ -12,13 +12,13 @@ updateDetailsToFirestore(
     String? bio,
     String? height,
     String? weight,
+    String? gender,
     BuildContext context) async {
   // calling firestore
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   final CollectionReference collectionReference =
       firebaseFirestore.collection('user_details');
   User? user = FirebaseAuth.instance.currentUser;
-
   UserModel userModel = UserModel();
 
   userModel.uid = user!.uid;
@@ -31,19 +31,19 @@ updateDetailsToFirestore(
   userModel.bio = bio;
   userModel.height = height;
   userModel.weight = weight;
+  userModel.gender = gender;
 
   await firebaseFirestore
       .collection("user_details")
       .doc(user.uid)
       .update(userModel.toMap());
-  // .set(userModel.toMap());
 
   ScaffoldMessenger.of(context).showSnackBar(
     const SnackBar(
       content: Text('Data updated Successfully'),
     ),
   );
-
+  Navigator.pop(context);
   // Navigator.pushAndRemoveUntil(
   //     (context),
   //     MaterialPageRoute(builder: (context) => const navPage()),

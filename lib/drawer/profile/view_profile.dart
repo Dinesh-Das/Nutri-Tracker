@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/constants.dart';
+import 'package:nutri_tracker/database/retrive.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 
@@ -14,11 +15,21 @@ class ViewProfile extends StatefulWidget {
 
 class _ViewProfileState extends State<ViewProfile> {
   // String name = userData!.name.toString();
+  UserModel retrivedData = UserModel();
+  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
     super.initState();
-    // getDataFromFirestore();
+
+    FirebaseFirestore.instance
+        .collection("user_details")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      retrivedData = UserModel.fromMap(value.data());
+      setState(() {});
+    });
   }
 
   @override
@@ -54,23 +65,21 @@ class _ViewProfileState extends State<ViewProfile> {
                           width: 120,
                           height: 120,
                           child: ClipRRect(
-                              borderRadius: BorderRadius.circular(80.0),
-                              child:
-                                  //  (userData!.photoURL == null)
-                                  //     ?
-                                  Image.network(
-                                defaultProfileUrl,
-                                fit: BoxFit.cover,
-                                width: 120,
-                                height: 120,
-                              )
-                              // : Image.network(
-                              //     userData!.photoURL.toString(),
-                              //     fit: BoxFit.cover,
-                              //     width: 120,
-                              //     height: 120,
-                              //   ),
-                              ),
+                            borderRadius: BorderRadius.circular(80.0),
+                            child: (retrivedData.photoURL == null)
+                                ? Image.network(
+                                    defaultProfileUrl,
+                                    fit: BoxFit.cover,
+                                    width: 120,
+                                    height: 120,
+                                  )
+                                : Image.network(
+                                    retrivedData.photoURL.toString(),
+                                    fit: BoxFit.cover,
+                                    width: 120,
+                                    height: 120,
+                                  ),
+                          ),
                           decoration: BoxDecoration(
                             border: Border.all(width: 4, color: Colors.white),
                             boxShadow: [
@@ -90,16 +99,16 @@ class _ViewProfileState extends State<ViewProfile> {
                         const SizedBox(
                           height: 4,
                         ),
-                        const Text(
-                          "User Full Name",
-                          style: TextStyle(
+                        Text(
+                          retrivedData.username.toString(),
+                          style: const TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const Text(
-                          "useremail@gmail.com",
-                          style: TextStyle(
+                        Text(
+                          retrivedData.email.toString(),
+                          style: const TextStyle(
                             fontSize: 12,
                             color: Colors.grey,
                           ),
@@ -138,12 +147,14 @@ class _ViewProfileState extends State<ViewProfile> {
             const SizedBox(
               height: 16,
             ),
-            displayData(Icons.ac_unit, "Full Name", "Gender"),
-            displayData(Icons.mobile_screen_share_outlined, "Mobile Number",
-                "Verified"),
+            displayData(Icons.ac_unit, retrivedData.name.toString(),
+                retrivedData.gender.toString()),
+            displayData(Icons.mobile_screen_share_outlined,
+                retrivedData.mobile.toString(), "Verified"),
             displayData(Icons.timelapse, "Joined Date", "21-11-2021"),
-            displayData(Icons.local_hospital, "Date of Birth", "16-10-1999"),
-            displayData(Icons.code, "About", "Eat. Sleep. Code. Repeat!"),
+            displayData(Icons.local_hospital, "Date of Birth",
+                retrivedData.birthdate.toString()),
+            displayData(Icons.code, "About", retrivedData.bio.toString()),
           ],
         ),
       ),

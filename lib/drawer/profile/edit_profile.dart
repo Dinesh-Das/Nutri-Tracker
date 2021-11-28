@@ -1,8 +1,13 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nutri_tracker/constants.dart';
+import 'package:nutri_tracker/database/update_data.dart';
+import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
+import 'package:intl/intl.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -12,6 +17,37 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  //Displaying data from database
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel updateData = UserModel();
+
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseFirestore.instance
+        .collection("user_details")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      updateData = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+  }
+
+  //Editing Controllers
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController birthdateController = TextEditingController();
+  TextEditingController genderController = TextEditingController();
+  TextEditingController heightController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController bioController = TextEditingController();
+
+  DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   PickedFile? imageFile;
   Future<void> _showChoiceDialog(BuildContext context) {
     return showDialog(
@@ -58,6 +94,17 @@ class _EditProfileState extends State<EditProfile> {
             ),
           );
         });
+  }
+
+  Future _selectDate() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2100));
+    if (picked != null) {
+      setState(() => {birthdateController.text = dateFormat.format(picked)});
+    }
   }
 
   void _openGallery(BuildContext context) async {
@@ -179,22 +226,70 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               const SizedBox(
-                height: 35,
+                height: 25,
               ),
+              buildTextField("User Name", updateData.username ?? "UserUnknown",
+                  Icons.account_circle_outlined, usernameController, false),
               buildTextField(
-                  "User Name", "UserUnknown", Icons.account_circle_outlined),
-              buildTextField("Full Name", "Dinesh Das",
-                  Icons.face_retouching_natural_outlined),
+                  "Full Name",
+                  updateData.name ?? "Full Name",
+                  Icons.face_retouching_natural_outlined,
+                  nameController,
+                  false),
+              buildTextField("Phone Number", updateData.mobile ?? "1234567890",
+                  Icons.mobile_screen_share, phoneController, false),
+              buildTextField("Email ", updateData.email ?? "email@gmail.com",
+                  Icons.mail, emailController, true),
+
+              //Birth Date Picker
+              Padding(
+                padding: const EdgeInsets.only(bottom: 35),
+                child: TextFormField(
+                  keyboardType: TextInputType.phone,
+                  autocorrect: false,
+                  controller: birthdateController,
+                  decoration: InputDecoration(
+                    labelText: 'DOB',
+                    hintStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black),
+                    prefixIcon: const Icon(Icons.calendar_today),
+                    suffixIcon: const Icon(Icons.edit),
+                    contentPadding: const EdgeInsets.only(bottom: 3),
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    hintText: updateData.birthdate ?? 'DOB',
+                  ),
+                  onSaved: (value) {
+                    birthdateController.text = value!;
+                  },
+                  onTap: () {
+                    _selectDate();
+                    FocusScope.of(context).requestFocus(FocusNode());
+                  },
+                  maxLines: 1,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Choose Date';
+                    }
+                  },
+                ),
+              ),
+
+              buildTextField("Gender", updateData.gender ?? "Male",
+                  Icons.group_outlined, genderController, false),
+              buildTextField("height", updateData.height ?? "182cm",
+                  Icons.height, heightController, false),
+              buildTextField("weight", updateData.weight ?? "73", Icons.ac_unit,
+                  weightController, false),
               buildTextField(
-                  "Phone Number", "9284425491", Icons.mobile_screen_share),
-              buildTextField("Email ", "email@gmail.com", Icons.mail_outline),
-              buildTextField(
-                  "BirthDate", "16-10=-1999", Icons.date_range_outlined),
-              buildTextField("Gender", "Male", Icons.group_outlined),
-              buildTextField("height", "182cm", Icons.height),
-              buildTextField("weight", "73", Icons.ac_unit),
-              buildTextField(
-                  "Location", "Aurnagabad, Maharashtra", Icons.location_city),
+                  "Location",
+                  updateData.location ?? "Aurnagabad, Maharashtra",
+                  Icons.location_city,
+                  locationController,
+                  false),
+              buildTextField("About", updateData.bio ?? "Short Description",
+                  Icons.info_sharp, bioController, false),
               const SizedBox(
                 height: 10,
               ),
@@ -218,7 +313,37 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                   RaisedButton(
                     color: Colors.green,
-                    onPressed: () {},
+                    onPressed: () {
+                      updateDetailsToFirestore(
+                          (usernameController.text == '')
+                              ? updateData.username
+                              : usernameController.text,
+                          (nameController.text == '')
+                              ? updateData.name
+                              : nameController.text,
+                          (phoneController.text == '')
+                              ? updateData.mobile
+                              : phoneController.text,
+                          (locationController.text == '')
+                              ? updateData.location
+                              : locationController.text,
+                          (birthdateController.text == '')
+                              ? updateData.birthdate
+                              : birthdateController.text,
+                          (bioController.text == '')
+                              ? updateData.bio
+                              : bioController.text,
+                          (heightController.text == '')
+                              ? updateData.height
+                              : heightController.text,
+                          (weightController.text == '')
+                              ? updateData.weight
+                              : weightController.text,
+                          (genderController.text == '')
+                              ? updateData.gender
+                              : genderController.text,
+                          context);
+                    },
                     elevation: 2,
                     padding: const EdgeInsets.symmetric(horizontal: 50),
                     shape: RoundedRectangleBorder(
@@ -243,13 +368,25 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-  Widget buildTextField(String lableText, String placeHolder, IconData icon) {
+  Widget buildTextField(String lableText, String placeHolder, IconData icon,
+      TextEditingController text, bool isEmail) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 35),
       child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Empty';
+          }
+        },
+        controller: text,
+        onSaved: (value) {
+          text.text = value!;
+        },
+        readOnly: isEmail,
+        textInputAction: TextInputAction.next,
         decoration: InputDecoration(
           prefixIcon: Icon(icon),
-          suffixIcon: Icon(Icons.edit),
+          suffixIcon: isEmail ? Icon(Icons.lock) : Icon(Icons.edit),
           contentPadding: const EdgeInsets.only(bottom: 3),
           labelText: lableText,
           floatingLabelBehavior: FloatingLabelBehavior.always,
