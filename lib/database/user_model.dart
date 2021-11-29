@@ -4,7 +4,7 @@ class UserModel {
   String? name;
   String? photoURL;
   String? username;
-  String? gender, height, mobile, weight, birthdate, bio, location;
+  String? gender, height, mobile, weight, birthdate, bio, location, creation;
   UserModel({
     this.uid,
     this.email,
@@ -18,6 +18,7 @@ class UserModel {
     this.birthdate,
     this.bio,
     this.location,
+    this.creation,
   });
 
   //reciving data from server
@@ -35,6 +36,7 @@ class UserModel {
       birthdate: map['birthdate'],
       bio: map['bio'],
       location: map['location'],
+      creation: map['creation'],
     );
   }
 
@@ -53,6 +55,7 @@ class UserModel {
       'birthdate': birthdate,
       'bio': bio,
       'location': location,
+      'creation': creation,
     };
   }
 }

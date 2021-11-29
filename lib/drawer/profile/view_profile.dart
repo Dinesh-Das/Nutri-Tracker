@@ -5,6 +5,7 @@ import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/retrive.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
+import 'package:intl/intl.dart';
 
 class ViewProfile extends StatefulWidget {
   const ViewProfile({Key? key}) : super(key: key);
@@ -17,7 +18,8 @@ class _ViewProfileState extends State<ViewProfile> {
   // String name = userData!.name.toString();
   UserModel retrivedData = UserModel();
   User? user = FirebaseAuth.instance.currentUser;
-
+  DateFormat? formatter = DateFormat('yyyy-MM-dd');
+  DateTime? creationDate;
   @override
   void initState() {
     super.initState();
@@ -28,6 +30,8 @@ class _ViewProfileState extends State<ViewProfile> {
         .get()
         .then((value) {
       retrivedData = UserModel.fromMap(value.data());
+      creationDate = user!.metadata.creationTime;
+      retrivedData.creation = formatter!.format(creationDate!);
       setState(() {});
     });
   }
@@ -39,13 +43,13 @@ class _ViewProfileState extends State<ViewProfile> {
         child: Column(
           children: <Widget>[
             SizedBox(
-              height: 280,
+              height: 250,
               child: Stack(
                 children: [
                   ClipPath(
                     clipper: MyCustomClipper(),
                     child: Container(
-                      height: 280,
+                      height: 250,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.cover,
@@ -147,14 +151,25 @@ class _ViewProfileState extends State<ViewProfile> {
             const SizedBox(
               height: 16,
             ),
-            displayData(Icons.ac_unit, retrivedData.name.toString(),
-                retrivedData.gender.toString()),
+            displayData(Icons.face_retouching_natural_sharp,
+                retrivedData.name.toString(), retrivedData.gender.toString()),
             displayData(Icons.mobile_screen_share_outlined,
                 retrivedData.mobile.toString(), "Verified"),
-            displayData(Icons.timelapse, "Joined Date", "21-11-2021"),
-            displayData(Icons.local_hospital, "Date of Birth",
+            displayData(Icons.local_hospital_outlined, "Date of Birth",
                 retrivedData.birthdate.toString()),
+            displayData(Icons.height, "Height", retrivedData.height.toString()),
+            displayData(Icons.monitor_weight_outlined, "Weight",
+                retrivedData.weight.toString()),
+            displayData(Icons.location_on_outlined, "Place",
+                retrivedData.location.toString()),
+            displayData(Icons.timelapse, "Joined Date",
+                retrivedData.creation.toString()),
+            displayData(
+                Icons.health_and_safety_outlined, "BMI : 22", "BMR : somthing"),
             displayData(Icons.code, "About", retrivedData.bio.toString()),
+            const SizedBox(
+              height: 25,
+            ),
           ],
         ),
       ),
@@ -166,7 +181,7 @@ class _ViewProfileState extends State<ViewProfile> {
       padding: const EdgeInsets.all(8.0),
       child: Card(
           child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
@@ -188,11 +203,11 @@ class _ViewProfileState extends State<ViewProfile> {
                       fontWeight: FontWeight.bold, fontSize: 18.0),
                 ),
                 const SizedBox(
-                  height: 8,
+                  height: 4,
                 ),
                 Text(
                   data,
-                  style: TextStyle(fontSize: 12.0, color: Colors.grey[700]),
+                  style: TextStyle(fontSize: 14.0, color: Colors.grey[700]),
                 )
               ],
             ),

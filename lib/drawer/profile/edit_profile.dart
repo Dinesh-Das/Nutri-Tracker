@@ -40,7 +40,6 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController birthdateController = TextEditingController();
-  TextEditingController genderController = TextEditingController();
   TextEditingController heightController = TextEditingController();
   TextEditingController weightController = TextEditingController();
   TextEditingController locationController = TextEditingController();
@@ -128,6 +127,9 @@ class _EditProfileState extends State<EditProfile> {
     });
     Navigator.pop(context);
   }
+
+  var genderList = ['Male', 'Female', 'Others'];
+  late String selectedGender = genderList.first;
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +245,7 @@ class _EditProfileState extends State<EditProfile> {
 
               //Birth Date Picker
               Padding(
-                padding: const EdgeInsets.only(bottom: 35),
+                padding: const EdgeInsets.only(bottom: 25),
                 child: TextFormField(
                   keyboardType: TextInputType.phone,
                   autocorrect: false,
@@ -275,9 +277,37 @@ class _EditProfileState extends State<EditProfile> {
                   },
                 ),
               ),
+              //Gender
+              Padding(
+                padding: const EdgeInsets.only(bottom: 25),
+                child: DropdownButtonFormField(
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.group_outlined),
+                    labelText: 'Gender',
+                  ),
+                  value: updateData.gender == ''
+                      ? selectedGender
+                      : updateData.gender,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  iconSize: 26,
+                  style: const TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      selectedGender = newValue!;
+                    });
+                  },
+                  isExpanded: false,
+                  items:
+                      genderList.map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
 
-              buildTextField("Gender", updateData.gender ?? "Male",
-                  Icons.group_outlined, genderController, false),
               buildTextField("height", updateData.height ?? "182cm",
                   Icons.height, heightController, false),
               buildTextField("weight", updateData.weight ?? "73", Icons.ac_unit,
@@ -339,9 +369,9 @@ class _EditProfileState extends State<EditProfile> {
                           (weightController.text == '')
                               ? updateData.weight
                               : weightController.text,
-                          (genderController.text == '')
+                          (selectedGender == updateData.gender)
                               ? updateData.gender
-                              : genderController.text,
+                              : selectedGender,
                           context);
                     },
                     elevation: 2,
