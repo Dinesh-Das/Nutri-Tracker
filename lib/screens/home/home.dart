@@ -1,6 +1,10 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/constants.dart';
+import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 // import 'package:fl_chart/fl_chart.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,7 +13,7 @@ import 'package:nutri_tracker/screens/home/foodmodel.dart';
 import 'package:nutri_tracker/screens/themes.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-class home extends StatelessWidget {
+class home extends StatefulWidget {
   home({Key? key}) : super(key: key);
 
   static List<String> foodName = ['Breakfast', 'lunch', 'dinner'];
@@ -19,12 +23,34 @@ class home extends StatelessWidget {
     'assets/images/dinner.jpg'
   ];
   static List<String> time = ['44', '43', '42'];
+
+  @override
+  State<home> createState() => _homeState();
+}
+
+class _homeState extends State<home> {
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseFirestore.instance
+        .collection("user_details")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+  }
+
   final List<FoodModel> foodlist = List.generate(
-      foodName.length,
+      home.foodName.length,
       (index) => FoodModel(
-          name: foodName[index],
-          foodImage: foodImage[index],
-          time: time[index]));
+          name: home.foodName[index],
+          foodImage: home.foodImage[index],
+          time: home.time[index]));
 
   @override
   Widget build(BuildContext context) {
@@ -62,19 +88,21 @@ class home extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ListTile(
-                      title: Text("Hey, Ashutosh!"),
+                      title: Text("Hey, ${loggedInUser.name ?? 'User'}!"),
                       subtitle: Text(
                         "Good Evening!",
                         style: TextStyle(
                             fontSize: 25, fontWeight: FontWeight.bold),
                       ),
-                      trailing: ClipOval(
-                        child: Image.asset(
-                          "assets/dev/ashutosh.jpg",
-                          width: 50,
-                          height: 50,
-                        ),
-                      ),
+                      // trailing: ClipOval(
+                      //   child: CircleAvatar(
+                      //     backgroundImage: loggedInUser.photoURL == ''
+                      //         ? NetworkImage(defaultProfileUrl)
+                      //         : NetworkImage(
+                      //             loggedInUser.photoURL.toString(),
+                      //           ),
+                      //   ),
+                      // ),
                     ),
                     CircularPercentIndicator(
                       radius: 150,

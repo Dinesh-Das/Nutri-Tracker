@@ -395,7 +395,7 @@ class _EditProfileState extends State<EditProfile> {
                   RaisedButton(
                     color: Colors.green,
                     onPressed: () {
-                      uploadPicture();
+                      // uploadPicture();
                       updateDetailsToFirestore(
                           isImagePicked
                               ? updateData.photoURL
