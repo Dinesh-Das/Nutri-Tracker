@@ -397,7 +397,7 @@ class _EditProfileState extends State<EditProfile> {
                     onPressed: () {
                       // uploadPicture();
                       updateDetailsToFirestore(
-                          isImagePicked
+                          isImagePicked && updateData.photoURL != ''
                               ? updateData.photoURL
                               : defaultProfileUrl,
                           (usernameController.text == '')

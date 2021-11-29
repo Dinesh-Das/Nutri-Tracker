@@ -17,8 +17,7 @@ showAlertDialog(BuildContext context) {
     onPressed: () async {
       final SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
-      // sharedPreferences.clear(); for all data
-
+      sharedPreferences.clear();
       try {
         FirebaseAuth.instance.currentUser!.delete();
         GoogleSignIn().signOut();
@@ -39,7 +38,8 @@ showAlertDialog(BuildContext context) {
         ),
       );
       Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => LoginScreen()));
+          context, MaterialPageRoute(builder: (context) => LoginScreen()),
+          result: false);
     },
   );
 

@@ -1,10 +1,17 @@
 class UserModel {
-  String? uid;
-  String? email;
-  String? name;
-  String? photoURL;
-  String? username;
-  String? gender, height, mobile, weight, birthdate, bio, location, creation;
+  String? uid = '';
+  String? email = '';
+  String? name = '';
+  String? photoURL = '';
+  String? username = '',
+      gender = '',
+      height = '',
+      mobile = '',
+      weight = '',
+      birthdate = '',
+      bio = '',
+      location = '',
+      creation = '';
   UserModel({
     this.uid,
     this.email,
