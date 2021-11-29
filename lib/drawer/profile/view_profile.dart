@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/constants.dart';
-import 'package:nutri_tracker/database/retrive.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:intl/intl.dart';
@@ -50,11 +49,10 @@ class _ViewProfileState extends State<ViewProfile> {
                     clipper: MyCustomClipper(),
                     child: Container(
                       height: 250,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: NetworkImage(
-                              "https://images.unsplash.com/photo-1516638917191-3ee89ea39908?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"),
+                          image: NetworkImage(defaultProfileViewingUrl),
                         ),
                       ),
                     ),
@@ -68,21 +66,27 @@ class _ViewProfileState extends State<ViewProfile> {
                         Container(
                           width: 120,
                           height: 120,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(80.0),
-                            child: (retrivedData.photoURL == null)
-                                ? Image.network(
-                                    defaultProfileUrl,
-                                    fit: BoxFit.cover,
-                                    width: 120,
-                                    height: 120,
-                                  )
-                                : Image.network(
-                                    retrivedData.photoURL.toString(),
-                                    fit: BoxFit.cover,
-                                    width: 120,
-                                    height: 120,
-                                  ),
+                          // child: ClipRRect(
+                          //   borderRadius: BorderRadius.circular(80.0),
+                          //   child: (retrivedData.photoURL == "")
+                          //       ? Image.network(
+                          //           defaultProfileUrl,
+                          //           fit: BoxFit.cover,
+                          //           width: 120,
+                          //           height: 120,
+                          //         )
+                          //       : Image.network(
+                          //           retrivedData.photoURL.toString(),
+                          //           fit: BoxFit.cover,
+                          //           width: 120,
+                          //           height: 120,
+                          //         ),
+                          // ),
+                          child: CircleAvatar(
+                            backgroundImage: (retrivedData.photoURL == "")
+                                ? NetworkImage(defaultProfileUrl)
+                                : NetworkImage(
+                                    retrivedData.photoURL.toString()),
                           ),
                           decoration: BoxDecoration(
                             border: Border.all(width: 4, color: Colors.white),
@@ -94,10 +98,6 @@ class _ViewProfileState extends State<ViewProfile> {
                                   offset: const Offset(0, 10)),
                             ],
                             shape: BoxShape.circle,
-                            image: const DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(''),
-                            ),
                           ),
                         ),
                         const SizedBox(

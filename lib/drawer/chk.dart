@@ -50,6 +50,11 @@ class _ChkState extends State<Chk> {
         children: [
           Column(
             children: [
+              const CircleAvatar(
+                radius: 100,
+                backgroundImage: NetworkImage(
+                    "https://firebasestorage.googleapis.com/v0/b/nutri-tracker-34aef.appspot.com/o/images%2F539UKfZptbNpumdKjsFZQ0ZIEfi1?alt=media&token=fc4dd7b6-b277-4103-baba-742781ead5af"),
+              ),
               Text(name.toString()),
               Text(email.toString()),
               Text(urlImage.toString()),

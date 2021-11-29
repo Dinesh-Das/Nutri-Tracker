@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nutri_tracker/constants.dart';
@@ -20,6 +21,22 @@ class _EditProfileState extends State<EditProfile> {
   //Displaying data from database
   User? user = FirebaseAuth.instance.currentUser;
   UserModel updateData = UserModel();
+  var genderList = ['Male', 'Female', 'Others'];
+  late String selectedGender = genderList.first;
+  bool isImagePicked = false;
+  //Editing Controllers
+  TextEditingController usernameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController birthdateController = TextEditingController();
+  TextEditingController heightController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController bioController = TextEditingController();
+
+  DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+  PickedFile? imageFile;
 
   @override
   void initState() {
@@ -35,19 +52,17 @@ class _EditProfileState extends State<EditProfile> {
     });
   }
 
-  //Editing Controllers
-  TextEditingController usernameController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController birthdateController = TextEditingController();
-  TextEditingController heightController = TextEditingController();
-  TextEditingController weightController = TextEditingController();
-  TextEditingController locationController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController bioController = TextEditingController();
+  Future _selectDate() async {
+    DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2100));
+    if (picked != null) {
+      setState(() => {birthdateController.text = dateFormat.format(picked)});
+    }
+  }
 
-  DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-  PickedFile? imageFile;
   Future<void> _showChoiceDialog(BuildContext context) {
     return showDialog(
         context: context,
@@ -95,41 +110,56 @@ class _EditProfileState extends State<EditProfile> {
         });
   }
 
-  Future _selectDate() async {
-    DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(1900),
-        lastDate: DateTime(2100));
-    if (picked != null) {
-      setState(() => {birthdateController.text = dateFormat.format(picked)});
-    }
-  }
-
   void _openGallery(BuildContext context) async {
+    // Open gallery code
     final pickedFile = await ImagePicker().getImage(
       source: ImageSource.gallery,
     );
 
     setState(() {
-      imageFile = pickedFile!;
+      imageFile = pickedFile;
+      isImagePicked = true;
     });
-
+    uploadPicture();
     Navigator.pop(context);
   }
 
   void _openCamera(BuildContext context) async {
+    //Camera code
     final pickedFile = await ImagePicker().getImage(
       source: ImageSource.camera,
     );
     setState(() {
-      imageFile = pickedFile!;
+      imageFile = pickedFile;
+      isImagePicked = true;
     });
+    uploadPicture();
     Navigator.pop(context);
   }
 
-  var genderList = ['Male', 'Female', 'Others'];
-  late String selectedGender = genderList.first;
+  uploadPicture() async {
+    if (imageFile != null) {
+      // File filename = File(imageFile!.path);
+      var file = File(imageFile!.path);
+      Reference firebaseStorage = await FirebaseStorage.instance
+          .ref()
+          .child("images/${updateData.uid}");
+
+      UploadTask uploadTask = firebaseStorage.putFile(file);
+      uploadTask.whenComplete(() async {
+        updateData.photoURL = await firebaseStorage.getDownloadURL();
+        print(updateData.photoURL);
+      });
+      // uploadTask.then((res) {
+      //   res.ref.getDownloadURL();
+      //   print(res.ref.getDownloadURL());
+      // });
+    } else {
+      const ScaffoldMessenger(
+        child: SnackBar(content: Text('No Image Path Received')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,22 +211,44 @@ class _EditProfileState extends State<EditProfile> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(80.0),
-                              child: (imageFile == null)
-                                  ? Image.network(
-                                      defaultProfileUrl,
-                                      fit: BoxFit.cover,
-                                      width: 120,
-                                      height: 120,
-                                    )
-                                  : Image.file(
-                                      File(imageFile!.path),
-                                      fit: BoxFit.cover,
-                                      width: 120,
-                                      height: 120,
-                                    ),
-                            ),
+                            // ClipRRect(
+                            //   borderRadius: BorderRadius.circular(80.0),
+                            //   child: (imageFile == null)
+                            //       ? Image.network(
+                            //           defaultProfileUrl,
+                            //           fit: BoxFit.cover,
+                            //           width: 120,
+                            //           height: 120,
+                            //         )
+                            //       : Image.file(
+                            //           File(imageFile!.path),
+                            //           fit: BoxFit.cover,
+                            //           width: 120,
+                            //           height: 120,
+                            //         ),
+                            // ),
+                            Container(
+                              width: 120,
+                              height: 120,
+                              child: CircleAvatar(
+                                backgroundImage: updateData.photoURL == ''
+                                    ? NetworkImage(defaultProfileUrl)
+                                    : NetworkImage(
+                                        updateData.photoURL.toString()),
+                              ),
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(width: 4, color: Colors.grey),
+                                boxShadow: [
+                                  BoxShadow(
+                                      spreadRadius: 2,
+                                      blurRadius: 10,
+                                      color: Colors.black.withOpacity(0.1),
+                                      offset: const Offset(0, 10)),
+                                ],
+                                shape: BoxShape.circle,
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -209,10 +261,9 @@ class _EditProfileState extends State<EditProfile> {
                           decoration: BoxDecoration(
                               color: Colors.deepOrangeAccent,
                               shape: BoxShape.circle,
-                              border:
-                                  Border.all(width: 4, color: Colors.white)),
+                              border: Border.all(width: 4, color: Colors.grey)),
                           child: IconButton(
-                            onPressed: () {
+                            onPressed: () async {
                               _showChoiceDialog(context);
                             },
                             padding: EdgeInsets.only(right: 2),
@@ -345,6 +396,9 @@ class _EditProfileState extends State<EditProfile> {
                     color: Colors.green,
                     onPressed: () {
                       updateDetailsToFirestore(
+                          isImagePicked
+                              ? updateData.photoURL
+                              : defaultProfileUrl,
                           (usernameController.text == '')
                               ? updateData.username
                               : usernameController.text,

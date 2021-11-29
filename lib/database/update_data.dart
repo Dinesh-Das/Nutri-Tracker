@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 
 updateDetailsToFirestore(
+    String? photoURL,
     String? username,
     String? name,
     String? phoneno,
@@ -16,12 +17,11 @@ updateDetailsToFirestore(
     BuildContext context) async {
   // calling firestore
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-  final CollectionReference collectionReference =
-      firebaseFirestore.collection('user_details');
   User? user = FirebaseAuth.instance.currentUser;
   UserModel userModel = UserModel();
 
   userModel.uid = user!.uid;
+  userModel.photoURL = photoURL;
   userModel.email = user.email;
   userModel.name = name;
   userModel.mobile = phoneno;

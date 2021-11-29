@@ -53,7 +53,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     //Email Passward data
     name = '${loggedInUser.name}';
     email = '${loggedInUser.email}';
-    urlImage = loggedInUser.photoURL ?? defaultProfileUrl;
+    urlImage =
+        loggedInUser.photoURL == '' ? defaultProfileUrl : loggedInUser.photoURL;
 
     //google account data
     user = FirebaseAuth.instance.currentUser!;
