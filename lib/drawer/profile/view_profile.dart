@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/dialog.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:intl/intl.dart';
 

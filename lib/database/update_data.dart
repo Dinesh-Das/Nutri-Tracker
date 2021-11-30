@@ -36,7 +36,7 @@ updateDetailsToFirestore(
   userModel.weight = weight;
   userModel.gender = gender;
 
-  showLoadingAlertDialog(context, 'Saving');
+  showLoadingAlertDialog(context, 'Saving Data');
   await firebaseFirestore
       .collection("user_details")
       .doc(user.uid)

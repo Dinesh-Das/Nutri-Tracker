@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/update_data.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/dialog.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:intl/intl.dart';
 
@@ -121,8 +123,8 @@ class _EditProfileState extends State<EditProfile> {
       imageFile = pickedFile;
       isImagePicked = true;
     });
-    uploadPicture();
     Navigator.pop(context);
+    await uploadPicture();
   }
 
   void _openCamera(BuildContext context) async {
@@ -134,11 +136,12 @@ class _EditProfileState extends State<EditProfile> {
       imageFile = pickedFile;
       isImagePicked = true;
     });
-    uploadPicture();
     Navigator.pop(context);
+    await uploadPicture();
   }
 
-  uploadPicture() async {
+  Future uploadPicture() async {
+    showLoadingAlertDialog(context, 'Uploading Profile Picture');
     if (imageFile != null) {
       // File filename = File(imageFile!.path);
       var file = File(imageFile!.path);
@@ -147,9 +150,12 @@ class _EditProfileState extends State<EditProfile> {
           .child("images/${updateData.uid}");
 
       UploadTask uploadTask = firebaseStorage.putFile(file);
+
       uploadTask.whenComplete(() async {
         updateData.photoURL = await firebaseStorage.getDownloadURL();
         print(updateData.photoURL);
+        setState(() {});
+        Navigator.pop(context);
       });
     } else {
       const ScaffoldMessenger(

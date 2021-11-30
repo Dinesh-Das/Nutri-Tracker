@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 // import 'package:fl_chart/fl_chart.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -31,6 +32,18 @@ class home extends StatefulWidget {
 class _homeState extends State<home> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
+  String greetings() {
+    var hour = DateTime.now().hour;
+    if (hour <= 12) {
+      return 'Morning';
+    } else if (hour > 12 && hour <= 16) {
+      return 'Afternoon';
+    } else if (hour > 16 && hour < 20) {
+      return 'Evening';
+    }
+    return 'Day';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -41,6 +54,7 @@ class _homeState extends State<home> {
         .get()
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
+
       setState(() {});
     });
   }
@@ -109,7 +123,7 @@ class _homeState extends State<home> {
                               ),
                               children: [
                                 TextSpan(
-                                  text: 'Good Evening',
+                                  text: 'Good ${greetings()}',
                                   style: TextStyle(
                                       fontSize: 25.0,
                                       fontWeight: FontWeight.bold),
