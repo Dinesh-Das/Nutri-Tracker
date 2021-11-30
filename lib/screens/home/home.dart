@@ -34,7 +34,7 @@ class _homeState extends State<home> {
   @override
   void initState() {
     super.initState();
-
+    // setState(() {});
     FirebaseFirestore.instance
         .collection("user_details")
         .doc(user!.uid)
@@ -65,6 +65,14 @@ class _homeState extends State<home> {
         foregroundColor: MyColors.shortDesc,
         backgroundColor: MyColors.backColor,
         elevation: 0,
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.dark_mode,
+                size: 30,
+              ))
+        ],
       ),
       // drawer
       drawer: NavigationDrawer(),
@@ -152,16 +160,31 @@ class _homeState extends State<home> {
                           ),
                         ),
                         SizedBox(
-                          width: 40,
+                          width: 10,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("Babuji Dhere Chalna"),
-                            Text("Pyaar Me zara sambhalna"),
-                            Text("Ooooo bade dhokhe hai"),
-                            Text("Bade dhokhe hai iss raah me"),
-                            Text('by Diljala Ashiq')
+                            Text(
+                              "Babuji Dhere Chalna",
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            Text(
+                              "Pyaar Me zara sambhalna",
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            Text(
+                              "Ooooo bade dhokhe hai",
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            Text(
+                              "Bade dhokhe hai iss raah me",
+                              style: TextStyle(fontSize: 13),
+                            ),
+                            Text(
+                              'by Diljala Ashiq',
+                              style: TextStyle(fontSize: 13),
+                            )
                           ],
                         ),
                       ],

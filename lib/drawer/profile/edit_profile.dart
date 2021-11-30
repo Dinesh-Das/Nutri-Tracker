@@ -23,6 +23,7 @@ class _EditProfileState extends State<EditProfile> {
   UserModel updateData = UserModel();
   var genderList = ['Male', 'Female', 'Others'];
   late String selectedGender = genderList.first;
+  bool isGenderChanged = false;
   bool isImagePicked = false;
   //Editing Controllers
   TextEditingController usernameController = TextEditingController();
@@ -150,10 +151,6 @@ class _EditProfileState extends State<EditProfile> {
         updateData.photoURL = await firebaseStorage.getDownloadURL();
         print(updateData.photoURL);
       });
-      // uploadTask.then((res) {
-      //   res.ref.getDownloadURL();
-      //   print(res.ref.getDownloadURL());
-      // });
     } else {
       const ScaffoldMessenger(
         child: SnackBar(content: Text('No Image Path Received')),
@@ -346,6 +343,7 @@ class _EditProfileState extends State<EditProfile> {
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedGender = newValue!;
+                      isGenderChanged = !isGenderChanged;
                     });
                   },
                   isExpanded: false,
@@ -394,10 +392,9 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                   RaisedButton(
                     color: Colors.green,
-                    onPressed: () {
-                      // uploadPicture();
-                      updateDetailsToFirestore(
-                          isImagePicked && updateData.photoURL != ''
+                    onPressed: () async {
+                      await updateDetailsToFirestore(
+                          isImagePicked || updateData.photoURL != ''
                               ? updateData.photoURL
                               : defaultProfileUrl,
                           (usernameController.text == '')
@@ -424,9 +421,10 @@ class _EditProfileState extends State<EditProfile> {
                           (weightController.text == '')
                               ? updateData.weight
                               : weightController.text,
-                          (selectedGender == updateData.gender)
-                              ? updateData.gender
-                              : selectedGender,
+                          (selectedGender != updateData.gender &&
+                                  isGenderChanged == true)
+                              ? selectedGender
+                              : updateData.gender,
                           context);
                     },
                     elevation: 2,

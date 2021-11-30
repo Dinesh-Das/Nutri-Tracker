@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/bottom_navigation.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/dialog.dart';
+import 'package:nutri_tracker/screens/home/home.dart';
 
 updateDetailsToFirestore(
     String? photoURL,
@@ -33,6 +36,7 @@ updateDetailsToFirestore(
   userModel.weight = weight;
   userModel.gender = gender;
 
+  showLoadingAlertDialog(context, 'Saving');
   await firebaseFirestore
       .collection("user_details")
       .doc(user.uid)
@@ -43,9 +47,9 @@ updateDetailsToFirestore(
       content: Text('Data updated Successfully'),
     ),
   );
-  Navigator.pop(context);
-  // Navigator.pushAndRemoveUntil(
-  //     (context),
-  //     MaterialPageRoute(builder: (context) => const navPage()),
-  //     (route) => false);
+
+  Navigator.pushAndRemoveUntil(
+      (context),
+      MaterialPageRoute(builder: (context) => const BottomNavigation()),
+      (route) => false);
 }
