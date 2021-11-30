@@ -87,36 +87,84 @@ class _homeState extends State<home> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ListTile(
-                      title: Text("Hey, ${loggedInUser.name ?? 'User'}!"),
-                      subtitle: Text(
-                        "Good Evening!",
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold),
-                      ),
-                      // trailing: ClipOval(
-                      //   child: CircleAvatar(
-                      //     backgroundImage: loggedInUser.photoURL == ''
-                      //         ? NetworkImage(defaultProfileUrl)
-                      //         : NetworkImage(
-                      //             loggedInUser.photoURL.toString(),
-                      //           ),
-                      //   ),
-                      // ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text.rich(
+                            TextSpan(
+                              text: "Hey, ${loggedInUser.name ?? 'User'}!\n",
+                              style: const TextStyle(
+                                fontSize: 19.0,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: 'Good Evening',
+                                  style: TextStyle(
+                                      fontSize: 25.0,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          child: CircleAvatar(
+                            radius: 38,
+                            backgroundImage: loggedInUser.photoURL != ''
+                                ? NetworkImage(loggedInUser.photoURL.toString())
+                                : NetworkImage(defaultProfileUrl),
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 4, color: Colors.white),
+                            boxShadow: [
+                              BoxShadow(
+                                  spreadRadius: 2,
+                                  blurRadius: 10,
+                                  color: Colors.black.withOpacity(0.1),
+                                  offset: const Offset(0, 10)),
+                            ],
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 0,
+                        ),
+                      ],
                     ),
-                    CircularPercentIndicator(
-                      radius: 150,
-                      backgroundColor: Colors.white,
-                      progressColor: MyColors.iconsColor,
-                      percent: 0.4,
-                      lineWidth: 10,
-                      circularStrokeCap: CircularStrokeCap.round,
-                      animation: true,
-                      animationDuration: 2000,
-                      center: Text(
-                        "0.4",
-                        style: TextStyle(fontSize: 24),
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CircularPercentIndicator(
+                          radius: 150,
+                          backgroundColor: Colors.white,
+                          progressColor: MyColors.iconsColor,
+                          percent: 0.4,
+                          lineWidth: 10,
+                          circularStrokeCap: CircularStrokeCap.round,
+                          animation: true,
+                          animationDuration: 2000,
+                          center: Text(
+                            "0.4",
+                            style: TextStyle(fontSize: 24),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 40,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Babuji Dhere Chalna"),
+                            Text("Pyaar Me zara sambhalna"),
+                            Text("Ooooo bade dhokhe hai"),
+                            Text("Bade dhokhe hai iss raah me"),
+                            Text('by Diljala Ashiq')
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -181,3 +229,20 @@ class _homeState extends State<home> {
     );
   }
 }
+ // ListTile(
+                    //   title: Text("Hey, ${loggedInUser.name ?? 'User'}!"),
+                    //   subtitle: Text(
+                    //     "Good Evening!",
+                    //     style: TextStyle(
+                    //         fontSize: 25, fontWeight: FontWeight.bold),
+                    //   ),
+                    // ),
+// Text(
+                    //   "Hey, ${loggedInUser.name ?? 'User'}!",
+                    //   style: TextStyle(fontSize: 19),
+                    // ),
+                    // Text(
+                    //   "Good Evening!",
+                    //   style:
+                    //       TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    // ),
