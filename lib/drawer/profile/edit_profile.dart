@@ -161,6 +161,7 @@ class _EditProfileState extends State<EditProfile> {
       const ScaffoldMessenger(
         child: SnackBar(content: Text('No Image Path Received')),
       );
+      Navigator.pop(context);
     }
   }
 
