@@ -70,8 +70,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
       urlImage = DataConstant.gimg.toString();
     }
     return Drawer(
+      elevation: 0,
       child: Material(
-        color: Colors.black45,
+        color: Color(0XFFF2E9E4),
         child: ListView(
           children: <Widget>[
             Container(
@@ -87,7 +88,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                           MaterialPageRoute(
                               builder: (context) => const ViewProfile()))),
                   const SizedBox(
-                    height: 10,
+                    height: 13,
                   ),
                   buildMenuItem(
                     text: 'Edit Profile',
@@ -95,7 +96,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     onClicked: () => selectedItem(context, 0),
                   ),
                   const SizedBox(
-                    height: 15,
+                    height: 13,
                   ),
                   buildMenuItem(
                     text: 'Favourites',
@@ -103,10 +104,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     onClicked: () => selectedItem(context, 1),
                   ),
                   const SizedBox(
-                    height: 15,
-                  ),
-                  const SizedBox(
-                    height: 15,
+                    height: 13,
                   ),
                   buildMenuItem(
                     text: 'Settings',
@@ -114,7 +112,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     onClicked: () => selectedItem(context, 2),
                   ),
                   const SizedBox(
-                    height: 15,
+                    height: 13,
                   ),
                   buildMenuItem(
                     text: 'Logout',
@@ -122,16 +120,13 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     onClicked: () => logout(context),
                   ),
                   const SizedBox(
-                    height: 20,
+                    height: 13,
                   ),
                   const Divider(
-                    color: Colors.white70,
+                    thickness: 2.5,
                   ),
                   const SizedBox(
-                    height: 20,
-                  ),
-                  const SizedBox(
-                    height: 10,
+                    height: 13,
                   ),
                   buildMenuItem(
                     text: 'Share',
@@ -139,7 +134,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     onClicked: () => selectedItem(context, 3),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 13,
                   ),
                   buildMenuItem(
                     text: 'About App',
@@ -147,7 +142,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     onClicked: () => selectedItem(context, 4),
                   ),
                   const SizedBox(
-                    height: 10,
+                    height: 13,
                   ),
                   buildMenuItem(
                       text: 'About Us',
@@ -207,14 +202,16 @@ Widget buildHeader({
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
                 name,
-                style: const TextStyle(fontSize: 18, color: Colors.white),
+                style: const TextStyle(
+                  fontSize: 18,
+                ),
               ),
               const SizedBox(
                 height: 4,
               ),
               Text(
                 email,
-                style: const TextStyle(fontSize: 11, color: Colors.white),
+                style: const TextStyle(fontSize: 11),
               ),
             ])
           ],
@@ -227,20 +224,10 @@ Widget buildMenuItem({
   required IconData icon,
   VoidCallback? onClicked,
 }) {
-  final color = Colors.white;
-  final hoverColor = Colors.white70;
-
   return ListTile(
-    leading: Icon(
-      icon,
-      color: color,
-    ),
-    title: Text(
-      text,
-      style: TextStyle(color: color),
-    ),
+    leading: Icon(icon),
+    title: Text(text),
     onTap: onClicked,
-    hoverColor: hoverColor,
   );
 }
 

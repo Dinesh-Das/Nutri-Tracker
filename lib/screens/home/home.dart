@@ -38,10 +38,22 @@ class _homeState extends State<home> {
       return 'Morning';
     } else if (hour > 12 && hour <= 16) {
       return 'Afternoon';
-    } else if (hour > 16 && hour < 20) {
+    } else if (hour > 16 && hour < 24) {
       return 'Evening';
     }
     return 'Day';
+  }
+
+  String quotes() {
+    var hour = DateTime.now().hour;
+    if (hour <= 12) {
+      return 'Nutrition is the only remedy that can bring full recovery and can be used with any treatment. Remember food is our best medicine!';
+    } else if (hour > 12 && hour <= 16) {
+      return 'Afternoon';
+    } else if (hour > 16 && hour < 22) {
+      return 'Evening';
+    }
+    return 'Nutrition is the only remedy that can \nbring full recovery and can be used \nwith any treatment. Remember food \nis our best medicine!\n- Bernard Jenses';
   }
 
   @override
@@ -160,7 +172,7 @@ class _homeState extends State<home> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         CircularPercentIndicator(
-                          radius: 150,
+                          radius: 140,
                           backgroundColor: Colors.white,
                           progressColor: MyColors.iconsColor,
                           percent: 0.4,
@@ -174,31 +186,12 @@ class _homeState extends State<home> {
                           ),
                         ),
                         SizedBox(
-                          width: 10,
+                          width: 15,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "Babuji Dhere Chalna",
-                              style: TextStyle(fontSize: 13),
-                            ),
-                            Text(
-                              "Pyaar Me zara sambhalna",
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            Text(
-                              "Ooooo bade dhokhe hai",
-                              style: TextStyle(fontSize: 13),
-                            ),
-                            Text(
-                              "Bade dhokhe hai iss raah me",
-                              style: TextStyle(fontSize: 13),
-                            ),
-                            Text(
-                              'by Diljala Ashiq',
-                              style: TextStyle(fontSize: 13),
-                            )
+                            Text(quotes(), style: TextStyle(fontSize: 13)),
                           ],
                         ),
                       ],

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/retry.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
@@ -63,41 +64,49 @@ class _ViewProfileState extends State<ViewProfile> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          width: 120,
-                          height: 120,
-                          // child: ClipRRect(
-                          //   borderRadius: BorderRadius.circular(80.0),
-                          //   child: (retrivedData.photoURL == "")
-                          //       ? Image.network(
-                          //           defaultProfileUrl,
-                          //           fit: BoxFit.cover,
-                          //           width: 120,
-                          //           height: 120,
-                          //         )
-                          //       : Image.network(
-                          //           retrivedData.photoURL.toString(),
-                          //           fit: BoxFit.cover,
-                          //           width: 120,
-                          //           height: 120,
-                          //         ),
-                          // ),
-                          child: CircleAvatar(
-                            backgroundImage: (retrivedData.photoURL == "")
-                                ? NetworkImage(defaultProfileUrl)
-                                : NetworkImage(
-                                    retrivedData.photoURL.toString()),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 4, color: Colors.white),
-                            boxShadow: [
-                              BoxShadow(
-                                  spreadRadius: 2,
-                                  blurRadius: 10,
-                                  color: Colors.black.withOpacity(0.1),
-                                  offset: const Offset(0, 10)),
-                            ],
-                            shape: BoxShape.circle,
+                        InkWell(
+                          onTap: () {
+                            viewProfilePicDialog(
+                                context,
+                                retrivedData.photoURL.toString(),
+                                retrivedData.name.toString());
+                          },
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            // child: ClipRRect(
+                            //   borderRadius: BorderRadius.circular(80.0),
+                            //   child: (retrivedData.photoURL == "")
+                            //       ? Image.network(
+                            //           defaultProfileUrl,
+                            //           fit: BoxFit.cover,
+                            //           width: 120,
+                            //           height: 120,
+                            //         )
+                            //       : Image.network(
+                            //           retrivedData.photoURL.toString(),
+                            //           fit: BoxFit.cover,
+                            //           width: 120,
+                            //           height: 120,
+                            //         ),
+                            // ),
+                            child: CircleAvatar(
+                              backgroundImage: (retrivedData.photoURL == "")
+                                  ? NetworkImage(defaultProfileUrl)
+                                  : NetworkImage(
+                                      retrivedData.photoURL.toString()),
+                            ),
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 4, color: Colors.white),
+                              boxShadow: [
+                                BoxShadow(
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                    color: Colors.black.withOpacity(0.1),
+                                    offset: const Offset(0, 10)),
+                              ],
+                              shape: BoxShape.circle,
+                            ),
                           ),
                         ),
                         const SizedBox(
@@ -233,4 +242,29 @@ class MyCustomClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
     return true;
   }
+}
+
+viewProfilePicDialog(BuildContext context, String photoLink, String name) {
+  return showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: Material(
+            type: MaterialType.transparency,
+            child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white),
+                padding: EdgeInsets.all(15),
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: 410,
+                child: Image.network(
+                  photoLink,
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  fit: BoxFit.cover,
+                  height: 390,
+                )),
+          ),
+        );
+      });
 }
