@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/drawer/AboutUs/aboutus01.dart';
-import 'package:nutri_tracker/drawer/chk.dart';
 import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
@@ -86,10 +85,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                       onClicked: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ViewProfile(
-                                  // name: name,
-                                  // urlImage: urlImage,
-                                  )))),
+                              builder: (context) => const ViewProfile()))),
                   const SizedBox(
                     height: 10,
                   ),
@@ -109,18 +105,13 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   const SizedBox(
                     height: 15,
                   ),
-                  buildMenuItem(
-                    text: 'Workflow',
-                    icon: Icons.workspaces_outline,
-                    onClicked: () => selectedItem(context, 2),
-                  ),
                   const SizedBox(
                     height: 15,
                   ),
                   buildMenuItem(
                     text: 'Settings',
                     icon: Icons.settings,
-                    onClicked: () => selectedItem(context, 3),
+                    onClicked: () => selectedItem(context, 2),
                   ),
                   const SizedBox(
                     height: 15,
@@ -145,7 +136,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   buildMenuItem(
                     text: 'Share',
                     icon: Icons.share,
-                    onClicked: () => selectedItem(context, 5),
+                    onClicked: () => selectedItem(context, 3),
                   ),
                   const SizedBox(
                     height: 10,
@@ -153,7 +144,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   buildMenuItem(
                     text: 'About App',
                     icon: Icons.workspaces_outline,
-                    onClicked: () => selectedItem(context, 6),
+                    onClicked: () => selectedItem(context, 4),
                   ),
                   const SizedBox(
                     height: 10,
@@ -265,17 +256,14 @@ void selectedItem(BuildContext context, int index) {
           context, MaterialPageRoute(builder: (context) => BottomNavigation()));
       break;
     case 2:
-      Navigator.push(context, MaterialPageRoute(builder: (context) => Chk()));
-      break;
-    case 3:
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const SettingsPage()));
       break;
-    case 5:
+    case 3:
       Share.share(
           'https://drive.google.com/file/d/18XAjRC9_k825xVOZMFBFTpMPzi4xBvOm/view?usp=sharing');
       break;
-    case 6:
+    case 4:
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => BottomNavigation()));
       break;
