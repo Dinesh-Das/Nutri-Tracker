@@ -3,8 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/bottom_navigation.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/dialog.dart';
-import 'package:nutri_tracker/screens/home/home.dart';
+import 'package:nutri_tracker/custom_dialog.dart';
 
 updateDetailsToFirestore(
     String? photoURL,

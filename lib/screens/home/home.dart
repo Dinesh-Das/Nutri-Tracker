@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/dialog.dart';
+import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 // import 'package:fl_chart/fl_chart.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';

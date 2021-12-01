@@ -2,12 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_auth/email_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:nutri_tracker/login_screens/auth.config.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/bottom_navigation.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);

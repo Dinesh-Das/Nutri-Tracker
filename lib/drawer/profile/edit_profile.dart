@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/update_data.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/dialog.dart';
+import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:intl/intl.dart';
 
