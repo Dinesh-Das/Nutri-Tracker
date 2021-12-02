@@ -31,9 +31,9 @@ class home extends StatefulWidget {
 }
 
 int current = Random().nextInt(mylist.length);
-Quotes data = mylist[current];
 
 class _homeState extends State<home> {
+  Quotes data = mylist[current];
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   String greetings() {
@@ -59,7 +59,9 @@ class _homeState extends State<home> {
         .then((value) {
       loggedInUser = UserModel.fromMap(value.data());
 
-      setState(() {});
+      setState(() {
+        current = Random().nextInt(mylist.length);
+      });
     });
   }
 
@@ -160,6 +162,9 @@ class _homeState extends State<home> {
                         ),
                       ],
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -184,22 +189,21 @@ class _homeState extends State<home> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             LimitedBox(
-                              maxWidth: 229,
+                              maxWidth: 175,
                               child: Text(
                                 data.quote.toString(),
                                 textDirection: TextDirection.ltr,
                                 style: TextStyle(
-                                  fontSize: 15,
-                                  fontStyle: FontStyle.italic,
+                                  fontSize: 18,
+                                  fontFamily: 'BeautyMountains',
                                 ),
-                                maxLines: 10,
                               ),
                             ),
                             SizedBox(
                               height: 10,
                             ),
                             Text(
-                              '- ${data.auther.toString()}',
+                              '              - ${data.auther.toString()}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
