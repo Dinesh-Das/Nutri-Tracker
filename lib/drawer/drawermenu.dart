@@ -101,17 +101,17 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     height: 13,
                   ),
                   buildMenuItem(
-                    text: 'Favourites',
-                    icon: Icons.favorite_border,
-                    onClicked: () => selectedItem(context, 1),
+                    text: 'Settings',
+                    icon: Icons.settings,
+                    onClicked: () => selectedItem(context, 2),
                   ),
                   const SizedBox(
                     height: 13,
                   ),
                   buildMenuItem(
-                    text: 'Settings',
-                    icon: Icons.settings,
-                    onClicked: () => selectedItem(context, 2),
+                    text: 'Support',
+                    icon: Icons.support_agent_sharp,
+                    onClicked: () => selectedItem(context, 1),
                   ),
                   const SizedBox(
                     height: 13,

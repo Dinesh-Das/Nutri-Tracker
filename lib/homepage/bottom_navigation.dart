@@ -27,15 +27,15 @@ class _BottomNavigationState extends State<BottomNavigation> {
   Widget build(BuildContext context) {
     final items = <Widget>[
       const Icon(
-        Icons.favorite,
+        Icons.favorite_border,
         size: 30,
       ),
       const Icon(
-        Icons.home,
+        Icons.home_outlined,
         size: 30,
       ),
       Icon(
-        Icons.search,
+        Icons.search_outlined,
         size: 30,
       ),
       // Icon(

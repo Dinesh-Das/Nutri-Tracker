@@ -1,5 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, avoid_unnecessary_containers
-
+import "dart:math";
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +9,7 @@ import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 import 'package:nutri_tracker/homepage/Pages/home/detail.dart';
 import 'package:nutri_tracker/homepage/Pages/home/foodmodel.dart';
+import 'package:nutri_tracker/homepage/Pages/home/quotes.dart';
 // import 'package:fl_chart/fl_chart.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nutri_tracker/themes.dart';
@@ -29,6 +30,9 @@ class home extends StatefulWidget {
   State<home> createState() => _homeState();
 }
 
+int current = Random().nextInt(mylist.length);
+Quotes data = mylist[current];
+
 class _homeState extends State<home> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
@@ -42,18 +46,6 @@ class _homeState extends State<home> {
       return 'Evening';
     }
     return 'Day';
-  }
-
-  String quotes() {
-    var hour = DateTime.now().hour;
-    if (hour <= 12) {
-      return 'Nutrition is the only remedy that can bring full recovery and can be used with any treatment. Remember food is our best medicine!';
-    } else if (hour > 12 && hour <= 16) {
-      return 'Afternoon';
-    } else if (hour > 16 && hour < 22) {
-      return 'Evening';
-    }
-    return 'Nutrition is the only remedy that \ncan bring full recovery and can be \nused with any treatment.\nRemember food is our best \nmedicine!\n- Bernard Jenses';
   }
 
   @override
@@ -191,7 +183,29 @@ class _homeState extends State<home> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(quotes(), style: TextStyle(fontSize: 11.5)),
+                            LimitedBox(
+                              maxWidth: 229,
+                              child: Text(
+                                data.quote.toString(),
+                                textDirection: TextDirection.ltr,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                maxLines: 10,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              '- ${data.auther.toString()}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textDirection: TextDirection.ltr,
+                              textAlign: TextAlign.left,
+                            )
                           ],
                         ),
                       ],
