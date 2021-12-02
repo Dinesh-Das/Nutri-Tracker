@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/screens/RecipePage/models/recipe.api.dart';
 import 'package:nutri_tracker/screens/RecipePage/models/recipe.dart';
 import 'package:nutri_tracker/screens/RecipePage/widgets/recipe_card.dart';
-import 'package:nutri_tracker/screens/themes.dart';
+import 'package:nutri_tracker/themes.dart';
 
 class recipe extends StatefulWidget {
   @override

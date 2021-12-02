@@ -9,12 +9,14 @@ import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/bottom_navigation.dart';
+// import 'package:nutri_tracker/bottom_navigation.dart';
 import 'package:nutri_tracker/sharedPreferences/local_data.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../homepage/bottom_navigation.dart';
 
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({Key? key}) : super(key: key);

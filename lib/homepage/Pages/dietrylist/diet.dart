@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/screens/themes.dart';
+import 'package:nutri_tracker/themes.dart';
 import 'dietry_list.dart';
-import '../themes.dart';
 
 class diet extends StatelessWidget {
   const diet({Key? key}) : super(key: key);

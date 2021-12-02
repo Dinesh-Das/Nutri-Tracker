@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/screens/themes.dart';
+import 'package:nutri_tracker/themes.dart';
 
 class dietrylist extends StatelessWidget {
   const dietrylist({Key? key}) : super(key: key);

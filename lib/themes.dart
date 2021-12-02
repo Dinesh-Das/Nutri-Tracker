@@ -14,6 +14,7 @@ class MyColors {
   // static Color backColor = Color(0XFFE29578);
 
   // ashu.deshmukh560@gmail.com
+  static Color bottomNav = Color(0XFFFFDDD2);
   static Color heading = Color(0XFF222223B);
   static Color subHeading = Color(0xFF4A4E69);
   static Color shortDesc = Color(0XFF9A8C98);

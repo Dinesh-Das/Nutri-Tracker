@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/bottom_navigation.dart';
 import 'package:nutri_tracker/onbparding_components/onboard.dart';
 import 'package:nutri_tracker/sharedPreferences/local_data.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
+
+import 'homepage/bottom_navigation.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);

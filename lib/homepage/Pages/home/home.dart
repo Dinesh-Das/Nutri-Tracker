@@ -7,11 +7,11 @@ import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
+import 'package:nutri_tracker/homepage/Pages/home/detail.dart';
+import 'package:nutri_tracker/homepage/Pages/home/foodmodel.dart';
 // import 'package:fl_chart/fl_chart.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:nutri_tracker/screens/home/detail.dart';
-import 'package:nutri_tracker/screens/home/foodmodel.dart';
-import 'package:nutri_tracker/screens/themes.dart';
+import 'package:nutri_tracker/themes.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class home extends StatefulWidget {
@@ -53,7 +53,7 @@ class _homeState extends State<home> {
     } else if (hour > 16 && hour < 22) {
       return 'Evening';
     }
-    return 'Nutrition is the only remedy that can \nbring full recovery and can be used \nwith any treatment. Remember food \nis our best medicine!\n- Bernard Jenses';
+    return 'Nutrition is the only remedy that \ncan bring full recovery and can be \nused with any treatment.\nRemember food is our best \nmedicine!\n- Bernard Jenses';
   }
 
   @override
@@ -186,12 +186,12 @@ class _homeState extends State<home> {
                           ),
                         ),
                         SizedBox(
-                          width: 15,
+                          width: 10,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(quotes(), style: TextStyle(fontSize: 13)),
+                            Text(quotes(), style: TextStyle(fontSize: 11.5)),
                           ],
                         ),
                       ],
