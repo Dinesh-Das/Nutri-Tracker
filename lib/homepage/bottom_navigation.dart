@@ -27,15 +27,15 @@ class _BottomNavigationState extends State<BottomNavigation> {
   Widget build(BuildContext context) {
     final items = <Widget>[
       const Icon(
-        Icons.favorite_border,
+        Icons.favorite,
         size: 30,
       ),
       const Icon(
-        Icons.home_outlined,
+        Icons.home,
         size: 30,
       ),
       Icon(
-        Icons.search_outlined,
+        Icons.search,
         size: 30,
       ),
       // Icon(
@@ -52,8 +52,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
             ),
         child: CurvedNavigationBar(
           key: navigationKey,
-          color: MyColors.bottomNav,
-          buttonBackgroundColor: MyColors.iconsColor,
+          color: MyColors.iconsColor,
+          buttonBackgroundColor: MyColors.bottomNav,
           backgroundColor: Colors.transparent,
           items: items,
           height: 50,

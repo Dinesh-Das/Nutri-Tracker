@@ -103,13 +103,13 @@ class _homeState extends State<home> {
             top: 0,
             left: 0,
             right: 0,
-            height: height * 0.35,
+            height: height * 0.38,
             child: ClipRRect(
               borderRadius: BorderRadius.only(
                   bottomRight: Radius.circular(40.0),
                   bottomLeft: Radius.circular(40.0)),
               child: Container(
-                height: 300,
+                // height: 300,
                 color: MyColors.backColor,
                 padding: EdgeInsets.only(left: 16, right: 16),
                 child: Column(
@@ -125,13 +125,13 @@ class _homeState extends State<home> {
                             TextSpan(
                               text: "Hey, ${loggedInUser.name ?? 'User'}!\n",
                               style: const TextStyle(
-                                fontSize: 19.0,
+                                fontSize: 14.0,
                               ),
                               children: [
                                 TextSpan(
                                   text: 'Good ${greetings()}',
                                   style: TextStyle(
-                                      fontSize: 25.0,
+                                      fontSize: 20.0,
                                       fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -140,7 +140,7 @@ class _homeState extends State<home> {
                         ),
                         Container(
                           child: CircleAvatar(
-                            radius: 38,
+                            radius: 35,
                             backgroundImage: loggedInUser.photoURL != ''
                                 ? NetworkImage(loggedInUser.photoURL.toString())
                                 : NetworkImage(defaultProfileUrl),
@@ -194,19 +194,17 @@ class _homeState extends State<home> {
                                 data.quote.toString(),
                                 textDirection: TextDirection.ltr,
                                 style: TextStyle(
-                                  fontSize: 18,
-                                  fontFamily: 'BeautyMountains',
+                                  fontSize: 12,
+                                  fontFamily: 'Countryside',
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
                             Text(
-                              '              - ${data.auther.toString()}',
+                              '- ${data.auther.toString()}',
                               style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                                  fontSize: 13,
+                                  fontFamily: 'Countryside',
+                                  fontWeight: FontWeight.bold),
                               textDirection: TextDirection.ltr,
                               textAlign: TextAlign.left,
                             )
@@ -277,20 +275,3 @@ class _homeState extends State<home> {
     );
   }
 }
- // ListTile(
-                    //   title: Text("Hey, ${loggedInUser.name ?? 'User'}!"),
-                    //   subtitle: Text(
-                    //     "Good Evening!",
-                    //     style: TextStyle(
-                    //         fontSize: 25, fontWeight: FontWeight.bold),
-                    //   ),
-                    // ),
-// Text(
-                    //   "Hey, ${loggedInUser.name ?? 'User'}!",
-                    //   style: TextStyle(fontSize: 19),
-                    // ),
-                    // Text(
-                    //   "Good Evening!",
-                    //   style:
-                    //       TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    // ),
