@@ -11,6 +11,7 @@ import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:intl/intl.dart';
+import 'package:nutri_tracker/homepage/bottom_navigation.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({Key? key}) : super(key: key);
@@ -154,6 +155,19 @@ class _EditProfileState extends State<EditProfile> {
       uploadTask.whenComplete(() async {
         updateData.photoURL = await firebaseStorage.getDownloadURL();
         print(updateData.photoURL);
+        updateProfilePicToFirestore(
+            isImagePicked || updateData.photoURL != ''
+                ? updateData.photoURL
+                : defaultProfileUrl,
+            updateData.username,
+            updateData.name,
+            updateData.mobile,
+            updateData.location,
+            updateData.birthdate,
+            updateData.bio,
+            updateData.height,
+            updateData.weight,
+            updateData.gender);
         setState(() {});
         Navigator.pop(context);
       });
@@ -177,7 +191,8 @@ class _EditProfileState extends State<EditProfile> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => BottomNavigation()));
           },
           icon: const Icon(Icons.arrow_back_ios),
           // color: Colors.green,

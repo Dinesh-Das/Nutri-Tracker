@@ -34,6 +34,10 @@ class MyApp extends StatelessWidget {
                 EdgeInsets.symmetric(vertical: 16 * 1.2, horizontal: 16),
           ),
         ),
+        // theme: ThemeData.dark().copyWith(
+        //   primaryColor: Color(0xFF0A0E21),
+        //   scaffoldBackgroundColor: Color(0xFF0A0E21),
+        // ),
         home: const Splash(),
       ),
     );

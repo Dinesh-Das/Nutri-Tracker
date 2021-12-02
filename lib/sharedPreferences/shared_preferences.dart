@@ -10,6 +10,7 @@ class UserLocalData {
   static String img = "photo";
   static String? logkey = "login";
   static String pass = "password";
+  static String theme = 'theme';
 
   //Google Login Data saving
 
@@ -103,6 +104,17 @@ class UserLocalData {
   static Future getLogData() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.getBool(logkey!);
+  }
+
+  //Theme Data
+  static Future<bool?> saveTheme(String themeData) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return await preferences.setString(theme, themeData);
+  }
+
+  static Future<String?> getTheme() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return await preferences.getString(theme);
   }
 }
 //init me name = UserLocalData.getUserName() ?? '';
