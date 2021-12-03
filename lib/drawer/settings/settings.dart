@@ -187,7 +187,7 @@ class _SettingsPageState extends State<SettingsPage> {
             buildNotificationOption(
                 "Notifications", setNotification, onNotificationChange),
             buildNotificationOption(
-                "Remainders", setRemainder, onRemainderChange),
+                "Reminders", setRemainder, onRemainderChange),
             const SizedBox(
               height: 50,
             ),

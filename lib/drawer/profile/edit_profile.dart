@@ -156,18 +156,10 @@ class _EditProfileState extends State<EditProfile> {
         updateData.photoURL = await firebaseStorage.getDownloadURL();
         print(updateData.photoURL);
         updateProfilePicToFirestore(
-            isImagePicked || updateData.photoURL != ''
-                ? updateData.photoURL
-                : defaultProfileUrl,
-            updateData.username,
-            updateData.name,
-            updateData.mobile,
-            updateData.location,
-            updateData.birthdate,
-            updateData.bio,
-            updateData.height,
-            updateData.weight,
-            updateData.gender);
+          isImagePicked || updateData.photoURL != ''
+              ? updateData.photoURL
+              : defaultProfileUrl,
+        );
         setState(() {});
         Navigator.pop(context);
       });
@@ -195,7 +187,6 @@ class _EditProfileState extends State<EditProfile> {
                 MaterialPageRoute(builder: (context) => BottomNavigation()));
           },
           icon: const Icon(Icons.arrow_back_ios),
-          // color: Colors.green,
         ),
         actions: [
           IconButton(
@@ -206,7 +197,6 @@ class _EditProfileState extends State<EditProfile> {
                       builder: (context) => const SettingsPage()));
             },
             icon: const Icon(Icons.settings),
-            // color: Colors.green,
           )
         ],
       ),
@@ -247,8 +237,8 @@ class _EditProfileState extends State<EditProfile> {
                             //         ),
                             // ),
                             Container(
-                              width: 120,
-                              height: 120,
+                              width: 130,
+                              height: 130,
                               child: CircleAvatar(
                                 backgroundImage: updateData.photoURL == ''
                                     ? NetworkImage(defaultProfileUrl)
@@ -257,7 +247,7 @@ class _EditProfileState extends State<EditProfile> {
                               ),
                               decoration: BoxDecoration(
                                 border:
-                                    Border.all(width: 4, color: Colors.grey),
+                                    Border.all(width: 4, color: Colors.black),
                                 boxShadow: [
                                   BoxShadow(
                                       spreadRadius: 2,
@@ -278,9 +268,10 @@ class _EditProfileState extends State<EditProfile> {
                           height: 40,
                           width: 40,
                           decoration: BoxDecoration(
-                              color: Colors.deepOrangeAccent,
+                              color: Colors.redAccent.shade100,
                               shape: BoxShape.circle,
-                              border: Border.all(width: 4, color: Colors.grey)),
+                              border:
+                                  Border.all(width: 4, color: Colors.black)),
                           child: IconButton(
                             onPressed: () async {
                               _showChoiceDialog(context);
@@ -288,7 +279,6 @@ class _EditProfileState extends State<EditProfile> {
                             padding: EdgeInsets.only(right: 2),
                             icon: const Icon(
                               Icons.add_a_photo,
-                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -308,10 +298,10 @@ class _EditProfileState extends State<EditProfile> {
                   Icons.face_retouching_natural_outlined,
                   nameController,
                   false),
-              buildTextField("Phone Number", updateData.mobile ?? "1234567890",
+              buildTextField("Phone Number", updateData.mobile ?? "",
                   Icons.mobile_screen_share, phoneController, false),
-              buildTextField("Email ", updateData.email ?? "email@gmail.com",
-                  Icons.mail, emailController, true),
+              buildTextField("Email ", updateData.email ?? "", Icons.mail,
+                  emailController, true),
 
               //Birth Date Picker
               Padding(
@@ -322,12 +312,23 @@ class _EditProfileState extends State<EditProfile> {
                   controller: birthdateController,
                   decoration: InputDecoration(
                     labelText: 'DOB',
-                    hintStyle: const TextStyle(
+                    labelStyle: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: Colors.black),
-                    prefixIcon: const Icon(Icons.calendar_today),
-                    suffixIcon: const Icon(Icons.edit),
+                    hintStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
+                    prefixIcon: const Icon(
+                      Icons.calendar_today,
+                      color: Colors.black,
+                      size: 32,
+                    ),
+                    suffixIcon: const Icon(
+                      Icons.edit,
+                      color: Colors.black,
+                    ),
                     contentPadding: const EdgeInsets.only(bottom: 3),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     hintText: updateData.birthdate ?? 'DOB',
@@ -352,16 +353,24 @@ class _EditProfileState extends State<EditProfile> {
                 padding: const EdgeInsets.only(bottom: 25),
                 child: DropdownButtonFormField(
                   decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.group_outlined),
-                    labelText: 'Gender',
-                  ),
+                      prefixIcon: Icon(
+                        Icons.group_outlined,
+                        color: Colors.black,
+                        size: 32,
+                      ),
+                      labelText: 'Gender',
+                      labelStyle: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold)),
                   value: updateData.gender == ''
                       ? selectedGender
                       : updateData.gender,
-                  icon: const Icon(Icons.arrow_drop_down),
+                  icon: const Icon(
+                    Icons.arrow_drop_down,
+                    color: Colors.black,
+                  ),
                   iconSize: 26,
                   style: const TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
+                      color: Colors.grey, fontWeight: FontWeight.bold),
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedGender = newValue!;
@@ -379,16 +388,12 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
 
-              buildTextField("height", updateData.height ?? "182cm",
-                  Icons.height, heightController, false),
-              buildTextField("weight", updateData.weight ?? "73", Icons.ac_unit,
+              buildTextField("height", updateData.height ?? "", Icons.height,
+                  heightController, false),
+              buildTextField("weight", updateData.weight ?? "", Icons.ac_unit,
                   weightController, false),
-              buildTextField(
-                  "Location",
-                  updateData.location ?? "Aurnagabad, Maharashtra",
-                  Icons.location_city,
-                  locationController,
-                  false),
+              buildTextField("Location", updateData.location ?? "",
+                  Icons.location_city, locationController, false),
               buildTextField("About", updateData.bio ?? "Short Description",
                   Icons.info_sharp, bioController, false),
               const SizedBox(
@@ -490,14 +495,28 @@ class _EditProfileState extends State<EditProfile> {
         readOnly: isEmail,
         textInputAction: TextInputAction.next,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon),
-          suffixIcon: isEmail ? Icon(Icons.lock) : Icon(Icons.edit),
+          prefixIcon: Icon(
+            icon,
+            color: Colors.black,
+            size: 32,
+          ),
+          suffixIcon: isEmail
+              ? Icon(
+                  Icons.lock,
+                  color: Colors.black,
+                )
+              : Icon(
+                  Icons.edit,
+                  color: Colors.black,
+                ),
           contentPadding: const EdgeInsets.only(bottom: 3),
           labelText: lableText,
+          labelStyle: const TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: placeHolder,
           hintStyle: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
         ),
       ),
     );

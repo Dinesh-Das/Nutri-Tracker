@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Nutri-Tracker',
         theme: ThemeData(
-          primarySwatch: Colors.green,
+          // primarySwatch: Colors.green,
           // define our text field style
           inputDecorationTheme: const InputDecorationTheme(
             filled: true,

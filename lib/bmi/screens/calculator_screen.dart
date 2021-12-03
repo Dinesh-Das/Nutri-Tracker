@@ -6,6 +6,7 @@ import 'package:nutri_tracker/bmi/constants.dart';
 import 'package:nutri_tracker/bmi/utils/icon_content.dart';
 import 'package:nutri_tracker/bmi/utils/reusable_card.dart';
 import 'package:nutri_tracker/bmi/utils/round_icon_button.dart';
+import 'package:nutri_tracker/themes.dart';
 
 import 'result_screen.dart';
 
@@ -28,6 +29,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MyColors.subHeading,
       appBar: AppBar(
         title: Text('BMI CALCULATOR'),
       ),

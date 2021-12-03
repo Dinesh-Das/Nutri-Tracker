@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/themes.dart';
 
 const kBottomContainerHeight = 80.0;
 
-const kActiveCardColour = Colors.greenAccent;
-const kInactiveCardColour = Colors.lightBlue;
-const kBottomContainerColour = Colors.blue;
+Color kActiveCardColour = MyColors.iconsColor;
+Color kInactiveCardColour = MyColors.backColor;
+Color kBottomContainerColour = Colors.blueGrey;
 
 const kLabelTextStyle = TextStyle(
   fontSize: 18.0,
@@ -27,7 +28,7 @@ const kTitleTextStyle = TextStyle(
 );
 
 const kResultTextStyle = TextStyle(
-  color: Color(0xFF24D876),
+  color: Color(0XFFF2E9E4),
   fontSize: 22.0,
   fontWeight: FontWeight.bold,
 );

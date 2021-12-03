@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/retry.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
@@ -226,7 +225,6 @@ class _ViewProfileState extends State<ViewProfile> {
     );
   }
 }
-//GoogleFonts.openSans().fontfamily
 
 class MyCustomClipper extends CustomClipper<Path> {
   @override

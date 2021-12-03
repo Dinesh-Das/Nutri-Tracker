@@ -53,37 +53,28 @@ updateDetailsToFirestore(
       (route) => false);
 }
 
-updateProfilePicToFirestore(
-  String? photoURL,
-  String? username,
-  String? name,
-  String? phoneno,
-  String? location,
-  String? birthdate,
-  String? bio,
-  String? height,
-  String? weight,
-  String? gender,
-) async {
+updateProfilePicToFirestore(String? photoURL) async {
   // calling firestore
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   User? user = FirebaseAuth.instance.currentUser;
   UserModel userModel = UserModel();
 
   userModel.uid = user!.uid;
-  userModel.photoURL = photoURL;
-  userModel.email = user.email;
-  userModel.name = name;
-  userModel.mobile = phoneno;
-  userModel.username = username;
-  userModel.location = location;
-  userModel.birthdate = birthdate;
-  userModel.bio = bio;
-  userModel.height = height;
-  userModel.weight = weight;
 
-  await firebaseFirestore
-      .collection("user_details")
-      .doc(user.uid)
-      .update(userModel.toMap());
+  user.updatePhotoURL(photoURL).then((value) {
+    FirebaseFirestore.instance
+        .collection("user_details")
+        .where('uid', isEqualTo: user.uid)
+        .get()
+        .then((value) {
+      FirebaseFirestore.instance
+          .doc("user_details/${value.docs[0].id}")
+          .update({'photoURL': photoURL}).then(
+              (value) => print('Updated Profile Picture'));
+    }).catchError((e) {
+      print(e.toString());
+    });
+  }).catchError((e) {
+    print(e.toString());
+  });
 }
