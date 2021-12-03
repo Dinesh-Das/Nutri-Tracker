@@ -3,6 +3,7 @@ import "dart:math";
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/bmi/screens/calculator_screen.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
@@ -97,7 +98,217 @@ class _homeState extends State<home> {
       // drawer
       drawer: NavigationDrawer(),
       // backgroundColor: const Color(0xFFE9E9E9),
-      body: Stack(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: height * 0.38,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(40.0),
+                        bottomLeft: Radius.circular(40.0)),
+                    child: Container(
+                      height: height * 0.38,
+                      color: MyColors.backColor,
+                      padding: EdgeInsets.only(left: 16, right: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: Text.rich(
+                                  TextSpan(
+                                    text:
+                                        "Hey, ${loggedInUser.name ?? 'User'}!\n",
+                                    style: const TextStyle(
+                                      fontSize: 14.0,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text: 'Good ${greetings()}',
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                child: CircleAvatar(
+                                  radius: 35,
+                                  backgroundImage: loggedInUser.photoURL != ''
+                                      ? NetworkImage(
+                                          loggedInUser.photoURL.toString())
+                                      : NetworkImage(defaultProfileUrl),
+                                ),
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 4, color: Colors.white),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        spreadRadius: 2,
+                                        blurRadius: 10,
+                                        color: Colors.black.withOpacity(0.1),
+                                        offset: const Offset(0, 10)),
+                                  ],
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 0,
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircularPercentIndicator(
+                                radius: 150,
+                                backgroundColor: Colors.white,
+                                progressColor: MyColors.iconsColor,
+                                percent: 0.4,
+                                lineWidth: 10,
+                                circularStrokeCap: CircularStrokeCap.round,
+                                animation: true,
+                                animationDuration: 2000,
+                                center: Text(
+                                  "0.4",
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  LimitedBox(
+                                    maxWidth: 175,
+                                    child: Text(
+                                      data.quote.toString(),
+                                      textDirection: TextDirection.ltr,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: 'Countryside',
+                                      ),
+                                    ),
+                                  ),
+                                  Text(
+                                    '- ${data.auther.toString()}',
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Countryside',
+                                        fontWeight: FontWeight.bold),
+                                    textDirection: TextDirection.ltr,
+                                    textAlign: TextAlign.left,
+                                  )
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            //Dummy
+            Positioned(
+              top: height * 0.40,
+              left: 30,
+              right: 0,
+              child: Container(
+                height: 220,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: foodlist.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    foodDetail(foodModel: foodlist[index]))),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          child: Card(
+                            color: MyColors.iconsColor,
+                            child: Wrap(
+                              children: [
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      foodlist[index].foodImage,
+                                      height: height * 0.20,
+                                      width: 200,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          foodlist[index].name,
+                                          style: const TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+              ),
+            ),
+            Positioned(
+              top: height * 0.42,
+              left: 30,
+              right: 0,
+              child: Container(
+                  color: MyColors.backColor,
+                  height: 300,
+                  child: InkWell(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CalculatorScreen())),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      child: Text(
+                          "This is  veryveryveryveryveryveryveryveryveryveryveryveryveryvery"),
+                    ),
+                  )),
+            ),
+            SizedBox(
+              height: height * 0.08,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+/*
+Ashu's Stack
+Stack(
         children: [
           Positioned(
             top: 0,
@@ -217,6 +428,7 @@ class _homeState extends State<home> {
               ),
             ),
           ),
+ 
           Positioned(
             top: height * 0.40,
             left: 30,
@@ -270,8 +482,4 @@ class _homeState extends State<home> {
                   }),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
+     */
