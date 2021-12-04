@@ -8,11 +8,15 @@ import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
+import 'package:nutri_tracker/homepage/Pages/home/weight_pages/underweight.dart';
 import 'package:nutri_tracker/homepage/Pages/home/weightdetail.dart';
 import 'package:nutri_tracker/homepage/Pages/home/weightdetailmodel.dart';
 import 'package:nutri_tracker/homepage/Pages/home/quotes.dart';
 import 'package:nutri_tracker/themes.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+
+import 'weight_pages/normalweight.dart';
+import 'weight_pages/overweight.dart';
 
 class home extends StatefulWidget {
   home({Key? key}) : super(key: key);
@@ -230,74 +234,188 @@ class _homeState extends State<home> {
               SizedBox(
                 height: 10,
               ),
-
-              //Dummy
-              Positioned(
-                top: height * 0.40,
-                left: 30,
-                right: 0,
-                child: Container(
-                  height: 220,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: foodlist.length,
-                    itemBuilder: (context, index) {
-                      return InkWell(
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    foodDetail(foodModel: foodlist[index]))),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    // underweight
+                    Positioned(
+                      top: height * 0.42,
+                      left: 30,
+                      right: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
-                          child: Card(
-                            color: MyColors.iconsColor,
-                            child: Wrap(
-                              children: [
-                                Column(
-                                  children: [
-                                    Image.asset(
-                                      foodlist[index].foodImage,
-                                      height: height * 0.20,
-                                      width: 200,
-                                      fit: BoxFit.cover,
+                          child: Container(
+                            color: MyColors.backColor,
+                            height: 220,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => underweight(),
+                                  ),
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30)),
+                                child: Container(
+                                  height: 220,
+                                  width: 200,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(30),
                                     ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Row(
+                                    child: Column(
                                       children: [
-                                        Text(
-                                          foodlist[index].name,
-                                          style: const TextStyle(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.bold),
+                                        Image.asset(
+                                          'assets/weight/underweight.png',
+                                          height: height * 0.20,
+                                          width: 200,
+                                          fit: BoxFit.cover,
                                         ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text('Under Weight',
+                                            style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold))
                                       ],
-                                    )
-                                  ],
+                                    ),
+                                  ),
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                    // normalweight
+                    Positioned(
+                      top: height * 0.42,
+                      left: 30,
+                      right: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          child: Container(
+                            color: MyColors.backColor,
+                            height: 220,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => normalweight(),
+                                  ),
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30)),
+                                child: Container(
+                                  height: 220,
+                                  width: 200,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(30),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Image.asset(
+                                          'assets/weight/normalweight.png',
+                                          height: height * 0.20,
+                                          width: 200,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text('Normal Weight',
+                                            style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Over Weight
+                    Positioned(
+                      top: height * 0.42,
+                      left: 30,
+                      right: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          child: Container(
+                            color: MyColors.backColor,
+                            height: 220,
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => overweight(),
+                                  ),
+                                );
+                              },
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(30)),
+                                child: Container(
+                                  height: 220,
+                                  width: 200,
+                                  child: ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(30),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Image.asset(
+                                          'assets/weight/overweight.png',
+                                          height: height * 0.20,
+                                          width: 200,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        const Text('Over Weight ',
+                                            style: TextStyle(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.bold))
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(
                 height: 5,
               ),
-
-              // Positioned(
-              //   top: height * 0.42,
-              //   left: 30,
-              //   right: 0,
-              //   child: ),
               SizedBox(
                 height: 5,
               ),
+              // calculate bmi
               Positioned(
                 top: height * 0.42,
                 left: 30,
@@ -316,8 +434,16 @@ class _homeState extends State<home> {
                                   builder: (context) => CalculatorScreen())),
                           child: ClipRRect(
                             borderRadius: BorderRadius.all(Radius.circular(30)),
-                            child: Center(
-                              child: Text("Click here to calculate bmi"),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(Icons.calculate,
+                                    size: 35, color: MyColors.shortDesc),
+                                Text(
+                                  "Click here to calculate bmi",
+                                  style: const TextStyle(fontSize: 22.0),
+                                ),
+                              ],
                             ),
                           ),
                         )),
@@ -360,180 +486,3 @@ class _homeState extends State<home> {
     );
   }
 }
-/*
-Ashu's Stack
-Stack(
-        children: [
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: height * 0.38,
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(40.0),
-                  bottomLeft: Radius.circular(40.0)),
-              child: Container(
-                // height: 300,
-                color: MyColors.backColor,
-                padding: EdgeInsets.only(left: 16, right: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text.rich(
-                            TextSpan(
-                              text: "Hey, ${loggedInUser.name ?? 'User'}!\n",
-                              style: const TextStyle(
-                                fontSize: 14.0,
-                              ),
-                              children: [
-                                TextSpan(
-                                  text: 'Good ${greetings()}',
-                                  style: TextStyle(
-                                      fontSize: 20.0,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          child: CircleAvatar(
-                            radius: 35,
-                            backgroundImage: loggedInUser.photoURL != ''
-                                ? NetworkImage(loggedInUser.photoURL.toString())
-                                : NetworkImage(defaultProfileUrl),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 4, color: Colors.white),
-                            boxShadow: [
-                              BoxShadow(
-                                  spreadRadius: 2,
-                                  blurRadius: 10,
-                                  color: Colors.black.withOpacity(0.1),
-                                  offset: const Offset(0, 10)),
-                            ],
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 0,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircularPercentIndicator(
-                          radius: 140,
-                          backgroundColor: Colors.white,
-                          progressColor: MyColors.iconsColor,
-                          percent: 0.4,
-                          lineWidth: 10,
-                          circularStrokeCap: CircularStrokeCap.round,
-                          animation: true,
-                          animationDuration: 2000,
-                          center: Text(
-                            "0.4",
-                            style: TextStyle(fontSize: 24),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            LimitedBox(
-                              maxWidth: 175,
-                              child: Text(
-                                data.quote.toString(),
-                                textDirection: TextDirection.ltr,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: 'Countryside',
-                                ),
-                              ),
-                            ),
-                            Text(
-                              '- ${data.auther.toString()}',
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontFamily: 'Countryside',
-                                  fontWeight: FontWeight.bold),
-                              textDirection: TextDirection.ltr,
-                              textAlign: TextAlign.left,
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
- 
-          Positioned(
-            top: height * 0.40,
-            left: 30,
-            right: 0,
-            child: Container(
-              height: 250,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: foodlist.length,
-                  itemBuilder: (context, index) {
-                    return InkWell(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  foodDetail(foodModel: foodlist[index]))),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                        child: Card(
-                          color: MyColors.iconsColor,
-                          child: Wrap(
-                            children: [
-                              Column(
-                                children: [
-                                  Image.asset(
-                                    foodlist[index].foodImage,
-                                    height: height * 0.22,
-                                    width: 200,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        foodlist[index].name,
-                                        style: const TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }),
-            ),
-          ),
-     */

@@ -87,6 +87,7 @@ flutter:
     - assets/images/
     - assets/onboard/
     - assets/dev/
+    - assets/weight/
     
  
   #   - images/a_dot_burr.jpeg
