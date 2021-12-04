@@ -8,22 +8,24 @@ import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
-import 'package:nutri_tracker/homepage/Pages/home/detail.dart';
-import 'package:nutri_tracker/homepage/Pages/home/foodmodel.dart';
+import 'package:nutri_tracker/homepage/Pages/home/weightdetail.dart';
+import 'package:nutri_tracker/homepage/Pages/home/weightdetailmodel.dart';
 import 'package:nutri_tracker/homepage/Pages/home/quotes.dart';
-// import 'package:fl_chart/fl_chart.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nutri_tracker/themes.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class home extends StatefulWidget {
   home({Key? key}) : super(key: key);
 
-  static List<String> foodName = ['Breakfast', 'lunch', 'dinner'];
+  static List<String> foodName = [
+    'Under Weight',
+    'Normal Weight',
+    'Over Weight'
+  ];
   static List<String> foodImage = [
-    'assets/images/fruits.jpg',
-    'assets/images/lunch.jpg',
-    'assets/images/dinner.jpg'
+    'assets/images/underweight.jpg',
+    'assets/images/normalweight.jpg',
+    'assets/images/overweight.jpg'
   ];
   static List<String> time = ['44', '43', '42'];
 
@@ -67,11 +69,12 @@ class _homeState extends State<home> {
   }
 
   final List<FoodModel> foodlist = List.generate(
-      home.foodName.length,
-      (index) => FoodModel(
-          name: home.foodName[index],
-          foodImage: home.foodImage[index],
-          time: home.time[index]));
+    home.foodName.length,
+    (index) => FoodModel(
+        name: home.foodName[index],
+        foodImage: home.foodImage[index],
+        time: home.time[index]),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -227,6 +230,7 @@ class _homeState extends State<home> {
               SizedBox(
                 height: 10,
               ),
+
               //Dummy
               Positioned(
                 top: height * 0.40,
@@ -235,52 +239,62 @@ class _homeState extends State<home> {
                 child: Container(
                   height: 220,
                   child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: foodlist.length,
-                      itemBuilder: (context, index) {
-                        return InkWell(
-                          onTap: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      foodDetail(foodModel: foodlist[index]))),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                            child: Card(
-                              color: MyColors.iconsColor,
-                              child: Wrap(
-                                children: [
-                                  Column(
-                                    children: [
-                                      Image.asset(
-                                        foodlist[index].foodImage,
-                                        height: height * 0.20,
-                                        width: 200,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            foodlist[index].name,
-                                            style: const TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: foodlist.length,
+                    itemBuilder: (context, index) {
+                      return InkWell(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    foodDetail(foodModel: foodlist[index]))),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(Radius.circular(30)),
+                          child: Card(
+                            color: MyColors.iconsColor,
+                            child: Wrap(
+                              children: [
+                                Column(
+                                  children: [
+                                    Image.asset(
+                                      foodlist[index].foodImage,
+                                      height: height * 0.20,
+                                      width: 200,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          foodlist[index].name,
+                                          style: const TextStyle(
+                                              fontSize: 22,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                        );
-                      }),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
+              SizedBox(
+                height: 5,
+              ),
+
+              // Positioned(
+              //   top: height * 0.42,
+              //   left: 30,
+              //   right: 0,
+              //   child: ),
               SizedBox(
                 height: 5,
               ),
