@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/bmi/screens/calculator_screen.dart';
 import 'package:nutri_tracker/constants.dart';
+import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
@@ -79,6 +80,7 @@ class _homeState extends State<home> {
         foodImage: home.foodImage[index],
         time: home.time[index]),
   );
+  bool theme = false;
 
   @override
   Widget build(BuildContext context) {
@@ -95,9 +97,15 @@ class _homeState extends State<home> {
         elevation: 0,
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                currentTheme.toggleTheme();
+
+                setState(() {
+                  theme = !theme;
+                });
+              },
               icon: Icon(
-                Icons.dark_mode,
+                theme ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
                 size: 30,
               ))
         ],
