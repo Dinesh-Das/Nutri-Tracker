@@ -1,19 +1,19 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/homepage/Pages/home/weight_pages_model/weight_gain_frt_model.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages_model/weight_gain_frt_model.dart';
 import '../weight_pages_model/weight_loss_frt_model.dart';
 
-class underweight extends StatefulWidget {
-  const underweight({Key? key}) : super(key: key);
+class normalweight extends StatefulWidget {
+  const normalweight({Key? key}) : super(key: key);
 
   @override
-  _underweightState createState() => _underweightState();
+  _normalweightState createState() => _normalweightState();
 }
 
 // int current = Random().nextInt(WLFruitsList.length);
 
-class _underweightState extends State<underweight> {
+class _normalweightState extends State<normalweight> {
   Wgainfruits wgainfruit = WGFruitsList[0];
 
   @override
@@ -35,7 +35,7 @@ class _underweightState extends State<underweight> {
               fit: BoxFit.cover,
             ),
             title: const Text(
-              'Weight Gain Fruits & Drinks',
+              'Normal Weight',
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 16.0,
@@ -81,7 +81,7 @@ class _underweightState extends State<underweight> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 25, right: 25),
                           child: Text(
-                            WGFruitsList[index].desc,
+                            WLFruitsList[index].desc,
                             style: TextStyle(fontSize: 12),
                           ),
                         ),

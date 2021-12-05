@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:nutri_tracker/homepage/Pages/home/weightdetailmodel.dart';
+import 'package:nutri_tracker/homepage/home/weightdetailmodel.dart';
 import 'package:nutri_tracker/themes.dart';
 
 class foodDetail extends StatelessWidget {

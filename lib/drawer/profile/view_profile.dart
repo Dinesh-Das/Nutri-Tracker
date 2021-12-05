@@ -37,6 +37,7 @@ class _ViewProfileState extends State<ViewProfile> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -96,7 +97,8 @@ class _ViewProfileState extends State<ViewProfile> {
                                       retrivedData.photoURL.toString()),
                             ),
                             decoration: BoxDecoration(
-                              border: Border.all(width: 4, color: Colors.white),
+                              border: Border.all(
+                                  width: 4, color: theme.bottomAppBarColor),
                               boxShadow: [
                                 BoxShadow(
                                     spreadRadius: 2,
@@ -122,7 +124,6 @@ class _ViewProfileState extends State<ViewProfile> {
                           retrivedData.email.toString(),
                           style: const TextStyle(
                             fontSize: 12,
-                            color: Colors.grey,
                           ),
                         ),
                       ],
@@ -196,7 +197,7 @@ class _ViewProfileState extends State<ViewProfile> {
             Icon(
               iconData,
               size: 40,
-              color: Colors.blue,
+              // color: Colors.blue,
             ),
             const SizedBox(
               width: 25,
@@ -215,7 +216,10 @@ class _ViewProfileState extends State<ViewProfile> {
                 ),
                 Text(
                   data,
-                  style: TextStyle(fontSize: 14.0, color: Colors.grey[700]),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    // color: Colors.grey[700],
+                  ),
                 )
               ],
             ),

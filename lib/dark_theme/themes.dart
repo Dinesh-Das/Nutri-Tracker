@@ -13,3 +13,6 @@ Color subHeading = Color(0xFF4A4E69);
 Color shortDesc = Color(0XFF9A8C98);
 Color iconsColor = Color(0xFFC9ADA7);
 Color backColor = Color(0XFFF2E9E4);
+
+
+//circular ka change karna hai

@@ -26,7 +26,7 @@ class CustomTheme with ChangeNotifier {
         //back color bottom bar
         bottomAppBarColor: bottomNavigationForeground,
         backgroundColor: bottomNavigationBackground,
-        iconTheme: IconThemeData(color: Colors.red, opacity: 0.9));
+        iconTheme: IconThemeData(color: Colors.red, opacity: 0.8));
   }
 
   static ThemeData get darkTheme {

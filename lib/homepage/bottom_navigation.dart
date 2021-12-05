@@ -2,10 +2,11 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
-import 'package:nutri_tracker/homepage/Pages/dietrylist/diet.dart';
-import 'package:nutri_tracker/homepage/Pages/favourite/favourite.dart';
-import 'package:nutri_tracker/homepage/Pages/home/home.dart';
 import 'package:nutri_tracker/themes.dart';
+
+import 'dietrylist/diet.dart';
+import 'favourite/favourite.dart';
+import 'home/home.dart';
 
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({Key? key}) : super(key: key);
@@ -46,24 +47,19 @@ class _BottomNavigationState extends State<BottomNavigation> {
     return Scaffold(
       extendBody: true,
       body: screens[index],
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-            // iconTheme: IconThemeData(color: Colors.white),
-            ),
-        child: CurvedNavigationBar(
-          key: navigationKey,
-          color: MyColors.iconsColor,
-          buttonBackgroundColor: MyColors.bottomNav,
-          backgroundColor: Colors.transparent,
-          items: items,
-          height: 50,
-          animationCurve: Curves.easeInOut,
-          animationDuration: Duration(milliseconds: 600),
-          index: index,
-          onTap: (index) => setState(() {
-            this.index = index;
-          }),
-        ),
+      bottomNavigationBar: CurvedNavigationBar(
+        key: navigationKey,
+        color: Theme.of(context).backgroundColor,
+        buttonBackgroundColor: Theme.of(context).bottomAppBarColor,
+        backgroundColor: Colors.transparent,
+        items: items,
+        height: 50,
+        animationCurve: Curves.easeInOut,
+        animationDuration: Duration(milliseconds: 600),
+        index: index,
+        onTap: (index) => setState(() {
+          this.index = index;
+        }),
       ),
     );
   }

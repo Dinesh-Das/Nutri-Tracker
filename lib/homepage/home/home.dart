@@ -9,15 +9,14 @@ import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
-import 'package:nutri_tracker/homepage/Pages/home/weight_pages/underweight.dart';
-import 'package:nutri_tracker/homepage/Pages/home/weightdetail.dart';
-import 'package:nutri_tracker/homepage/Pages/home/weightdetailmodel.dart';
-import 'package:nutri_tracker/homepage/Pages/home/quotes.dart';
+import 'package:nutri_tracker/homepage/home/quotes.dart';
+import 'package:nutri_tracker/homepage/home/weightdetailmodel.dart';
 import 'package:nutri_tracker/themes.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 import 'weight_pages/normalweight.dart';
 import 'weight_pages/overweight.dart';
+import 'weight_pages/underweight.dart';
 
 class home extends StatefulWidget {
   home({Key? key}) : super(key: key);
@@ -44,6 +43,7 @@ class _homeState extends State<home> {
   Quotes data = mylist[current];
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
+  bool theme = false;
   String greetings() {
     var hour = DateTime.now().hour;
     if (hour <= 12) {
@@ -80,7 +80,6 @@ class _homeState extends State<home> {
         foodImage: home.foodImage[index],
         time: home.time[index]),
   );
-  bool theme = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +91,8 @@ class _homeState extends State<home> {
           // style: TextStyle(color: MyColors.heading),
         ),
         centerTitle: true,
-        foregroundColor: MyColors.shortDesc,
-        backgroundColor: MyColors.backColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         actions: [
           IconButton(
@@ -127,7 +126,7 @@ class _homeState extends State<home> {
                           bottomLeft: Radius.circular(40.0)),
                       child: Container(
                         height: height * 0.38,
-                        color: MyColors.backColor,
+                        color: Theme.of(context).appBarTheme.backgroundColor,
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,8 +189,10 @@ class _homeState extends State<home> {
                               children: [
                                 CircularPercentIndicator(
                                   radius: 140,
-                                  backgroundColor: Colors.white,
-                                  progressColor: MyColors.iconsColor,
+                                  backgroundColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  progressColor:
+                                      Theme.of(context).iconTheme.color,
                                   percent: 0.4,
                                   lineWidth: 10,
                                   circularStrokeCap: CircularStrokeCap.round,
@@ -256,7 +257,8 @@ class _homeState extends State<home> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                           child: Container(
-                            color: MyColors.backColor,
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
                             height: 220,
                             child: InkWell(
                               onTap: () {
@@ -312,7 +314,8 @@ class _homeState extends State<home> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                           child: Container(
-                            color: MyColors.backColor,
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
                             height: 220,
                             child: InkWell(
                               onTap: () {
@@ -368,7 +371,8 @@ class _homeState extends State<home> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                           child: Container(
-                            color: MyColors.backColor,
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
                             height: 220,
                             child: InkWell(
                               onTap: () {
@@ -433,7 +437,7 @@ class _homeState extends State<home> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(30)),
                     child: Container(
-                        color: MyColors.backColor,
+                        color: Theme.of(context).appBarTheme.backgroundColor,
                         height: 97,
                         child: InkWell(
                           onTap: () => Navigator.push(
@@ -445,8 +449,7 @@ class _homeState extends State<home> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Icon(Icons.calculate,
-                                    size: 35, color: MyColors.shortDesc),
+                                Icon(Icons.calculate, size: 35),
                                 Text(
                                   "Click here to calculate bmi",
                                   style: const TextStyle(fontSize: 22.0),
@@ -470,7 +473,7 @@ class _homeState extends State<home> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(30)),
                     child: Container(
-                        color: MyColors.backColor,
+                        color: Theme.of(context).appBarTheme.backgroundColor,
                         height: 300,
                         child: InkWell(
                           onTap: () {},
