@@ -8,15 +8,15 @@ import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
-import 'package:nutri_tracker/homepage/Pages/home/weight_pages/underweight.dart';
+import 'package:nutri_tracker/homepage/Pages/home/weight_pages/next%20page/normalweight.dart';
+import 'package:nutri_tracker/homepage/Pages/home/weight_pages/next%20page/overweight.dart';
+import 'package:nutri_tracker/homepage/Pages/home/weight_pages/next%20page/underweight.dart';
+import 'package:nutri_tracker/homepage/Pages/home/weight_pages/overweight_home.dart';
 import 'package:nutri_tracker/homepage/Pages/home/weightdetail.dart';
 import 'package:nutri_tracker/homepage/Pages/home/weightdetailmodel.dart';
 import 'package:nutri_tracker/homepage/Pages/home/quotes.dart';
 import 'package:nutri_tracker/themes.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-
-import 'weight_pages/normalweight.dart';
-import 'weight_pages/overweight.dart';
 
 class home extends StatefulWidget {
   home({Key? key}) : super(key: key);
@@ -367,7 +367,7 @@ class _homeState extends State<home> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => overweight(),
+                                    builder: (context) => overweightHome(),
                                   ),
                                 );
                               },

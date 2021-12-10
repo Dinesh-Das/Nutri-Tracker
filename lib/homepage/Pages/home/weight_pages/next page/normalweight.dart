@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/homepage/Pages/home/weight_pages_model/weight_gain_frt_model.dart';
-import '../weight_pages_model/weight_loss_frt_model.dart';
 
 class normalweight extends StatefulWidget {
   const normalweight({Key? key}) : super(key: key);
@@ -76,15 +75,6 @@ class _normalweightState extends State<normalweight> {
                         WGFruitsList[index].name,
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 25, right: 25),
-                          child: Text(
-                            WLFruitsList[index].desc,
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
                       ),
                     ],
                   ),

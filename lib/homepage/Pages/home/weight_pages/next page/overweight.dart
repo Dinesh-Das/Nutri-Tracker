@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import '../weight_pages_model/weight_loss_frt_model.dart';
+import 'package:nutri_tracker/homepage/Pages/home/weight_pages_model/weight_loss_frt_model.dart';
 
 class overweight extends StatefulWidget {
   const overweight({Key? key}) : super(key: key);
@@ -75,15 +75,6 @@ class _overweightState extends State<overweight> {
                         WLFruitsList[index].name,
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 25, right: 25),
-                          child: Text(
-                            WLFruitsList[index].desc,
-                            style: TextStyle(fontSize: 12),
-                          ),
-                        ),
                       ),
                     ],
                   ),
