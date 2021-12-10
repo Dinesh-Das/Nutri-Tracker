@@ -9,6 +9,7 @@ import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
+import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/homepage/home/quotes.dart';
 import 'package:nutri_tracker/homepage/home/weightdetailmodel.dart';
 import 'package:nutri_tracker/themes.dart';
@@ -155,25 +156,39 @@ class _homeState extends State<home> {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  child: CircleAvatar(
-                                    radius: 35,
-                                    backgroundImage: loggedInUser.photoURL != ''
-                                        ? NetworkImage(
-                                            loggedInUser.photoURL.toString())
-                                        : NetworkImage(defaultProfileUrl),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 4, color: Colors.white),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          spreadRadius: 2,
-                                          blurRadius: 10,
-                                          color: Colors.black.withOpacity(0.1),
-                                          offset: const Offset(0, 10)),
-                                    ],
-                                    shape: BoxShape.circle,
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ViewProfile()));
+                                  },
+                                  child: Container(
+                                    child: CircleAvatar(
+                                      radius: 35,
+                                      backgroundImage: loggedInUser.photoURL !=
+                                              ''
+                                          ? NetworkImage(
+                                              loggedInUser.photoURL.toString())
+                                          : NetworkImage(defaultProfileUrl),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        width: 4,
+                                        color:
+                                            Theme.of(context).bottomAppBarColor,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            spreadRadius: 2,
+                                            blurRadius: 10,
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            offset: const Offset(0, 10)),
+                                      ],
+                                      shape: BoxShape.circle,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -199,7 +214,7 @@ class _homeState extends State<home> {
                                   animation: true,
                                   animationDuration: 2000,
                                   center: Text(
-                                    "0.4",
+                                    "${loggedInUser.bmi}",
                                     style: TextStyle(fontSize: 24),
                                   ),
                                 ),

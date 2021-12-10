@@ -82,6 +82,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               child: Column(
                 children: [
                   buildHeader(
+                      context: context,
                       urlImage: urlImage.toString(),
                       name: name.toString(),
                       email: email.toString(),
@@ -197,6 +198,7 @@ Widget buildHeader({
   required String name,
   required String email,
   required VoidCallback onClicked,
+  required BuildContext context,
 }) =>
     InkWell(
       onTap: onClicked,
@@ -206,7 +208,24 @@ Widget buildHeader({
         ),
         child: Row(
           children: [
-            CircleAvatar(radius: 30, backgroundImage: NetworkImage(urlImage)),
+            Container(
+              child: CircleAvatar(
+                  radius: 30, backgroundImage: NetworkImage(urlImage)),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 4,
+                  color: Theme.of(context).bottomAppBarColor,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      color: Colors.black.withOpacity(0.1),
+                      offset: const Offset(0, 10)),
+                ],
+                shape: BoxShape.circle,
+              ),
+            ),
             const SizedBox(width: 20),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
