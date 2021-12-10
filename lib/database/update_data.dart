@@ -16,6 +16,7 @@ updateDetailsToFirestore(
     String? height,
     String? weight,
     String? gender,
+    String? bmi,
     BuildContext context) async {
   // calling firestore
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
@@ -34,6 +35,7 @@ updateDetailsToFirestore(
   userModel.height = height;
   userModel.weight = weight;
   userModel.gender = gender;
+  userModel.bmi = bmi;
 
   showLoadingAlertDialog(context, 'Saving Data');
   await firebaseFirestore
@@ -55,7 +57,7 @@ updateDetailsToFirestore(
 
 updateProfilePicToFirestore(String? photoURL) async {
   // calling firestore
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+
   User? user = FirebaseAuth.instance.currentUser;
   UserModel userModel = UserModel();
 
@@ -76,5 +78,23 @@ updateProfilePicToFirestore(String? photoURL) async {
     });
   }).catchError((e) {
     print(e.toString());
+  });
+}
+
+updateBMIData(
+  String? height,
+  String? weight,
+  String? bmi,
+  String? gender,
+) async {
+  User? user = FirebaseAuth.instance.currentUser;
+  await FirebaseFirestore.instance
+      .collection("user_details")
+      .doc(user!.uid)
+      .update({
+    'height': height,
+    'weight': weight,
+    'bmi': bmi,
+    'gender': gender,
   });
 }

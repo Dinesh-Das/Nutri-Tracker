@@ -2,6 +2,7 @@ class UserModel {
   String? uid;
   String? email;
   String? name;
+  String? bmi;
   String? photoURL;
   String? username,
       gender,
@@ -14,6 +15,7 @@ class UserModel {
       creation;
   UserModel({
     this.uid,
+    this.bmi,
     this.email,
     this.name,
     this.mobile,
@@ -32,6 +34,7 @@ class UserModel {
   factory UserModel.fromMap(map) {
     return UserModel(
       uid: map['uid'],
+      bmi: map['bmi'],
       email: map['email'],
       name: map['name'],
       mobile: map['mobile'],
@@ -51,6 +54,7 @@ class UserModel {
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
+      'bmi': bmi,
       'email': email,
       'name': name,
       'mobile': mobile,

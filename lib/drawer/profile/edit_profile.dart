@@ -432,6 +432,7 @@ class _EditProfileState extends State<EditProfile> {
                                   isGenderChanged == true)
                               ? selectedGender
                               : updateData.gender,
+                          updateData.bmi,
                           context);
                     },
                     elevation: 2,

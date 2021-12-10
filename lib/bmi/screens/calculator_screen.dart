@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -6,13 +8,15 @@ import 'package:nutri_tracker/bmi/constants.dart';
 import 'package:nutri_tracker/bmi/utils/icon_content.dart';
 import 'package:nutri_tracker/bmi/utils/reusable_card.dart';
 import 'package:nutri_tracker/bmi/utils/round_icon_button.dart';
+import 'package:nutri_tracker/database/update_data.dart';
+import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/themes.dart';
 
 import 'result_screen.dart';
 
 enum Gender {
-  male,
-  female,
+  Male,
+  Female,
 }
 
 class CalculatorScreen extends StatefulWidget {
@@ -21,11 +25,10 @@ class CalculatorScreen extends StatefulWidget {
 }
 
 class CalculatorScreenState extends State<CalculatorScreen> {
-  Gender selectedGender = Gender.female;
+  Gender selectedGender = Gender.Female;
   int height = 180;
   int weight = 60;
   int age = 20;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,10 +46,10 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                 child: ReusableCard(
                   onPress: () {
                     setState(() {
-                      selectedGender = Gender.male;
+                      selectedGender = Gender.Male;
                     });
                   },
-                  colour: selectedGender == Gender.male
+                  colour: selectedGender == Gender.Male
                       ? kActiveCardColour
                       : kInactiveCardColour,
                   cardChild: IconContent(
@@ -59,10 +62,10 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                 child: ReusableCard(
                   onPress: () {
                     setState(() {
-                      selectedGender = Gender.female;
+                      selectedGender = Gender.Female;
                     });
                   },
-                  colour: selectedGender == Gender.female
+                  colour: selectedGender == Gender.Female
                       ? kActiveCardColour
                       : kInactiveCardColour,
                   cardChild: IconContent(
@@ -220,7 +223,15 @@ class CalculatorScreenState extends State<CalculatorScreen> {
           GestureDetector(
             onTap: () {
               BmiLogic calc = BmiLogic(height: height, weight: weight, bmi: 0);
-
+              var result = calc.calculateBMI();
+              String? gender = '';
+              if (selectedGender == Gender.Male) {
+                gender = 'Male';
+              } else {
+                gender = 'Female';
+              }
+              updateBMIData(height.toString(), weight.toString(),
+                  result.toString(), gender);
               Navigator.push(
                 context,
                 MaterialPageRoute(

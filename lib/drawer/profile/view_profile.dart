@@ -173,8 +173,8 @@ class _ViewProfileState extends State<ViewProfile> {
                 retrivedData.location.toString()),
             displayData(Icons.timelapse, "Joined Date",
                 retrivedData.creation.toString()),
-            displayData(
-                Icons.health_and_safety_outlined, "BMI : 22", "BMR : somthing"),
+            displayData(Icons.health_and_safety_outlined,
+                "BMI : ${retrivedData.bmi}", "BMR : ${retrivedData.bmi}"),
             displayData(Icons.code, "About", retrivedData.bio.toString()),
             const SizedBox(
               height: 25,
