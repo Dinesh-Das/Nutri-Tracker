@@ -3,6 +3,7 @@ import "dart:math";
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/bmi/bmi/inputpage.dart';
 import 'package:nutri_tracker/bmi/screens/calculator_screen.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
@@ -429,7 +430,7 @@ class _homeState extends State<home> {
                           onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CalculatorScreen())),
+                                  builder: (context) => InputPage())),
                           child: ClipRRect(
                             borderRadius: BorderRadius.all(Radius.circular(30)),
                             child: Row(
