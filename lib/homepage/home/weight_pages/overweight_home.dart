@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/homepage/Pages/home/weight_pages/next%20page/overweight.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages/next%20page/overweight.dart';
 
 class overweightHome extends StatelessWidget {
   const overweightHome({Key? key}) : super(key: key);

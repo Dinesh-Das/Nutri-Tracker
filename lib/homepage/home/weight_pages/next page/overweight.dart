@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages_model/weight_loss_frt_model.dart';
 
 class overweight extends StatefulWidget {
   const overweight({Key? key}) : super(key: key);
