@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/admin/admin_home.dart';
 import 'package:nutri_tracker/onbparding_components/onboard.dart';
 import 'package:nutri_tracker/sharedPreferences/local_data.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
@@ -32,10 +33,17 @@ class _SplashState extends State<Splash> {
       DataConstant.mail = (await UserLocalData.getEmail());
       DataConstant.photo = (await UserLocalData.getImg());
 
-      Timer(
-          const Duration(milliseconds: 6000),
-          () => Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => BottomNavigation())));
+      if (DataConstant.mail == 'nutritracker@admin.in') {
+        Timer(
+            const Duration(milliseconds: 6000),
+            () => Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => AdminPage())));
+      } else {
+        Timer(
+            const Duration(milliseconds: 6000),
+            () => Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => BottomNavigation())));
+      }
     } else {
       Timer(
           const Duration(milliseconds: 6000),

@@ -1,19 +1,20 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/homepage/Pages/home/weight_pages_model/weight_loss_frt_model.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages_model/weight_gain_frt_model.dart';
+import '../weight_pages_model/weight_loss_frt_model.dart';
 
-class overweight extends StatefulWidget {
-  const overweight({Key? key}) : super(key: key);
+class normalweight extends StatefulWidget {
+  const normalweight({Key? key}) : super(key: key);
 
   @override
-  _overweightState createState() => _overweightState();
+  _normalweightState createState() => _normalweightState();
 }
 
 // int current = Random().nextInt(WLFruitsList.length);
 
-class _overweightState extends State<overweight> {
-  Wlossfruits wlossfruit = WLFruitsList[0];
+class _normalweightState extends State<normalweight> {
+  Wgainfruits wgainfruit = WGFruitsList[0];
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +29,13 @@ class _overweightState extends State<overweight> {
           // floating: true,
           flexibleSpace: FlexibleSpaceBar(
             background: Image.asset(
-              'assets/weight/overweight.png',
+              'assets/weight/underweight.png',
               width: 500,
               height: 200,
               fit: BoxFit.cover,
             ),
             title: const Text(
-              'Weight Loss Fruits & Drinks',
+              'Normal Weight',
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 16.0,
@@ -63,7 +64,7 @@ class _overweightState extends State<overweight> {
                   child: Column(
                     children: [
                       Image.network(
-                        WLFruitsList[index].image,
+                        WGFruitsList[index].image,
                         height: height * 0.20,
                         width: 200,
                         fit: BoxFit.cover,
@@ -72,16 +73,25 @@ class _overweightState extends State<overweight> {
                         height: 10,
                       ),
                       Text(
-                        WLFruitsList[index].name,
+                        WGFruitsList[index].name,
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 25, right: 25),
+                          child: Text(
+                            WLFruitsList[index].desc,
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
             );
-          }, childCount: WLFruitsList.length),
+          }, childCount: WGFruitsList.length),
         ),
       ]),
     );

@@ -74,7 +74,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     return Drawer(
       elevation: 0,
       child: Material(
-        color: Color(0XFFF2E9E4),
+        color: Theme.of(context).primaryColorDark,
         child: ListView(
           children: <Widget>[
             Container(
@@ -82,6 +82,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
               child: Column(
                 children: [
                   buildHeader(
+                      context: context,
                       urlImage: urlImage.toString(),
                       name: name.toString(),
                       email: email.toString(),
@@ -93,6 +94,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     height: 13,
                   ),
                   buildMenuItem(
+                    context: context,
                     text: 'Edit Profile',
                     icon: Icons.edit,
                     onClicked: () => selectedItem(context, 0),
@@ -101,6 +103,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     height: 13,
                   ),
                   buildMenuItem(
+                    context: context,
                     text: 'Settings',
                     icon: Icons.settings,
                     onClicked: () => selectedItem(context, 2),
@@ -109,6 +112,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     height: 13,
                   ),
                   buildMenuItem(
+                    context: context,
                     text: 'Support',
                     icon: Icons.support_agent_sharp,
                     onClicked: () => selectedItem(context, 1),
@@ -117,6 +121,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     height: 13,
                   ),
                   buildMenuItem(
+                    context: context,
                     text: 'Logout',
                     icon: Icons.logout,
                     onClicked: () => logout(context),
@@ -131,6 +136,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     height: 13,
                   ),
                   buildMenuItem(
+                    context: context,
                     text: 'Share',
                     icon: Icons.share,
                     onClicked: () => selectedItem(context, 3),
@@ -139,6 +145,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     height: 13,
                   ),
                   buildMenuItem(
+                    context: context,
                     text: 'About App',
                     icon: Icons.workspaces_outline,
                     onClicked: () => selectedItem(context, 4),
@@ -147,6 +154,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     height: 13,
                   ),
                   buildMenuItem(
+                      context: context,
                       text: 'About Us',
                       icon: Icons.developer_mode,
                       onClicked: () {
@@ -190,6 +198,7 @@ Widget buildHeader({
   required String name,
   required String email,
   required VoidCallback onClicked,
+  required BuildContext context,
 }) =>
     InkWell(
       onTap: onClicked,
@@ -199,7 +208,24 @@ Widget buildHeader({
         ),
         child: Row(
           children: [
-            CircleAvatar(radius: 30, backgroundImage: NetworkImage(urlImage)),
+            Container(
+              child: CircleAvatar(
+                  radius: 30, backgroundImage: NetworkImage(urlImage)),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 4,
+                  color: Theme.of(context).bottomAppBarColor,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                      spreadRadius: 2,
+                      blurRadius: 10,
+                      color: Colors.black.withOpacity(0.1),
+                      offset: const Offset(0, 10)),
+                ],
+                shape: BoxShape.circle,
+              ),
+            ),
             const SizedBox(width: 20),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Text(
@@ -224,10 +250,14 @@ Widget buildHeader({
 Widget buildMenuItem({
   required String text,
   required IconData icon,
+  required BuildContext context,
   VoidCallback? onClicked,
 }) {
   return ListTile(
-    leading: Icon(icon),
+    leading: Icon(
+      icon,
+      color: Theme.of(context).iconTheme.color,
+    ),
     title: Text(text),
     onTap: onClicked,
   );

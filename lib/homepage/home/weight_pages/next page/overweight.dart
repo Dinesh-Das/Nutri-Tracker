@@ -1,19 +1,18 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/homepage/Pages/home/weight_pages_model/weight_gain_frt_model.dart';
 
-class normalweight extends StatefulWidget {
-  const normalweight({Key? key}) : super(key: key);
+class overweight extends StatefulWidget {
+  const overweight({Key? key}) : super(key: key);
 
   @override
-  _normalweightState createState() => _normalweightState();
+  _overweightState createState() => _overweightState();
 }
 
 // int current = Random().nextInt(WLFruitsList.length);
 
-class _normalweightState extends State<normalweight> {
-  Wgainfruits wgainfruit = WGFruitsList[0];
+class _overweightState extends State<overweight> {
+  Wlossfruits wlossfruit = WLFruitsList[0];
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +27,13 @@ class _normalweightState extends State<normalweight> {
           // floating: true,
           flexibleSpace: FlexibleSpaceBar(
             background: Image.asset(
-              'assets/weight/underweight.png',
+              'assets/weight/overweight.png',
               width: 500,
               height: 200,
               fit: BoxFit.cover,
             ),
             title: const Text(
-              'Normal Weight',
+              'Weight Loss Fruits & Drinks',
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 16.0,
@@ -63,7 +62,7 @@ class _normalweightState extends State<normalweight> {
                   child: Column(
                     children: [
                       Image.network(
-                        WGFruitsList[index].image,
+                        WLFruitsList[index].image,
                         height: height * 0.20,
                         width: 200,
                         fit: BoxFit.cover,
@@ -72,7 +71,7 @@ class _normalweightState extends State<normalweight> {
                         height: 10,
                       ),
                       Text(
-                        WGFruitsList[index].name,
+                        WLFruitsList[index].name,
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
@@ -81,7 +80,7 @@ class _normalweightState extends State<normalweight> {
                 ),
               ),
             );
-          }, childCount: WGFruitsList.length),
+          }, childCount: WLFruitsList.length),
         ),
       ]),
     );

@@ -220,22 +220,6 @@ class _EditProfileState extends State<EditProfile> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // ClipRRect(
-                            //   borderRadius: BorderRadius.circular(80.0),
-                            //   child: (imageFile == null)
-                            //       ? Image.network(
-                            //           defaultProfileUrl,
-                            //           fit: BoxFit.cover,
-                            //           width: 120,
-                            //           height: 120,
-                            //         )
-                            //       : Image.file(
-                            //           File(imageFile!.path),
-                            //           fit: BoxFit.cover,
-                            //           width: 120,
-                            //           height: 120,
-                            //         ),
-                            // ),
                             Container(
                               width: 130,
                               height: 130,
@@ -246,8 +230,9 @@ class _EditProfileState extends State<EditProfile> {
                                         updateData.photoURL.toString()),
                               ),
                               decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 4, color: Colors.black),
+                                border: Border.all(
+                                    width: 4,
+                                    color: Theme.of(context).bottomAppBarColor),
                                 boxShadow: [
                                   BoxShadow(
                                       spreadRadius: 2,
@@ -268,10 +253,11 @@ class _EditProfileState extends State<EditProfile> {
                           height: 40,
                           width: 40,
                           decoration: BoxDecoration(
-                              color: Colors.redAccent.shade100,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               shape: BoxShape.circle,
-                              border:
-                                  Border.all(width: 4, color: Colors.black)),
+                              border: Border.all(
+                                  width: 4,
+                                  color: Theme.of(context).bottomAppBarColor)),
                           child: IconButton(
                             onPressed: () async {
                               _showChoiceDialog(context);
@@ -313,22 +299,20 @@ class _EditProfileState extends State<EditProfile> {
                   decoration: InputDecoration(
                     labelText: 'DOB',
                     labelStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                     hintStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey),
-                    prefixIcon: const Icon(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    prefixIcon: Icon(
                       Icons.calendar_today,
-                      color: Colors.black,
+                      color: Theme.of(context).iconTheme.color,
                       size: 32,
                     ),
-                    suffixIcon: const Icon(
-                      Icons.edit,
-                      color: Colors.black,
-                    ),
+                    suffixIcon: Icon(Icons.edit,
+                        color: Theme.of(context).appBarTheme.foregroundColor),
                     contentPadding: const EdgeInsets.only(bottom: 3),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     hintText: updateData.birthdate ?? 'DOB',
@@ -352,25 +336,21 @@ class _EditProfileState extends State<EditProfile> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 25),
                 child: DropdownButtonFormField(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                       prefixIcon: Icon(
                         Icons.group_outlined,
-                        color: Colors.black,
+                        color: Theme.of(context).iconTheme.color,
                         size: 32,
                       ),
                       labelText: 'Gender',
-                      labelStyle: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold)),
+                      labelStyle: TextStyle(fontWeight: FontWeight.bold)),
                   value: updateData.gender == ''
                       ? selectedGender
                       : updateData.gender,
-                  icon: const Icon(
-                    Icons.arrow_drop_down,
-                    color: Colors.black,
-                  ),
+                  icon: Icon(Icons.arrow_drop_down,
+                      color: Theme.of(context).appBarTheme.foregroundColor),
                   iconSize: 26,
-                  style: const TextStyle(
-                      color: Colors.grey, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedGender = newValue!;
@@ -412,9 +392,9 @@ class _EditProfileState extends State<EditProfile> {
                     child: const Text(
                       "Cancel",
                       style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2.2,
-                          color: Colors.black),
+                        fontSize: 14,
+                        letterSpacing: 2.2,
+                      ),
                     ),
                   ),
                   RaisedButton(
@@ -452,6 +432,7 @@ class _EditProfileState extends State<EditProfile> {
                                   isGenderChanged == true)
                               ? selectedGender
                               : updateData.gender,
+                          updateData.bmi,
                           context);
                     },
                     elevation: 2,
@@ -461,9 +442,10 @@ class _EditProfileState extends State<EditProfile> {
                     child: const Text(
                       "Save",
                       style: TextStyle(
-                          fontSize: 14,
-                          letterSpacing: 2.2,
-                          color: Colors.white),
+                        fontSize: 14,
+                        letterSpacing: 2.2,
+                        // color: Colors.white
+                      ),
                     ),
                   ),
                 ],
@@ -497,26 +479,30 @@ class _EditProfileState extends State<EditProfile> {
         decoration: InputDecoration(
           prefixIcon: Icon(
             icon,
-            color: Colors.black,
+            color: Theme.of(context).iconTheme.color,
             size: 32,
           ),
           suffixIcon: isEmail
               ? Icon(
                   Icons.lock,
-                  color: Colors.black,
+                  color: Theme.of(context).appBarTheme.foregroundColor,
                 )
               : Icon(
                   Icons.edit,
-                  color: Colors.black,
+                  color: Theme.of(context).appBarTheme.foregroundColor,
                 ),
           contentPadding: const EdgeInsets.only(bottom: 3),
           labelText: lableText,
           labelStyle: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
           floatingLabelBehavior: FloatingLabelBehavior.always,
           hintText: placeHolder,
           hintStyle: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

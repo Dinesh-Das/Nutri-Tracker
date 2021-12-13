@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -11,10 +12,22 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    currentTheme.addListener(() {
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -22,22 +35,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Nutri-Tracker',
-        theme: ThemeData(
-          // primarySwatch: Colors.green,
-          // define our text field style
-          inputDecorationTheme: const InputDecorationTheme(
-            filled: true,
-            fillColor: Colors.white70,
-            border: InputBorder.none,
-            hintStyle: TextStyle(color: Colors.black),
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 16 * 1.2, horizontal: 16),
-          ),
-        ),
-        // theme: ThemeData.dark().copyWith(
-        //   primaryColor: Color(0xFF0A0E21),
-        //   scaffoldBackgroundColor: Color(0xFF0A0E21),
-        // ),
+        theme: CustomTheme.lightTheme,
+        darkTheme: CustomTheme.darkTheme,
+        themeMode: currentTheme.currentTheme,
         home: const Splash(),
       ),
     );

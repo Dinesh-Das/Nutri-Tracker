@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:nutri_tracker/admin/admin_home.dart';
 import 'package:nutri_tracker/homepage/bottom_navigation.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
 import 'package:nutri_tracker/database/google_signin.dart';
@@ -260,6 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
   //login function
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
+      // nutritracker@admin.in
       try {
         UserLocalData.savePass(passwordController.text);
         UserLocalData.saveMail(emailController.text);
@@ -269,8 +271,17 @@ class _LoginScreenState extends State<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Login Successful'),
         ));
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const BottomNavigation()));
+
+        //if admin go to admin page
+        if (emailController.text == 'nutritracker@admin.in') {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const AdminPage()));
+        } else {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const BottomNavigation()));
+        }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           ScaffoldMessenger.of(context).showSnackBar(
