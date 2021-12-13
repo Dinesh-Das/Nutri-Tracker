@@ -2,6 +2,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
+import 'package:nutri_tracker/homepage/RecipePage/recipe.dart';
 import 'package:nutri_tracker/themes.dart';
 
 import 'dietrylist/diet.dart';
@@ -22,7 +23,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
     const FavouritePage(),
     home(),
     // const diet(),
-    const ViewProfile(),
+    // const ViewProfile(),
+    // recipe()
   ];
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
         Icons.home,
         size: 30,
       ),
+      // const Icon(
+      //   Icons.hotel,
+      //   size: 30,
+      // ),
       // Icon(
       //   Icons.search,
       //   size: 30,

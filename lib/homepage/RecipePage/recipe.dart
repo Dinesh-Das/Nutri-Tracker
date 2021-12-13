@@ -1,9 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/screens/RecipePage/models/recipe.api.dart';
-import 'package:nutri_tracker/screens/RecipePage/models/recipe.dart';
-import 'package:nutri_tracker/screens/RecipePage/widgets/recipe_card.dart';
+import 'package:nutri_tracker/homepage/RecipePage/models/recipe.api.dart';
+import 'package:nutri_tracker/homepage/RecipePage/models/recipe.dart';
+import 'package:nutri_tracker/homepage/RecipePage/widgets/recipe_card.dart';
 import 'package:nutri_tracker/themes.dart';
 
 class recipe extends StatefulWidget {
