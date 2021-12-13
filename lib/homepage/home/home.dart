@@ -3,19 +3,21 @@ import "dart:math";
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/bmi/bmi/inputpage.dart';
 import 'package:nutri_tracker/bmi/screens/calculator_screen.dart';
 import 'package:nutri_tracker/constants.dart';
+import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
+import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/homepage/home/quotes.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages/next%20page/normalweight.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages/next%20page/underweight.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages/overweight_home.dart';
 import 'package:nutri_tracker/homepage/home/weightdetailmodel.dart';
 import 'package:nutri_tracker/themes.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+
+import 'weight_pages/normalweight.dart';
+import 'weight_pages/overweight.dart';
+import 'weight_pages/underweight.dart';
 
 class home extends StatefulWidget {
   home({Key? key}) : super(key: key);
@@ -42,6 +44,7 @@ class _homeState extends State<home> {
   Quotes data = mylist[current];
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
+  bool theme = false;
   String greetings() {
     var hour = DateTime.now().hour;
     if (hour <= 12) {
@@ -89,14 +92,20 @@ class _homeState extends State<home> {
           // style: TextStyle(color: MyColors.heading),
         ),
         centerTitle: true,
-        foregroundColor: MyColors.shortDesc,
-        backgroundColor: MyColors.backColor,
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () {
+                currentTheme.toggleTheme();
+
+                setState(() {
+                  theme = !theme;
+                });
+              },
               icon: Icon(
-                Icons.dark_mode,
+                theme ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
                 size: 30,
               ))
         ],
@@ -118,7 +127,7 @@ class _homeState extends State<home> {
                           bottomLeft: Radius.circular(40.0)),
                       child: Container(
                         height: height * 0.38,
-                        color: MyColors.backColor,
+                        color: Theme.of(context).appBarTheme.backgroundColor,
                         padding: EdgeInsets.only(left: 16, right: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,25 +156,39 @@ class _homeState extends State<home> {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  child: CircleAvatar(
-                                    radius: 35,
-                                    backgroundImage: loggedInUser.photoURL != ''
-                                        ? NetworkImage(
-                                            loggedInUser.photoURL.toString())
-                                        : NetworkImage(defaultProfileUrl),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 4, color: Colors.white),
-                                    boxShadow: [
-                                      BoxShadow(
-                                          spreadRadius: 2,
-                                          blurRadius: 10,
-                                          color: Colors.black.withOpacity(0.1),
-                                          offset: const Offset(0, 10)),
-                                    ],
-                                    shape: BoxShape.circle,
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ViewProfile()));
+                                  },
+                                  child: Container(
+                                    child: CircleAvatar(
+                                      radius: 35,
+                                      backgroundImage: loggedInUser.photoURL !=
+                                              ''
+                                          ? NetworkImage(
+                                              loggedInUser.photoURL.toString())
+                                          : NetworkImage(defaultProfileUrl),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        width: 4,
+                                        color:
+                                            Theme.of(context).bottomAppBarColor,
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                            spreadRadius: 2,
+                                            blurRadius: 10,
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            offset: const Offset(0, 10)),
+                                      ],
+                                      shape: BoxShape.circle,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -181,15 +204,17 @@ class _homeState extends State<home> {
                               children: [
                                 CircularPercentIndicator(
                                   radius: 140,
-                                  backgroundColor: Colors.white,
-                                  progressColor: MyColors.iconsColor,
+                                  backgroundColor:
+                                      Theme.of(context).scaffoldBackgroundColor,
+                                  progressColor:
+                                      Theme.of(context).iconTheme.color,
                                   percent: 0.4,
                                   lineWidth: 10,
                                   circularStrokeCap: CircularStrokeCap.round,
                                   animation: true,
                                   animationDuration: 2000,
                                   center: Text(
-                                    "0.4",
+                                    "${loggedInUser.bmi}",
                                     style: TextStyle(fontSize: 24),
                                   ),
                                 ),
@@ -247,7 +272,8 @@ class _homeState extends State<home> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                           child: Container(
-                            color: MyColors.backColor,
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
                             height: 220,
                             child: InkWell(
                               onTap: () {
@@ -303,7 +329,8 @@ class _homeState extends State<home> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                           child: Container(
-                            color: MyColors.backColor,
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
                             height: 220,
                             child: InkWell(
                               onTap: () {
@@ -359,14 +386,15 @@ class _homeState extends State<home> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.all(Radius.circular(30)),
                           child: Container(
-                            color: MyColors.backColor,
+                            color:
+                                Theme.of(context).appBarTheme.backgroundColor,
                             height: 220,
                             child: InkWell(
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => overweightHome(),
+                                    builder: (context) => overweight(),
                                   ),
                                 );
                               },
@@ -424,20 +452,19 @@ class _homeState extends State<home> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(Radius.circular(30)),
                     child: Container(
-                        color: MyColors.backColor,
+                        color: Theme.of(context).appBarTheme.backgroundColor,
                         height: 97,
                         child: InkWell(
                           onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => InputPage())),
+                                  builder: (context) => CalculatorScreen())),
                           child: ClipRRect(
                             borderRadius: BorderRadius.all(Radius.circular(30)),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Icon(Icons.calculate,
-                                    size: 35, color: MyColors.shortDesc),
+                                Icon(Icons.calculate, size: 35),
                                 Text(
                                   "Click here to calculate bmi",
                                   style: const TextStyle(fontSize: 22.0),
@@ -452,29 +479,29 @@ class _homeState extends State<home> {
               SizedBox(
                 height: 5,
               ),
-              // Positioned(
-              //   top: height * 0.42,
-              //   left: 30,
-              //   right: 0,
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: ClipRRect(
-              //       borderRadius: BorderRadius.all(Radius.circular(30)),
-              //       child: Container(
-              //           color: MyColors.backColor,
-              //           height: 300,
-              //           child: InkWell(
-              //             onTap: () {},
-              //             child: ClipRRect(
-              //               borderRadius: BorderRadius.all(Radius.circular(30)),
-              //               child: Center(
-              //                 child: Text("Show Some Progress here"),
-              //               ),
-              //             ),
-              //           )),
-              //     ),
-              //   ),
-              // ),
+              Positioned(
+                top: height * 0.42,
+                left: 30,
+                right: 0,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    child: Container(
+                        color: Theme.of(context).appBarTheme.backgroundColor,
+                        height: 300,
+                        child: InkWell(
+                          onTap: () {},
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(Radius.circular(30)),
+                            child: Center(
+                              child: Text("Show Some Progress here"),
+                            ),
+                          ),
+                        )),
+                  ),
+                ),
+              ),
               SizedBox(
                 height: height * 0.08,
               ),

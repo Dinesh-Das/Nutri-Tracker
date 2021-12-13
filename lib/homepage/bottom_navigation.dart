@@ -21,8 +21,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
   final screens = [
     const FavouritePage(),
     home(),
-    // const diet(),
-    const ViewProfile(),
+    const diet(),
+    // const ViewProfile(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -35,10 +35,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
         Icons.home,
         size: 30,
       ),
-      // Icon(
-      //   Icons.search,
-      //   size: 30,
-      // ),
+      Icon(
+        Icons.search,
+        size: 30,
+      ),
       // Icon(
       //   Icons.person,
       //   size: 30,
