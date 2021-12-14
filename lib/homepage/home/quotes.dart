@@ -29,10 +29,10 @@ List<Quotes> mylist = [
       auther: 'Adelle Davis',
       quote:
           '"Eat breakfast like a king, lunch like a prince, and dinner like a pauper." '),
-  Quotes(
-      auther: 'Graeme Obree',
-      quote:
-          '"Training is bad for you! Training followed by rest and proper nutrition is good for you and will make you better prepared for the event you are training for."'),
+  // Quotes(
+  //     auther: 'Graeme Obree',
+  //     quote:
+  //         '"Training is bad for you! Training followed by rest and proper nutrition is good for you and will make you better prepared for the event you are training for."'),
   Quotes(
       auther: 'John Robbins',
       quote:
