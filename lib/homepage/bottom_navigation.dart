@@ -38,7 +38,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         size: 30,
       ),
       // const Icon(
-      //   Icons.hotel,
+      //   Icons.restaurant_menu,
       //   size: 30,
       // ),
       // Icon(

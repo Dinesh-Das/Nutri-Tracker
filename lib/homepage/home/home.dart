@@ -206,15 +206,18 @@ class _homeState extends State<home> {
                                         textDirection: TextDirection.ltr,
                                         style: TextStyle(
                                           fontSize: 12,
-                                          fontFamily: 'Countryside',
+                                          fontFamily: 'Raleway',
                                         ),
                                       ),
+                                    ),
+                                    SizedBox(
+                                      height: 5,
                                     ),
                                     Text(
                                       '- ${data.auther.toString()}',
                                       style: TextStyle(
                                           fontSize: 13,
-                                          fontFamily: 'Countryside',
+                                          fontFamily: 'Raleway',
                                           fontWeight: FontWeight.bold),
                                       textDirection: TextDirection.ltr,
                                       textAlign: TextAlign.left,
