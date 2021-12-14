@@ -61,7 +61,7 @@ class _overweightmealsState extends State<overweightmeals> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => overweight_meals_details(),
+                      builder: (context) => overweight_meals_details(index),
                     ),
                   );
                 },
