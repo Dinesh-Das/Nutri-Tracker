@@ -215,7 +215,7 @@ class _homeState extends State<home> {
                                   animation: true,
                                   animationDuration: 2000,
                                   center: Text(
-                                    "${loggedInUser.bmi}",
+                                    "${loggedInUser.bmi ?? "BMI"}",
                                     style: TextStyle(fontSize: 24),
                                   ),
                                 ),
