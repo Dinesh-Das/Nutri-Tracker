@@ -7,6 +7,10 @@ class CustomTheme with ChangeNotifier {
   static bool _isDarkTheme = false;
   static bool _isSystemTheme = false;
   ThemeMode get currentTheme => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
+  bool isDarkTheme() {
+    if (_isDarkTheme) return true;
+    return false;
+  }
 
   void toggleTheme() {
     _isDarkTheme = !_isDarkTheme;
@@ -31,17 +35,19 @@ class CustomTheme with ChangeNotifier {
 
   static ThemeData get darkTheme {
     return ThemeData(
-        colorScheme: const ColorScheme.dark(),
-        scaffoldBackgroundColor: Colors.black,
-        primaryColor: Colors.black,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF4A4E69),
-          foregroundColor: Color(0XFFF2E9E4),
-        ),
-
-        //back color bottom bar
-        bottomAppBarColor: Color(0XFF6d6875),
+      colorScheme: const ColorScheme.dark(),
+      scaffoldBackgroundColor: Colors.black,
+      primaryColor: Colors.black,
+      appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xFF4A4E69),
-        iconTheme: IconThemeData(color: Colors.purple, opacity: 0.8));
+        foregroundColor: Color(0XFFF2E9E4),
+      ),
+
+      //back color bottom bar
+      bottomAppBarColor: Color(0XFF6d6875),
+      backgroundColor: Color(0xFF4A4E69),
+      iconTheme: IconThemeData(color: Color(0xffc77dff), opacity: 0.8),
+      selectedRowColor: Colors.blue,
+    );
   }
 }
