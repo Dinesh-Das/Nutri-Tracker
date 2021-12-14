@@ -224,7 +224,8 @@ class _EditProfileState extends State<EditProfile> {
                               width: 130,
                               height: 130,
                               child: CircleAvatar(
-                                backgroundImage: updateData.photoURL == ''
+                                backgroundImage: updateData.photoURL == '' ||
+                                        updateData.photoURL == null
                                     ? NetworkImage(defaultProfileUrl)
                                     : NetworkImage(
                                         updateData.photoURL.toString()),
@@ -350,7 +351,8 @@ class _EditProfileState extends State<EditProfile> {
                   icon: Icon(Icons.arrow_drop_down,
                       color: Theme.of(context).appBarTheme.foregroundColor),
                   iconSize: 26,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.blueGrey),
                   onChanged: (String? newValue) {
                     setState(() {
                       selectedGender = newValue!;
@@ -368,11 +370,11 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
 
-              buildTextField("height", updateData.height ?? "", Icons.height,
-                  heightController, false),
-              buildTextField("weight", updateData.weight ?? "", Icons.ac_unit,
-                  weightController, false),
-              buildTextField("Location", updateData.location ?? "",
+              buildTextField("height", updateData.height ?? "height",
+                  Icons.height, heightController, false),
+              buildTextField("weight", updateData.weight ?? "weight",
+                  Icons.ac_unit, weightController, false),
+              buildTextField("Location", updateData.location ?? "Location",
                   Icons.location_city, locationController, false),
               buildTextField("About", updateData.bio ?? "Short Description",
                   Icons.info_sharp, bioController, false),
@@ -433,6 +435,7 @@ class _EditProfileState extends State<EditProfile> {
                               ? selectedGender
                               : updateData.gender,
                           updateData.bmi,
+                          updateData.bmr,
                           context);
                     },
                     elevation: 2,

@@ -38,6 +38,7 @@ class _ViewProfileState extends State<ViewProfile> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var username = retrivedData.username;
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -68,30 +69,15 @@ class _ViewProfileState extends State<ViewProfile> {
                           onTap: () {
                             viewProfilePicDialog(
                                 context,
-                                retrivedData.photoURL.toString(),
+                                retrivedData.photoURL ?? defaultProfileUrl,
                                 retrivedData.name.toString());
                           },
                           child: Container(
                             width: 120,
                             height: 120,
-                            // child: ClipRRect(
-                            //   borderRadius: BorderRadius.circular(80.0),
-                            //   child: (retrivedData.photoURL == "")
-                            //       ? Image.network(
-                            //           defaultProfileUrl,
-                            //           fit: BoxFit.cover,
-                            //           width: 120,
-                            //           height: 120,
-                            //         )
-                            //       : Image.network(
-                            //           retrivedData.photoURL.toString(),
-                            //           fit: BoxFit.cover,
-                            //           width: 120,
-                            //           height: 120,
-                            //         ),
-                            // ),
                             child: CircleAvatar(
-                              backgroundImage: (retrivedData.photoURL == "")
+                              backgroundImage: (retrivedData.photoURL == "" ||
+                                      retrivedData.photoURL == null)
                                   ? NetworkImage(defaultProfileUrl)
                                   : NetworkImage(
                                       retrivedData.photoURL.toString()),
@@ -114,7 +100,7 @@ class _ViewProfileState extends State<ViewProfile> {
                           height: 4,
                         ),
                         Text(
-                          retrivedData.username.toString(),
+                          username ?? "User-name",
                           style: const TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
@@ -161,21 +147,24 @@ class _ViewProfileState extends State<ViewProfile> {
               height: 16,
             ),
             displayData(Icons.face_retouching_natural_sharp,
-                retrivedData.name.toString(), retrivedData.gender.toString()),
+                retrivedData.name.toString(), retrivedData.gender ?? 'gender'),
             displayData(Icons.mobile_screen_share_outlined,
-                retrivedData.mobile.toString(), "Verified"),
+                retrivedData.mobile ?? "Mobile Number", "Verified"),
             displayData(Icons.local_hospital_outlined, "Date of Birth",
-                retrivedData.birthdate.toString()),
-            displayData(Icons.height, "Height", retrivedData.height.toString()),
+                retrivedData.birthdate ?? "DOB"),
+            displayData(
+                Icons.height, "Height", retrivedData.height ?? "height"),
             displayData(Icons.monitor_weight_outlined, "Weight",
-                retrivedData.weight.toString()),
+                retrivedData.weight ?? "weight"),
             displayData(Icons.location_on_outlined, "Place",
-                retrivedData.location.toString()),
+                retrivedData.location ?? "location"),
             displayData(Icons.timelapse, "Joined Date",
-                retrivedData.creation.toString()),
-            displayData(Icons.health_and_safety_outlined,
-                "BMI : ${retrivedData.bmi}", "BMR : ${retrivedData.bmi}"),
-            displayData(Icons.code, "About", retrivedData.bio.toString()),
+                retrivedData.creation ?? "joined"),
+            displayData(
+                Icons.health_and_safety_outlined,
+                "BMI : ${retrivedData.bmi ?? "BMI"}",
+                "BMR : ${retrivedData.bmr ?? "BMR"}"),
+            displayData(Icons.code, "About", retrivedData.bio ?? "About"),
             const SizedBox(
               height: 25,
             ),

@@ -97,11 +97,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           color: Colors.green,
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+            color: Theme.of(context).scaffoldBackgroundColor,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(
@@ -125,18 +125,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         height: 25,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          ActionChip(
-                              backgroundColor: Colors.green,
-                              padding: const EdgeInsets.all(13),
-                              label: const Text(
+                          SizedBox(
+                            width: 150,
+                            child: FloatingActionButton(
+                              child: const Text(
                                 "Send Email",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 18, fontWeight: FontWeight.bold),
                               ),
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
                               onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   setState(() {
@@ -144,19 +144,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   });
                                 }
                                 resetPassword();
-                              }),
-                          const SizedBox(
-                            width: 20,
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50.0)),
+                            ),
                           ),
-                          ActionChip(
-                              backgroundColor: Colors.green,
-                              padding: const EdgeInsets.all(13),
-                              label: const Text(
+                          SizedBox(
+                            width: 150,
+                            child: FloatingActionButton(
+                              child: const Text(
                                 "Login?",
                                 style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
                               onPressed: () {
                                 Navigator.pushReplacement(
@@ -164,7 +163,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             const LoginScreen()));
-                              })
+                              },
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50.0)),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(

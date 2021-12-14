@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/settings/change_password.dart';
 import 'package:nutri_tracker/drawer/settings/delete_user.dart';
@@ -12,15 +13,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool setDarkTheme = false;
+  bool setDarkTheme = currentTheme.isDarkTheme();
   bool setNotification = false;
   bool setRemainder = false;
-
-  onThemeChange(bool value) {
-    setState(() {
-      setDarkTheme = value;
-    });
-  }
 
   onNotificationChange(bool value) {
     setState(() {
@@ -36,6 +31,13 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    onThemeChange(bool value) {
+      setState(() {
+        setDarkTheme = value;
+        currentTheme.toggleTheme();
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -59,7 +61,6 @@ class _SettingsPageState extends State<SettingsPage> {
               children: const [
                 Icon(
                   Icons.person_outline,
-                  color: Colors.blue,
                 ),
                 SizedBox(
                   width: 10,
@@ -165,7 +166,6 @@ class _SettingsPageState extends State<SettingsPage> {
               children: const [
                 Icon(
                   Icons.volume_up_outlined,
-                  color: Colors.blue,
                 ),
                 SizedBox(
                   width: 10,
@@ -222,53 +222,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 }),
           ),
         ],
-      ),
-    );
-  }
-
-  GestureDetector buildAccountOption(BuildContext context, String title) {
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text(title),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("Option 1"),
-                    Text("Option 2"),
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text("Close")),
-                ],
-              );
-            });
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600]),
-            ),
-            const Icon(
-              Icons.arrow_forward_ios,
-              color: Colors.grey,
-            )
-          ],
-        ),
       ),
     );
   }

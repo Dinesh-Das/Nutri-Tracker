@@ -167,11 +167,12 @@ class _homeState extends State<home> {
                                   child: Container(
                                     child: CircleAvatar(
                                       radius: 35,
-                                      backgroundImage: loggedInUser.photoURL !=
-                                              ''
-                                          ? NetworkImage(
-                                              loggedInUser.photoURL.toString())
-                                          : NetworkImage(defaultProfileUrl),
+                                      backgroundImage: loggedInUser.photoURL ==
+                                                  '' ||
+                                              loggedInUser.photoURL == null
+                                          ? NetworkImage(defaultProfileUrl)
+                                          : NetworkImage(
+                                              loggedInUser.photoURL.toString()),
                                     ),
                                     decoration: BoxDecoration(
                                       border: Border.all(
@@ -214,7 +215,7 @@ class _homeState extends State<home> {
                                   animation: true,
                                   animationDuration: 2000,
                                   center: Text(
-                                    "${loggedInUser.bmi}",
+                                    "${loggedInUser.bmi ?? "BMI"}",
                                     style: TextStyle(fontSize: 24),
                                   ),
                                 ),

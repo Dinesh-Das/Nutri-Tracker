@@ -63,12 +63,16 @@ class _ChangePasswordState extends State<ChangePassword> {
               child: Column(
                 children: [
                   Image.asset(
-                    "assets/forgot_password.png",
+                    "assets/images/forgot_password.png",
                     colorBlendMode: BlendMode.overlay,
+                  ),
+                  const SizedBox(
+                    height: 15,
                   ),
                   //Email
                   TextFormField(
                     autofocus: false,
+                    readOnly: true,
                     initialValue: userEmail.toString(),
                     decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.mail_outline),

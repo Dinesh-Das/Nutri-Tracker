@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'Login',
           textAlign: TextAlign.center,
           style: TextStyle(
-              fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
+              fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
         minWidth: MediaQuery.of(context).size.width,
@@ -123,11 +123,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+            color: Theme.of(context).scaffoldBackgroundColor,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(
@@ -205,43 +205,44 @@ class _LoginScreenState extends State<LoginScreen> {
                       // ),
                       // //Signin With Google Button
                       // ElevatedButton.icon(
-                      //     onPressed: () async {
-                      //       ;
-                      //       final provider = Provider.of<GoogleSignInProvider>(
-                      //           context,
-                      //           listen: false);
-                      //       provider
-                      //           .googleLogin()
-                      //           .whenComplete(() => Navigator.pushReplacement(
-                      //               context,
-                      //               MaterialPageRoute(
-                      //                   builder: (context) =>
-                      //                       BottomNavigation())))
-                      //           .catchError((error) {
-                      //         ScaffoldMessenger.of(context).showSnackBar(
-                      //           const SnackBar(
-                      //             content: Text('Error .......'),
-                      //           ),
-                      //         );
-                      //       });
-                      //     },
-                      //     style: ElevatedButton.styleFrom(
-                      //         primary: Colors.white54,
-                      //         fixedSize: const Size(double.maxFinite, 55),
-                      //         shape: RoundedRectangleBorder(
-                      //             borderRadius: BorderRadius.circular(50))),
-                      //     icon: Image.asset(
-                      //       "assets/images/google_logo.png",
-                      //       fit: BoxFit.fill,
-                      //       height: 25,
-                      //     ),
-                      //     label: const Text(
-                      //       "Sign Up With Google",
-                      //       style: TextStyle(
-                      //           color: Colors.black,
-                      //           fontWeight: FontWeight.bold,
-                      //           fontSize: 18),
-                      //     )),
+                      //   onPressed: () async {
+                      //     ;
+                      //     final provider = Provider.of<GoogleSignInProvider>(
+                      //         context,
+                      //         listen: false);
+                      //     provider
+                      //         .googleLogin()
+                      //         .whenComplete(() => Navigator.pushReplacement(
+                      //             context,
+                      //             MaterialPageRoute(
+                      //                 builder: (context) =>
+                      //                     BottomNavigation())))
+                      //         .catchError((error) {
+                      //       ScaffoldMessenger.of(context).showSnackBar(
+                      //         const SnackBar(
+                      //           content: Text('Error .......'),
+                      //         ),
+                      //       );
+                      //     });
+                      //   },
+                      //   style: ElevatedButton.styleFrom(
+                      //       primary: Colors.white54,
+                      //       fixedSize: const Size(double.maxFinite, 55),
+                      //       shape: RoundedRectangleBorder(
+                      //           borderRadius: BorderRadius.circular(50))),
+                      //   icon: Image.asset(
+                      //     "assets/images/google_logo.png",
+                      //     fit: BoxFit.fill,
+                      //     height: 25,
+                      //   ),
+                      //   label: const Text(
+                      //     "Sign Up With Google",
+                      //     style: TextStyle(
+                      //         color: Colors.black,
+                      //         fontWeight: FontWeight.bold,
+                      //         fontSize: 18),
+                      //   ),
+                      // ),
                     ],
                   )),
             ),

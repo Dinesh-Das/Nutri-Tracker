@@ -320,11 +320,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           color: Colors.green,
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+            color: Theme.of(context).scaffoldBackgroundColor,
             child: Padding(
               padding: const EdgeInsets.all(36.0),
               child: Form(

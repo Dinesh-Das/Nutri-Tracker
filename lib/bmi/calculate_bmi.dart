@@ -32,3 +32,31 @@ class BmiLogic {
     }
   }
 }
+
+class BMR {
+  final int height;
+  final int weight;
+  final String gender;
+  final int age;
+  BMR(
+      {required this.height,
+      required this.weight,
+      required this.gender,
+      required this.age,
+      required this.bmr});
+
+  double bmr;
+  String calculateBMR() {
+    if (gender == 'Male') {
+      bmr = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age);
+      return bmr.toStringAsFixed(1);
+    } else if (gender == 'Female') {
+      bmr = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age);
+      return bmr.toStringAsFixed(1);
+    }
+    return 'BMR';
+  }
+}
+
+// Men	BMR = 88.362 + (13.397 × weight in kg) + (4.799 × height in cm) - (5.677 × age in years)
+// Women	BMR = 447.593 + (9.247 × weight in kg) + (3.098 × height in cm) - (4.330 × age in years)
