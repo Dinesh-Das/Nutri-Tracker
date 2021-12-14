@@ -11,13 +11,12 @@ import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/homepage/home/quotes.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages/normalweight_home.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages/overweight_home.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages/underweight_home.dart';
 import 'package:nutri_tracker/homepage/home/weightdetailmodel.dart';
 import 'package:nutri_tracker/themes.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-
-import 'weight_pages/normalweight.dart';
-import 'weight_pages/overweight.dart';
-import 'weight_pages/underweight.dart';
 
 class home extends StatefulWidget {
   home({Key? key}) : super(key: key);
@@ -88,7 +87,7 @@ class _homeState extends State<home> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'N U T R I T R A C K E R',
+          'N U T R I - P R O V I D E R',
           // style: TextStyle(color: MyColors.heading),
         ),
         centerTitle: true,
@@ -284,7 +283,7 @@ class _homeState extends State<home> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => underweight(),
+                                    builder: (context) => underweightHome(),
                                   ),
                                 );
                               },
@@ -341,7 +340,7 @@ class _homeState extends State<home> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => normalweight(),
+                                    builder: (context) => normalweightHome(),
                                   ),
                                 );
                               },
@@ -398,7 +397,7 @@ class _homeState extends State<home> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => overweight(),
+                                    builder: (context) => overweightHome(),
                                   ),
                                 );
                               },

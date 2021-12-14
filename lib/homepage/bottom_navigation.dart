@@ -4,7 +4,6 @@ import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/homepage/RecipePage/recipe.dart';
 import 'package:nutri_tracker/themes.dart';
-
 import 'dietrylist/diet.dart';
 import 'favourite/favourite.dart';
 import 'home/home.dart';
@@ -22,7 +21,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
   final screens = [
     const FavouritePage(),
     home(),
-    const diet(),
+    // const diet(),
     // const ViewProfile(),
   ];
   @override
@@ -36,10 +35,10 @@ class _BottomNavigationState extends State<BottomNavigation> {
         Icons.home,
         size: 30,
       ),
-      Icon(
-        Icons.search,
-        size: 30,
-      ),
+      // Icon(
+      //   Icons.search,
+      //   size: 30,
+      // ),
       // Icon(
       //   Icons.person,
       //   size: 30,

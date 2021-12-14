@@ -1,12 +1,13 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages/underweight_category/underweight_drinks.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages/underweight_category/underweight_fruit.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages/overweight_category/overeight_drinks.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages/overweight_category/overweight_fruit.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages/overweight_category/overweight_meals.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages/underweight_category/underweight_meals.dart';
 
-class underweightHome extends StatelessWidget {
-  const underweightHome({Key? key}) : super(key: key);
+class normalweightHome extends StatelessWidget {
+  const normalweightHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +17,7 @@ class underweightHome extends StatelessWidget {
         elevation: 0,
         foregroundColor: Colors.black,
         leading: Icon(Icons.inventory_outlined),
-        title: Text('Underweight Categories',
-            style: TextStyle(color: Colors.black)),
+        title: Text('Normal Categories', style: TextStyle(color: Colors.black)),
         centerTitle: true,
       ),
       body: Padding(
@@ -31,7 +31,7 @@ class underweightHome extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => underweightfruits(),
+                        builder: (context) => underweightmeals(),
                       ),
                     );
                   },
@@ -71,7 +71,7 @@ class underweightHome extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => underweightdrinks(),
+                        builder: (context) => normalweight(),
                       ),
                     );
                   },
@@ -111,7 +111,7 @@ class underweightHome extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => underweightmeals(),
+                        builder: (context) => overweightmeals(),
                       ),
                     );
                   },
