@@ -46,7 +46,7 @@ class CustomTheme with ChangeNotifier {
       //back color bottom bar
       bottomAppBarColor: Color(0XFF6d6875),
       backgroundColor: Color(0xFF4A4E69),
-      iconTheme: IconThemeData(color: Color(0xffc77dff), opacity: 0.8),
+      iconTheme: IconThemeData(color: Color(0xffe0aaff), opacity: 0.8),
       selectedRowColor: Colors.blue,
     );
   }

@@ -17,6 +17,7 @@ updateDetailsToFirestore(
     String? weight,
     String? gender,
     String? bmi,
+    String? bmr,
     BuildContext context) async {
   // calling firestore
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
@@ -36,6 +37,7 @@ updateDetailsToFirestore(
   userModel.weight = weight;
   userModel.gender = gender;
   userModel.bmi = bmi;
+  userModel.bmr = bmr;
 
   showLoadingAlertDialog(context, 'Saving Data');
   await firebaseFirestore
@@ -86,6 +88,7 @@ updateBMIData(
   String? weight,
   String? bmi,
   String? gender,
+  String? bmr,
 ) async {
   User? user = FirebaseAuth.instance.currentUser;
   await FirebaseFirestore.instance
@@ -95,6 +98,7 @@ updateBMIData(
     'height': height,
     'weight': weight,
     'bmi': bmi,
+    'bmr': bmr,
     'gender': gender,
   });
 }

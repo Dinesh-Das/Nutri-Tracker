@@ -5,6 +5,7 @@ class UserModel {
   String? bmi;
   String? photoURL;
   String? username,
+      bmr,
       gender,
       height,
       mobile,
@@ -28,6 +29,7 @@ class UserModel {
     this.bio,
     this.location,
     this.creation,
+    this.bmr,
   });
 
   //reciving data from server
@@ -47,6 +49,7 @@ class UserModel {
       bio: map['bio'],
       location: map['location'],
       creation: map['creation'],
+      bmr: map['bmr'],
     );
   }
 
@@ -67,6 +70,7 @@ class UserModel {
       'bio': bio,
       'location': location,
       'creation': creation,
+      'bmr': bmr,
     };
   }
 }

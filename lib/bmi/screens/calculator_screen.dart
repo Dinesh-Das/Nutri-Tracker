@@ -230,8 +230,16 @@ class CalculatorScreenState extends State<CalculatorScreen> {
               } else {
                 gender = 'Female';
               }
+              BMR bmr = BMR(
+                  age: age,
+                  height: height,
+                  weight: weight,
+                  bmr: 0,
+                  gender: gender);
+              var bmrResult = bmr.calculateBMR();
+              print("bmr result $bmrResult");
               updateBMIData(height.toString(), weight.toString(),
-                  result.toString(), gender);
+                  result.toString(), gender, bmrResult.toString());
               Navigator.push(
                 context,
                 MaterialPageRoute(

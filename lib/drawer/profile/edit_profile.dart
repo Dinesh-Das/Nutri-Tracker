@@ -224,7 +224,8 @@ class _EditProfileState extends State<EditProfile> {
                               width: 130,
                               height: 130,
                               child: CircleAvatar(
-                                backgroundImage: updateData.photoURL == ''
+                                backgroundImage: updateData.photoURL == '' ||
+                                        updateData.photoURL == null
                                     ? NetworkImage(defaultProfileUrl)
                                     : NetworkImage(
                                         updateData.photoURL.toString()),
@@ -433,6 +434,7 @@ class _EditProfileState extends State<EditProfile> {
                               ? selectedGender
                               : updateData.gender,
                           updateData.bmi,
+                          updateData.bmr,
                           context);
                     },
                     elevation: 2,

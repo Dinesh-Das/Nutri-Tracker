@@ -91,7 +91,8 @@ class _ViewProfileState extends State<ViewProfile> {
                             //         ),
                             // ),
                             child: CircleAvatar(
-                              backgroundImage: (retrivedData.photoURL == "")
+                              backgroundImage: (retrivedData.photoURL == "" ||
+                                      retrivedData.photoURL == null)
                                   ? NetworkImage(defaultProfileUrl)
                                   : NetworkImage(
                                       retrivedData.photoURL.toString()),
@@ -174,7 +175,7 @@ class _ViewProfileState extends State<ViewProfile> {
             displayData(Icons.timelapse, "Joined Date",
                 retrivedData.creation.toString()),
             displayData(Icons.health_and_safety_outlined,
-                "BMI : ${retrivedData.bmi}", "BMR : ${retrivedData.bmi}"),
+                "BMI : ${retrivedData.bmi}", "BMR : ${retrivedData.bmr}"),
             displayData(Icons.code, "About", retrivedData.bio.toString()),
             const SizedBox(
               height: 25,
