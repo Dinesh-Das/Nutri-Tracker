@@ -134,6 +134,7 @@ class _AddDataState extends State<AddData> {
                             selectedSubCategory = newValue!;
                             isSubCategoryChanged = !isSubCategoryChanged;
                           });
+                          setState(() {});
                         },
                         isExpanded: false,
                         items: subCategory
@@ -159,7 +160,7 @@ class _AddDataState extends State<AddData> {
                     const SizedBox(
                       height: 10,
                     ),
-                    selectedSubCategory == "Meal"
+                    selectedSubCategory == "Meals"
                         ? buildFormItems("Ingredients", Icons.description,
                             descriptionController)
                         : buildFormItems("Description", Icons.description,
@@ -172,7 +173,7 @@ class _AddDataState extends State<AddData> {
                     const SizedBox(
                       height: 10,
                     ),
-                    selectedSubCategory == "Meal"
+                    selectedSubCategory == "Meals"
                         ? buildFormItems(
                             "Recipie", Icons.description, descriptionController)
                         : buildFormItems(
@@ -180,8 +181,22 @@ class _AddDataState extends State<AddData> {
                     const SizedBox(
                       height: 10,
                     ),
-                    buildFormItems("Side Effects", Icons.dangerous_outlined,
-                        sideEffectsController),
+                    selectedSubCategory == "Meals"
+                        ? TextFormField(
+                            readOnly: true,
+                            decoration: InputDecoration(
+                                prefixIcon: Icon(
+                                  Icons.lock,
+                                  color: Theme.of(context).iconTheme.color,
+                                ),
+                                contentPadding:
+                                    const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                                hintText: "Not Required",
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10))),
+                          )
+                        : buildFormItems("Side Effects",
+                            Icons.dangerous_outlined, sideEffectsController),
                     const SizedBox(
                       height: 30,
                     ),
