@@ -1,6 +1,10 @@
+// ignore_for_file: prefer_const_constructors, avoid_print
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:nutri_tracker/homepage/home/home.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages/overweight_category/overweight_meals_details/overweight_meals_details.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages_model/meal%20model/weight_loss_meal.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages_model/weight_gain_frt_model.dart';
@@ -65,31 +69,100 @@ class _overweightmealsState extends State<overweightmeals> {
                     ),
                   );
                 },
-                child: Container(
-                  height: 220,
-                  width: 200,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(30),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(30),
+                  ),
+                  child: Container(
+                    color: Colors.black12,
+                    height: 220,
+                    width: 200,
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(30),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              Wlossmeal[index].image,
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: Transform.translate(
+                          offset: Offset(50, -90),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 60, vertical: 110),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white),
+                            child: IconButton(
+                              onPressed: () {
+                                // Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => home(),
+                                //   ),
+                                // );
+                                print('Added to Fav.');
+                              },
+                              icon: Icon(
+                                Icons.favorite_outlined,
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Column(
-                      children: [
-                        Image.network(
-                          Wlossmeal[index].image,
-                          height: height * 0.20,
-                          width: 200,
-                          fit: BoxFit.cover,
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          Wlossmeal[index].name,
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
+                    //  Column(
+                    //   children: [
+                    //     Image.network(
+                    //       Wlossmeal[index].image,
+                    //       height: height * 0.20,
+                    //       width: 200,
+                    //       fit: BoxFit.cover,
+                    //     ),
+                    //     SizedBox(
+                    //       height: 20,
+                    //     ),
+                    //     // SizedBox(
+                    //     //   height: 60,
+                    //     //   child: Transform.translate(
+                    //     //     offset: Offset(50, -150),
+                    //     //     child: Container(
+                    //     //       margin: EdgeInsets.symmetric(
+                    //     //           horizontal: 40, vertical: 10),
+                    //     //       decoration: BoxDecoration(
+                    //     //           borderRadius: BorderRadius.circular(10),
+                    //     //           color: Colors.white),
+                    //     //       child: IconButton(
+                    //     //           onPressed: () {
+                    //     //             Navigator.push(
+                    //     //               context,
+                    //     //               MaterialPageRoute(
+                    //     //                 builder: (context) => home(),
+                    //     //               ),
+                    //     //             );
+                    //     //           },
+                    //     //           icon: Icon(Icons.bookmark_add_outlined)),
+                    //     //     ),
+                    //     //   ),
+                    //     // ),
+                    //     Padding(
+                    //       padding:
+                    //           const EdgeInsets.only(left: 8.0, right: 7.0),
+                    //       child: Text(
+                    //         Wlossmeal[index].name,
+                    //         style: TextStyle(
+                    //             fontSize: 18, fontWeight: FontWeight.bold),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ),
                 ),
               ),
