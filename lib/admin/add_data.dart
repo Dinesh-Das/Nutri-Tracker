@@ -159,8 +159,11 @@ class _AddDataState extends State<AddData> {
                     const SizedBox(
                       height: 10,
                     ),
-                    buildFormItems("Description", Icons.description,
-                        descriptionController),
+                    selectedSubCategory == "Meal"
+                        ? buildFormItems("Ingredients", Icons.description,
+                            descriptionController)
+                        : buildFormItems("Description", Icons.description,
+                            descriptionController),
                     const SizedBox(
                       height: 10,
                     ),
@@ -169,8 +172,11 @@ class _AddDataState extends State<AddData> {
                     const SizedBox(
                       height: 10,
                     ),
-                    buildFormItems(
-                        "Benifits", Icons.emoji_nature, benifitsController),
+                    selectedSubCategory == "Meal"
+                        ? buildFormItems(
+                            "Recipie", Icons.description, descriptionController)
+                        : buildFormItems(
+                            "Benifits", Icons.emoji_nature, benifitsController),
                     const SizedBox(
                       height: 10,
                     ),
@@ -209,7 +215,7 @@ class _AddDataState extends State<AddData> {
                           width: 100,
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
+                                Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => AdminPage()));
@@ -275,6 +281,14 @@ void addNutritionalData(
     "benefits": benifits,
     "side_effects": sideEffects
   };
+
+  Map<String, dynamic> addMeal = {
+    "image": img,
+    "name": name,
+    "ingredients": desc,
+    "nfact": nfacts,
+    "recipie": benifits,
+  };
   //add overweight data
   if (category == 'OverWeight') {
     if (subCat == 'Fruits') {
@@ -295,7 +309,7 @@ void addNutritionalData(
       db
           .doc("OverWeight")
           .collection('Meals')
-          .add(addData)
+          .add(addMeal)
           .then((value) => print('success'));
     }
   }
@@ -319,7 +333,7 @@ void addNutritionalData(
       db
           .doc("UnderWeight")
           .collection('Meals')
-          .add(addData)
+          .add(addMeal)
           .then((value) => print('success'));
     }
   }
@@ -344,7 +358,7 @@ void addNutritionalData(
       db
           .doc("Normal")
           .collection('Meals')
-          .add(addData)
+          .add(addMeal)
           .then((value) => print('success'));
     }
   }
@@ -361,7 +375,7 @@ showConfirmationDialog(BuildContext context) {
       nameController.clear();
       imageURLController.clear();
       descriptionController.clear();
-      nameController.clear();
+      nutriFactsController.clear();
       sideEffectsController.clear();
       benifitsController.clear();
       Navigator.pop(context);
@@ -373,7 +387,7 @@ showConfirmationDialog(BuildContext context) {
       nameController.clear();
       imageURLController.clear();
       descriptionController.clear();
-      nameController.clear();
+      nutriFactsController.clear();
       sideEffectsController.clear();
       benifitsController.clear();
       Navigator.pop(context);
