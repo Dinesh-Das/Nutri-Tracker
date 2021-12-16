@@ -19,6 +19,7 @@ class _ViewProfileState extends State<ViewProfile> {
   User? user = FirebaseAuth.instance.currentUser;
   DateFormat? formatter = DateFormat('yyyy-MM-dd');
   DateTime? creationDate;
+  String? displayDate;
   @override
   void initState() {
     super.initState();
@@ -30,7 +31,7 @@ class _ViewProfileState extends State<ViewProfile> {
         .then((value) {
       retrivedData = UserModel.fromMap(value.data());
       creationDate = user!.metadata.creationTime;
-      retrivedData.creation = formatter!.format(creationDate!);
+      displayDate = formatter!.format(creationDate!);
       setState(() {});
     });
   }
@@ -158,8 +159,8 @@ class _ViewProfileState extends State<ViewProfile> {
                 retrivedData.weight ?? "weight"),
             displayData(Icons.location_on_outlined, "Place",
                 retrivedData.location ?? "location"),
-            displayData(Icons.timelapse, "Joined Date",
-                retrivedData.creation ?? "joined"),
+            displayData(
+                Icons.timelapse, "Joined Date", displayDate ?? "joined"),
             displayData(
                 Icons.health_and_safety_outlined,
                 "BMI : ${retrivedData.bmi ?? "BMI"}",

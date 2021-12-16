@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/bmi/screens/calculator_screen.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 
 import '../../../themes.dart';

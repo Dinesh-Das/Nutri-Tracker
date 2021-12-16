@@ -60,21 +60,43 @@ class _AdminPageState extends State<AdminPage> {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => AddData()));
                 },
-                child: Text("Add Weight Data")),
+                child: Text("Add Nutritional Data")),
             TextButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => TestFirebase()));
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context) => TestFirebase()));
                 },
                 child: Text("Update Data")),
             TextButton(
                 onPressed: () {
-                  var data = FirebaseFirestore.instance
-                      .collection('devi')
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .collection('prasad')
-                      .get();
-                  print(data);
+                  // var db =
+                  //     FirebaseFirestore.instance.collection("NutritionalData");
+                  // Map<String, dynamic> ourData = {
+                  //   "image": "image",
+                  //   "name": "name",
+                  //   "desc": "desc",
+                  //   "nfact": "nfact",
+                  //   "benefits": "benefits",
+                  //   "side_effects": "side_effects"
+                  // };
+                  // List data = ['overweight', 'underweight', 'normal'];
+                  // for (int i = 0; i < 3; i++) {
+                  //   db
+                  //       .doc(data[i])
+                  //       .collection('fruits')
+                  //       .add(ourData)
+                  //       .then((value) => print('success'));
+                  //   db
+                  //       .doc(data[i])
+                  //       .collection('drinks')
+                  //       .add(ourData)
+                  //       .then((value) => print('success'));
+                  //   db
+                  //       .doc(data[i])
+                  //       .collection('meals')
+                  //       .add(ourData)
+                  //       .then((value) => print('success'));
+                  // }
                 },
                 child: Text("View Data")),
           ],
