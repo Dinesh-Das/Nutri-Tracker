@@ -482,29 +482,29 @@ class _homeState extends State<home> {
               SizedBox(
                 height: 5,
               ),
-              Positioned(
-                top: height * 0.42,
-                left: 30,
-                right: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    child: Container(
-                        color: Theme.of(context).appBarTheme.backgroundColor,
-                        height: 300,
-                        child: InkWell(
-                          onTap: () {},
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                            child: Center(
-                              child: Text("Show Some Progress here"),
-                            ),
-                          ),
-                        )),
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   top: height * 0.42,
+              //   left: 30,
+              //   right: 0,
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     child: ClipRRect(
+              //       borderRadius: BorderRadius.all(Radius.circular(30)),
+              //       child: Container(
+              //           color: Theme.of(context).appBarTheme.backgroundColor,
+              //           height: 300,
+              //           child: InkWell(
+              //             onTap: () {},
+              //             child: ClipRRect(
+              //               borderRadius: BorderRadius.all(Radius.circular(30)),
+              //               child: Center(
+              //                 child: Text("Show Some Progress here"),
+              //               ),
+              //             ),
+              //           )),
+              //     ),
+              //   ),
+              // ),
               SizedBox(
                 height: height * 0.08,
               ),

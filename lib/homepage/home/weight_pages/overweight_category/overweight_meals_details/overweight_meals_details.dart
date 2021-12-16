@@ -20,13 +20,13 @@ class _overweight_meals_detailsState extends State<overweight_meals_details> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(Wlossmeal[currentItem].name),
-      ),
-      // body: Center(
-      //   child: Text(wlossmealss[index].name),
-      // )
-      // Center(child: Image.network(Wlossmeal.,),
-    );
+        appBar: AppBar(
+          title: Text(Wlossmeal[currentItem].name),
+        ),
+        body: Center(
+          child: Text(Wlossmeal[currentItem].recipe),
+        )
+        // Center(child: Image.network(Wlossmeal.,),
+        );
   }
 }

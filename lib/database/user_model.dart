@@ -4,16 +4,15 @@ class UserModel {
   String? name;
   String? bmi;
   String? photoURL;
-  String? username,
-      bmr,
-      gender,
-      height,
-      mobile,
-      weight,
-      birthdate,
-      bio,
-      location,
-      creation;
+  String? username;
+  String? bmr;
+  String? gender;
+  String? height;
+  String? mobile;
+  String? weight;
+  String? birthdate;
+  String? bio;
+  String? location;
   UserModel({
     this.uid,
     this.bmi,
@@ -28,7 +27,6 @@ class UserModel {
     this.birthdate,
     this.bio,
     this.location,
-    this.creation,
     this.bmr,
   });
 
@@ -48,7 +46,6 @@ class UserModel {
       birthdate: map['birthdate'],
       bio: map['bio'],
       location: map['location'],
-      creation: map['creation'],
       bmr: map['bmr'],
     );
   }
@@ -69,7 +66,6 @@ class UserModel {
       'birthdate': birthdate,
       'bio': bio,
       'location': location,
-      'creation': creation,
       'bmr': bmr,
     };
   }
