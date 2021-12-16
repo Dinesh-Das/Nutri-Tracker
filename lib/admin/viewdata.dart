@@ -16,16 +16,24 @@ class _ViewDataState extends State<ViewData> {
       body: SafeArea(
           child: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection("NutritionalData")
+            .collection("user_details")
+            // .collection("NutritionalData")
             .snapshots(),
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
+            print("total documents : ${snapshot.data!.docs.length}");
             if (snapshot.data!.docs.isNotEmpty) {
               return ListView.separated(
                 itemBuilder: (context, int index) {
+                  Map<String, dynamic> doc = snapshot.data!.docs[index].data();
+                  if (doc.isEmpty) {
+                    return Center(child: Text("document is empty"));
+                  }
+                  String name =
+                      snapshot.data!.docs.elementAt(index).get("name");
                   return ListTile(
-                    title: Text("data"),
+                    title: Text(name),
                     subtitle: Text("data"),
                   );
                 },

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/admin/add_data.dart';
 import 'package:nutri_tracker/admin/test.dart';
+import 'package:nutri_tracker/admin/viewdata.dart';
 import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,6 +70,8 @@ class _AdminPageState extends State<AdminPage> {
                 child: Text("Update Data")),
             TextButton(
                 onPressed: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (_) => ViewData()));
                   // var db =
                   //     FirebaseFirestore.instance.collection("NutritionalData");
                   // Map<String, dynamic> ourData = {

@@ -175,7 +175,7 @@ class _AddDataState extends State<AddData> {
                     ),
                     selectedSubCategory == "Meals"
                         ? buildFormItems(
-                            "Recipie", Icons.description, descriptionController)
+                            "Recipie", Icons.description, benifitsController)
                         : buildFormItems(
                             "Benifits", Icons.emoji_nature, benifitsController),
                     const SizedBox(
