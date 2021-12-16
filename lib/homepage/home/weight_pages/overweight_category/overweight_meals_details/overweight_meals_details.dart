@@ -20,13 +20,81 @@ class _overweight_meals_detailsState extends State<overweight_meals_details> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(Wlossmeal[currentItem].name),
+      appBar: AppBar(
+        title: Text(Wlossmeal[currentItem].name),
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 250,
+              width: 392,
+              child: Image.network(
+                Wlossmeal[currentItem].image,
+                fit: BoxFit.cover,
+              ),
+            ),
+            Divider(
+              thickness: 2,
+              endIndent: 30,
+              indent: 30,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 30, top: 20),
+              child: Container(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      Wlossmeal[currentItem].name,
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 30, top: 20),
+              child: Container(
+                child: Text(
+                  Wlossmeal[currentItem].ingredients,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+            Divider(
+              thickness: 2,
+              endIndent: 30,
+              indent: 30,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: Container(
+                margin: EdgeInsets.only(right: 180),
+                child: Text(
+                  Wlossmeal[currentItem].nfacts,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+            Divider(
+              thickness: 2,
+              endIndent: 30,
+              indent: 30,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 30, top: 20),
+              child: Container(
+                child: Text(
+                  Wlossmeal[currentItem].recipe,
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ),
+            ),
+          ],
         ),
-        body: Center(
-          child: Text(Wlossmeal[currentItem].recipe),
-        )
-        // Center(child: Image.network(Wlossmeal.,),
-        );
+      ),
+    );
   }
 }
