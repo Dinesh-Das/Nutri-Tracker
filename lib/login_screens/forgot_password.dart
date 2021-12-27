@@ -128,7 +128,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           SizedBox(
-                            width: 150,
+                            width: 130,
                             child: FloatingActionButton(
                               child: const Text(
                                 "Send Email",
@@ -150,7 +150,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             ),
                           ),
                           SizedBox(
-                            width: 150,
+                            width: 130,
                             child: FloatingActionButton(
                               child: const Text(
                                 "Login?",

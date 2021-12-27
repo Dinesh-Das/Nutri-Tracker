@@ -32,7 +32,10 @@ class _ViewDataState extends State<ViewData> {
                   }
                   String name =
                       snapshot.data!.docs.elementAt(index).get("name");
+                  String? img =
+                      snapshot.data!.docs.elementAt(index).get("photoURL");
                   return ListTile(
+                    leading: Image.network(img.toString()),
                     title: Text(name),
                     subtitle: Text("data"),
                   );

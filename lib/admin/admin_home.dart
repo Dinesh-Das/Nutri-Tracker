@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nutri_tracker/admin/add_data.dart';
 import 'package:nutri_tracker/admin/test.dart';
 import 'package:nutri_tracker/admin/viewdata.dart';
@@ -52,16 +53,68 @@ class _AdminPageState extends State<AdminPage> {
         centerTitle: true,
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TextButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddData()));
-                },
-                child: Text("Add Nutritional Data")),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Image.asset("assets/images/admin.png"),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(32.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => AddData()));
+                      },
+                      child: Text("Add Data"),
+                      style: ElevatedButton.styleFrom(
+                          primary:
+                              Theme.of(context).appBarTheme.foregroundColor),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text("Update Data"),
+                      style: ElevatedButton.styleFrom(
+                          primary:
+                              Theme.of(context).appBarTheme.foregroundColor),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text("Delete Data"),
+                      style: ElevatedButton.styleFrom(
+                          primary:
+                              Theme.of(context).appBarTheme.foregroundColor),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ViewData()));
+                      },
+                      child: Text("View Data"),
+                      style: ElevatedButton.styleFrom(
+                          primary:
+                              Theme.of(context).appBarTheme.foregroundColor),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+/**
+ * TextButton(onPressed: () {}, child: Text("Add Nutritional Data")),
             TextButton(
                 onPressed: () {
                   // Navigator.push(context,
@@ -102,9 +155,4 @@ class _AdminPageState extends State<AdminPage> {
                   // }
                 },
                 child: Text("View Data")),
-          ],
-        ),
-      ),
-    );
-  }
-}
+ */
