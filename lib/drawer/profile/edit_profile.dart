@@ -384,73 +384,73 @@ class _EditProfileState extends State<EditProfile> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  OutlineButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      "Cancel",
-                      style: TextStyle(
-                        fontSize: 14,
-                        letterSpacing: 2.2,
-                      ),
-                    ),
-                  ),
-                  RaisedButton(
-                    color: Colors.green,
-                    onPressed: () async {
-                      await updateDetailsToFirestore(
-                          isImagePicked || updateData.photoURL != ''
-                              ? updateData.photoURL
-                              : defaultProfileUrl,
-                          (usernameController.text == '')
-                              ? updateData.username
-                              : usernameController.text,
-                          (nameController.text == '')
-                              ? updateData.name
-                              : nameController.text,
-                          (phoneController.text == '')
-                              ? updateData.mobile
-                              : phoneController.text,
-                          (locationController.text == '')
-                              ? updateData.location
-                              : locationController.text,
-                          (birthdateController.text == '')
-                              ? updateData.birthdate
-                              : birthdateController.text,
-                          (bioController.text == '')
-                              ? updateData.bio
-                              : bioController.text,
-                          (heightController.text == '')
-                              ? updateData.height
-                              : heightController.text,
-                          (weightController.text == '')
-                              ? updateData.weight
-                              : weightController.text,
-                          (selectedGender != updateData.gender &&
-                                  isGenderChanged == true)
-                              ? selectedGender
-                              : updateData.gender,
-                          updateData.bmi,
-                          updateData.bmr,
-                          context);
-                    },
-                    elevation: 2,
-                    padding: const EdgeInsets.symmetric(horizontal: 50),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(
-                        fontSize: 14,
-                        letterSpacing: 2.2,
-                        // color: Colors.white
-                      ),
-                    ),
-                  ),
+                  // OutlineButton(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 50),
+                  //   shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(20)),
+                  //   onPressed: () {
+                  //     Navigator.pop(context);
+                  //   },
+                  //   child: const Text(
+                  //     "Cancel",
+                  //     style: TextStyle(
+                  //       fontSize: 14,
+                  //       letterSpacing: 2.2,
+                  //     ),
+                  //   ),
+                  // ),
+                  // RaisedButton(
+                  //   color: Colors.green,
+                  //   onPressed: () async {
+                  //     await updateDetailsToFirestore(
+                  //         isImagePicked || updateData.photoURL != ''
+                  //             ? updateData.photoURL
+                  //             : defaultProfileUrl,
+                  //         (usernameController.text == '')
+                  //             ? updateData.username
+                  //             : usernameController.text,
+                  //         (nameController.text == '')
+                  //             ? updateData.name
+                  //             : nameController.text,
+                  //         (phoneController.text == '')
+                  //             ? updateData.mobile
+                  //             : phoneController.text,
+                  //         (locationController.text == '')
+                  //             ? updateData.location
+                  //             : locationController.text,
+                  //         (birthdateController.text == '')
+                  //             ? updateData.birthdate
+                  //             : birthdateController.text,
+                  //         (bioController.text == '')
+                  //             ? updateData.bio
+                  //             : bioController.text,
+                  //         (heightController.text == '')
+                  //             ? updateData.height
+                  //             : heightController.text,
+                  //         (weightController.text == '')
+                  //             ? updateData.weight
+                  //             : weightController.text,
+                  //         (selectedGender != updateData.gender &&
+                  //                 isGenderChanged == true)
+                  //             ? selectedGender
+                  //             : updateData.gender,
+                  //         updateData.bmi,
+                  //         updateData.bmr,
+                  //         context);
+                  //   },
+                  //   elevation: 2,
+                  //   padding: const EdgeInsets.symmetric(horizontal: 50),
+                  //   shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(20)),
+                  //   child: const Text(
+                  //     "Save",
+                  //     style: TextStyle(
+                  //       fontSize: 14,
+                  //       letterSpacing: 2.2,
+                  //       // color: Colors.white
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
               const SizedBox(

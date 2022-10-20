@@ -138,7 +138,7 @@ class _OnboardingState extends State<Onboarding> {
               alignment: Alignment.bottomLeft,
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
-                child: FlatButton(
+                child: TextButton(
                   onPressed: () {
                     liquidController.currentPage + 1 > data.length - 1 ||
                             liquidController.currentPage != 0
@@ -155,7 +155,7 @@ class _OnboardingState extends State<Onboarding> {
                           "Skip",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                  color: Colors.white.withOpacity(0.01),
+                  // color: Colors.white.withOpacity(0.01),
                 ),
               ),
             ),
@@ -163,7 +163,7 @@ class _OnboardingState extends State<Onboarding> {
               alignment: Alignment.bottomRight,
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
-                child: FlatButton(
+                child: TextButton(
                   onPressed: () {
                     liquidController.currentPage + 1 > data.length - 1
                         ? continueToLogin()
@@ -175,7 +175,7 @@ class _OnboardingState extends State<Onboarding> {
                           style: TextStyle(fontWeight: FontWeight.bold))
                       : const Text("Next",
                           style: TextStyle(fontWeight: FontWeight.bold)),
-                  color: Colors.white.withOpacity(0.01),
+                  // color: Colors.white.withOpacity(0.01),
                 ),
               ),
             )
