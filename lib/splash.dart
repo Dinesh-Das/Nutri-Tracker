@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/admin/admin_home.dart';
+import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
 import 'package:nutri_tracker/onbparding_components/onboard.dart';
 import 'package:nutri_tracker/sharedPreferences/local_data.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
@@ -33,16 +35,26 @@ class _SplashState extends State<Splash> {
       DataConstant.mail = (await UserLocalData.getEmail());
       DataConstant.photo = (await UserLocalData.getImg());
 
-      if (DataConstant.mail == 'nutritracker@admin.in') {
+      final doc = await FirebaseFirestore.instance
+          .collection('user_details')
+          .doc(user.uid)
+          .get();
+      final data = doc.data() ?? {};
+      if (data['isAdmin'] == true) {
         Timer(
             const Duration(milliseconds: 6000),
             () => Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => AdminPage())));
+                context, MaterialPageRoute(builder: (context) => const AdminPage())));
+      } else if (data['isOnboardingDone'] != true) {
+        Timer(
+            const Duration(milliseconds: 6000),
+            () => Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => const OnboardingScreen())));
       } else {
         Timer(
             const Duration(milliseconds: 6000),
             () => Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => BottomNavigation())));
+                MaterialPageRoute(builder: (context) => const BottomNavigation())));
       }
     } else {
       Timer(

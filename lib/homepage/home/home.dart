@@ -2,7 +2,7 @@
 import "dart:math";
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:nutri_tracker/bmi/screens/calculator_screen.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/dark_theme/custom_theme.dart';
@@ -177,7 +177,7 @@ class _homeState extends State<home> {
                                       border: Border.all(
                                         width: 4,
                                         color:
-                                            Theme.of(context).bottomAppBarColor,
+                                            Theme.of(context).colorScheme.surfaceVariant,
                                       ),
                                       boxShadow: [
                                         BoxShadow(

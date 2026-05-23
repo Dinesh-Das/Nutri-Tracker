@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UserModel {
   String? uid;
   String? email;
@@ -13,6 +15,16 @@ class UserModel {
   String? birthdate;
   String? bio;
   String? location;
+  double? targetWeight;
+  String? activityLevel;
+  String? dietaryPreference;
+  List<String>? allergies;
+  int? dailyCalorieGoal;
+  bool? isAdmin;
+  DateTime? lastBmiDate;
+  String? weightGoal;
+  bool? isOnboardingDone;
+
   UserModel({
     this.uid,
     this.bmi,
@@ -28,13 +40,24 @@ class UserModel {
     this.bio,
     this.location,
     this.bmr,
+    this.targetWeight,
+    this.activityLevel,
+    this.dietaryPreference,
+    this.allergies,
+    this.dailyCalorieGoal,
+    this.isAdmin,
+    this.lastBmiDate,
+    this.weightGoal,
+    this.isOnboardingDone,
   });
 
   //reciving data from server
-  factory UserModel.fromMap(map) {
+  factory UserModel.fromMap(Map<String, dynamic>? map) {
+    if (map == null) return UserModel();
+    final lastBmiValue = map['lastBmiDate'];
     return UserModel(
       uid: map['uid'],
-      bmi: map['bmi'],
+      bmi: map['bmi']?.toString(),
       email: map['email'],
       name: map['name'],
       mobile: map['mobile'],
@@ -46,7 +69,20 @@ class UserModel {
       birthdate: map['birthdate'],
       bio: map['bio'],
       location: map['location'],
-      bmr: map['bmr'],
+      bmr: map['bmr']?.toString(),
+      targetWeight: (map['targetWeight'] as num?)?.toDouble(),
+      activityLevel: map['activityLevel'],
+      dietaryPreference: map['dietaryPreference'],
+      allergies: List<String>.from(map['allergies'] ?? const []),
+      dailyCalorieGoal: (map['dailyCalorieGoal'] as num?)?.toInt(),
+      isAdmin: map['isAdmin'] == true,
+      lastBmiDate: lastBmiValue is Timestamp
+          ? lastBmiValue.toDate()
+          : lastBmiValue is DateTime
+              ? lastBmiValue
+              : null,
+      weightGoal: map['weightGoal'],
+      isOnboardingDone: map['isOnboardingDone'] == true,
     );
   }
 
@@ -67,6 +103,16 @@ class UserModel {
       'bio': bio,
       'location': location,
       'bmr': bmr,
+      'targetWeight': targetWeight,
+      'activityLevel': activityLevel,
+      'dietaryPreference': dietaryPreference,
+      'allergies': allergies ?? const <String>[],
+      'dailyCalorieGoal': dailyCalorieGoal,
+      'isAdmin': isAdmin ?? false,
+      'lastBmiDate':
+          lastBmiDate == null ? null : Timestamp.fromDate(lastBmiDate!),
+      'weightGoal': weightGoal,
+      'isOnboardingDone': isOnboardingDone ?? false,
     };
   }
 }

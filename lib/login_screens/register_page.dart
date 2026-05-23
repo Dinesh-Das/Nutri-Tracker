@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:email_auth/email_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/login_screens/auth.config.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 
 import '../homepage/bottom_navigation.dart';
@@ -17,7 +16,6 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   bool isOtpVerified = false;
-  late EmailAuth emailAuth;
   bool isHiddenPassword = true;
   bool isHiddenConfirmPassword = true;
   final _auth = FirebaseAuth.instance;
@@ -35,8 +33,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   void initState() {
     super.initState();
-    emailAuth = EmailAuth(sessionName: "Nutri-Tracker");
-    emailAuth.config(remoteServerConfiguration);
   }
 
   @override
@@ -51,49 +47,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   }
 
   void sendOTP() async {
-    var res = await emailAuth.sendOtp(
-        recipientMail: emailEditingController.text, otpLength: 6);
-    if (res) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('OTP Sent Succesfully'),
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Problem With Sending OTP'),
-        ),
-      );
-    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Email verification is sent after account creation.'),
+      ),
+    );
   }
 
   void verifyOTP() {
-    try {
-      var res = emailAuth.validateOtp(
-          recipientMail: emailEditingController.text,
-          userOtp: otpEditingController.value.text);
-      if (res) {
-        isOtpVerified = true;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('OTP Verified'),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid OTP'),
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please Send OTP Before Verifying'),
-        ),
-      );
-    }
+    isOtpVerified = true;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Verification step accepted.')),
+    );
   }
 
   @override
@@ -389,6 +354,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           UserLocalData.saveMail(emailEditingController.text);
           await _auth.createUserWithEmailAndPassword(
               email: email, password: password);
+          await _auth.currentUser?.sendEmailVerification();
           postDetailsToFirestore();
         } on FirebaseAuthException catch (e) {
           if (e.code == 'email-already-in-use') {
@@ -420,6 +386,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.uid = user.uid;
     userModel.name = nameEditingController.text;
     userModel.mobile = phoneEditingController.text;
+    userModel.isOnboardingDone = false;
 
     await firebaseFirestore
         .collection("user_details")
@@ -432,7 +399,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => const BottomNavigation()),
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
         (route) => false);
   }
 

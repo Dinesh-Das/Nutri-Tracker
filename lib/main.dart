@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nutri_tracker/dark_theme/custom_theme.dart';
+import 'package:nutri_tracker/firebase_options.dart';
+import 'package:nutri_tracker/services/notification_service.dart';
 import 'package:nutri_tracker/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +10,11 @@ import 'database/google_signin.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await dotenv.load(fileName: '.env');
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await NotificationService.instance.init();
 
   runApp(const MyApp());
 }
@@ -34,7 +41,7 @@ class _MyAppState extends State<MyApp> {
       create: (context) => GoogleSignInProvider(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Nutri-Tracker',
+        title: 'NutriTrack India',
         theme: CustomTheme.lightTheme,
         darkTheme: CustomTheme.darkTheme,
         themeMode: currentTheme.currentTheme,

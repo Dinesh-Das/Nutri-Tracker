@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nutri_tracker/admin/admin_home.dart';
+import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
 import 'package:nutri_tracker/homepage/bottom_navigation.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
 import 'package:nutri_tracker/database/google_signin.dart';
@@ -273,10 +275,18 @@ class _LoginScreenState extends State<LoginScreen> {
           content: Text('Login Successful'),
         ));
 
-        //if admin go to admin page
-        if (emailController.text == 'nutritracker@admin.in') {
+        final user = _auth.currentUser;
+        final doc = await FirebaseFirestore.instance
+            .collection('user_details')
+            .doc(user!.uid)
+            .get();
+        final data = doc.data() ?? {};
+        if (data['isAdmin'] == true) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const AdminPage()));
+        } else if (data['isOnboardingDone'] != true) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const OnboardingScreen()));
         } else {
           Navigator.pushReplacement(
               context,

@@ -94,11 +94,23 @@ updateBMIData(
   await FirebaseFirestore.instance
       .collection("user_details")
       .doc(user!.uid)
-      .update({
+      .set({
     'height': height,
     'weight': weight,
     'bmi': bmi,
     'bmr': bmr,
     'gender': gender,
+    'lastBmiDate': Timestamp.now(),
+  }, SetOptions(merge: true));
+
+  await FirebaseFirestore.instance
+      .collection('weight_logs')
+      .doc(user.uid)
+      .collection('entries')
+      .add({
+    'weight': double.tryParse(weight ?? '0') ?? 0,
+    'bmi': double.tryParse(bmi ?? '0') ?? 0,
+    'date': Timestamp.now(),
+    'note': '',
   });
 }

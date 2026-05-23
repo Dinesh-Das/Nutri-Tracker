@@ -40,7 +40,7 @@ class _EditProfileState extends State<EditProfile> {
   TextEditingController bioController = TextEditingController();
 
   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
-  PickedFile? imageFile;
+  XFile? imageFile;
 
   @override
   void initState() {
@@ -116,7 +116,7 @@ class _EditProfileState extends State<EditProfile> {
 
   void _openGallery(BuildContext context) async {
     // Open gallery code
-    final pickedFile = await ImagePicker().getImage(
+    final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
 
@@ -130,7 +130,7 @@ class _EditProfileState extends State<EditProfile> {
 
   void _openCamera(BuildContext context) async {
     //Camera code
-    final pickedFile = await ImagePicker().getImage(
+    final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.camera,
     );
     setState(() {
@@ -233,7 +233,7 @@ class _EditProfileState extends State<EditProfile> {
                               decoration: BoxDecoration(
                                 border: Border.all(
                                     width: 4,
-                                    color: Theme.of(context).bottomAppBarColor),
+                                    color: Theme.of(context).colorScheme.surfaceVariant),
                                 boxShadow: [
                                   BoxShadow(
                                       spreadRadius: 2,
@@ -258,7 +258,7 @@ class _EditProfileState extends State<EditProfile> {
                               shape: BoxShape.circle,
                               border: Border.all(
                                   width: 4,
-                                  color: Theme.of(context).bottomAppBarColor)),
+                                  color: Theme.of(context).colorScheme.surfaceVariant)),
                           child: IconButton(
                             onPressed: () async {
                               _showChoiceDialog(context);

@@ -99,7 +99,7 @@ class _AddDataState extends State<AddData> {
                             child: Text(
                               value,
                               style: TextStyle(
-                                  color: Theme.of(context).backgroundColor),
+                                  color: Theme.of(context).colorScheme.surface),
                             ),
                           );
                         }).toList(),
@@ -144,7 +144,7 @@ class _AddDataState extends State<AddData> {
                             child: Text(
                               value,
                               style: TextStyle(
-                                  color: Theme.of(context).backgroundColor),
+                                  color: Theme.of(context).colorScheme.surface),
                             ),
                           );
                         }).toList(),

@@ -3,11 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nutri_tracker/admin/add_data.dart';
+import 'package:nutri_tracker/admin/indian_foods_admin.dart';
 import 'package:nutri_tracker/admin/test.dart';
 import 'package:nutri_tracker/admin/viewdata.dart';
 import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({Key? key}) : super(key: key);
@@ -38,10 +38,6 @@ class _AdminPageState extends State<AdminPage> {
         actions: [
           IconButton(
               onPressed: () async {
-                final SharedPreferences sharedPreferences =
-                    await SharedPreferences.getInstance();
-                sharedPreferences.clear();
-                sharedPreferences.remove('logintype');
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(
                     context,
@@ -74,21 +70,21 @@ class _AdminPageState extends State<AdminPage> {
                       },
                       child: Text("Add Data"),
                       style: ElevatedButton.styleFrom(
-                          primary:
+                          backgroundColor:
                               Theme.of(context).appBarTheme.foregroundColor),
                     ),
                     ElevatedButton(
                       onPressed: () {},
                       child: Text("Update Data"),
                       style: ElevatedButton.styleFrom(
-                          primary:
+                          backgroundColor:
                               Theme.of(context).appBarTheme.foregroundColor),
                     ),
                     ElevatedButton(
                       onPressed: () {},
                       child: Text("Delete Data"),
                       style: ElevatedButton.styleFrom(
-                          primary:
+                          backgroundColor:
                               Theme.of(context).appBarTheme.foregroundColor),
                     ),
                     ElevatedButton(
@@ -100,7 +96,20 @@ class _AdminPageState extends State<AdminPage> {
                       },
                       child: Text("View Data"),
                       style: ElevatedButton.styleFrom(
-                          primary:
+                          backgroundColor:
+                              Theme.of(context).appBarTheme.foregroundColor),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const IndianFoodsAdminScreen()));
+                      },
+                      child: Text("Indian Foods"),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor:
                               Theme.of(context).appBarTheme.foregroundColor),
                     ),
                   ],

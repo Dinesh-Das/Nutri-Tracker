@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide NavigationDrawer;
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 
 import '../../../themes.dart';

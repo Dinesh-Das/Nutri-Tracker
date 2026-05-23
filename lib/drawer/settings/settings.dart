@@ -4,6 +4,7 @@ import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/settings/change_password.dart';
 import 'package:nutri_tracker/drawer/settings/delete_user.dart';
+import 'package:nutri_tracker/services/notification_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -17,16 +18,26 @@ class _SettingsPageState extends State<SettingsPage> {
   bool setNotification = false;
   bool setRemainder = false;
 
-  onNotificationChange(bool value) {
+  onNotificationChange(bool value) async {
     setState(() {
       setNotification = value;
     });
+    if (value) {
+      await NotificationService.instance.scheduleMealReminders();
+    } else {
+      await NotificationService.instance.cancelMealReminders();
+    }
   }
 
-  onRemainderChange(bool value) {
+  onRemainderChange(bool value) async {
     setState(() {
       setRemainder = value;
     });
+    if (value) {
+      await NotificationService.instance.scheduleMealReminders();
+    } else {
+      await NotificationService.instance.cancelMealReminders();
+    }
   }
 
   @override

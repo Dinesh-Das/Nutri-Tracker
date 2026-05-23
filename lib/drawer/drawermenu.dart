@@ -215,7 +215,7 @@ Widget buildHeader({
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 4,
-                  color: Theme.of(context).bottomAppBarColor,
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                 ),
                 boxShadow: [
                   BoxShadow(

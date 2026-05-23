@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -30,34 +30,53 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Firebase
+  firebase_core: 3.6.0
+  firebase_auth: 5.3.1
+  cloud_firestore: 5.4.4
+  firebase_storage: 12.3.2
+  google_sign_in: 6.2.1
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
-  flutter_svg: ^0.23.0+1
-  liquid_swipe: ^2.1.1
-  bottom_navy_bar: ^6.0.0
-  avatar_glow: ^2.0.1
-  # pie_chart: ^5.0.1
-  # for pie chart
-  fl_chart: ^0.40.2
-  # for icons
-  font_awesome_flutter: ^9.2.0
-  cloud_firestore: ^2.5.4
-  firebase_auth: ^3.1.4
+  # State management
+  provider: ^6.1.2
+  riverpod: ^2.5.1
 
-  firebase_core: ^1.8.0
-  http: ^0.13.4
-  email_auth: ^1.0.0
-  google_sign_in: ^5.2.1
-  provider: ^6.0.1
-  curved_navigation_bar: ^1.0.1
-  shared_preferences: ^2.0.9
-  share_plus: ^3.0.4
-  image_picker: ^0.8.4+4
-  percent_indicator: ^3.4.0
-  firebase_storage: ^10.1.0
- 
+  # UI
+  cupertino_icons: ^1.0.8
+  flutter_svg: ^2.0.10
+  liquid_swipe: ^3.1.0
+  curved_navigation_bar: ^1.0.3
+  avatar_glow: ^3.0.1
+  percent_indicator: ^4.2.3
+  font_awesome_flutter: 10.7.0
+  fl_chart: ^0.68.0
+  lottie: ^3.1.2
+
+  # Networking
+  http: ^1.2.2
+  dio: ^5.7.0
+
+  # Local storage
+  shared_preferences: ^2.3.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Media
+  image_picker: ^1.1.2
+  cached_network_image: ^3.4.1
+
+  # Utilities
+  share_plus: ^10.0.2
+  intl: ^0.19.0
+  uuid: ^4.5.0
+  flutter_local_notifications: ^17.2.3
+  flutter_plugin_android_lifecycle: 2.0.24
+  platform: ^3.1.6
+  flutter_dotenv: ^5.1.0
+  timezone: ^0.9.4
+
+  # AI / API
+  anthropic_sdk_dart: ^0.2.0+1
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +87,9 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^1.0.0
+  flutter_lints: ^4.0.0
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.13
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -88,6 +109,7 @@ flutter:
     - assets/onboard/
     - assets/dev/
     - assets/weight/
+    - .env
     
  
   #   - images/a_dot_burr.jpeg

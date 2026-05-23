@@ -85,7 +85,7 @@ class _ViewProfileState extends State<ViewProfile> {
                             ),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  width: 4, color: theme.bottomAppBarColor),
+                                  width: 4, color: theme.colorScheme.surfaceVariant),
                               boxShadow: [
                                 BoxShadow(
                                     spreadRadius: 2,
