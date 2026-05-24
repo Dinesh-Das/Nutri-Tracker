@@ -22,28 +22,28 @@ updateDetailsToFirestore(
   // calling firestore
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   User? user = FirebaseAuth.instance.currentUser;
-  UserModel userModel = UserModel();
-
-  userModel.uid = user!.uid;
-  userModel.photoURL = photoURL;
-  userModel.email = user.email;
-  userModel.name = name;
-  userModel.mobile = phoneno;
-  userModel.username = username;
-  userModel.location = location;
-  userModel.birthdate = birthdate;
-  userModel.bio = bio;
-  userModel.height = height;
-  userModel.weight = weight;
-  userModel.gender = gender;
-  userModel.bmi = bmi;
-  userModel.bmr = bmr;
+  final data = <String, dynamic>{
+    'uid': user!.uid,
+    'photoURL': photoURL,
+    'email': user.email,
+    'name': name,
+    'mobile': phoneno,
+    'username': username,
+    'location': location,
+    'birthdate': birthdate,
+    'bio': bio,
+    'height': height,
+    'weight': weight,
+    'gender': gender,
+    'bmi': bmi,
+    'bmr': bmr,
+  }..removeWhere((key, value) => value == null);
 
   showLoadingAlertDialog(context, 'Saving Data');
   await firebaseFirestore
       .collection("user_details")
       .doc(user.uid)
-      .update(userModel.toMap());
+      .set(data, SetOptions(merge: true));
 
   ScaffoldMessenger.of(context).showSnackBar(
     const SnackBar(
@@ -95,6 +95,7 @@ updateBMIData(
       .collection("user_details")
       .doc(user!.uid)
       .set({
+    'uid': user.uid,
     'height': height,
     'weight': weight,
     'bmi': bmi,

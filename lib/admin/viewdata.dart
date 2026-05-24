@@ -16,8 +16,8 @@ class _ViewDataState extends State<ViewData> {
       body: SafeArea(
           child: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection("user_details")
-            // .collection("NutritionalData")
+            .collection("food_data")
+            .orderBy('createdAt', descending: true)
             .snapshots(),
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
@@ -30,14 +30,17 @@ class _ViewDataState extends State<ViewData> {
                   if (doc.isEmpty) {
                     return Center(child: Text("document is empty"));
                   }
-                  String name =
-                      snapshot.data!.docs.elementAt(index).get("name");
-                  String? img =
-                      snapshot.data!.docs.elementAt(index).get("photoURL");
+                  final name = (doc["name"] ?? "Food").toString();
+                  final img =
+                      (doc["imageURL"] ?? doc["image"] ?? "").toString();
                   return ListTile(
-                    leading: Image.network(img.toString()),
+                    leading: img.isEmpty
+                        ? const Icon(Icons.restaurant)
+                        : Image.network(img),
                     title: Text(name),
-                    subtitle: Text("data"),
+                    subtitle: Text(
+                      '${doc["category"] ?? ""} / ${doc["subCategory"] ?? ""}',
+                    ),
                   );
                 },
                 separatorBuilder: (___, ____) {

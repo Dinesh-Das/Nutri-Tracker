@@ -9,7 +9,6 @@ class UserLocalData {
   static String mail = "email";
   static String img = "photo";
   static String? logkey = "login";
-  static String pass = "password";
   static String theme = 'theme';
 
   //Google Login Data saving
@@ -66,11 +65,6 @@ class UserLocalData {
     return await preferences.setString(mail, useremail);
   }
 
-  static Future<bool?> savePass(String password) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.setString(pass, password);
-  }
-
   static Future<bool?> saveImg(String imgUrl) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.setString(img, imgUrl);
@@ -84,11 +78,6 @@ class UserLocalData {
   static Future<String?> getEmail() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return await preferences.getString(mail);
-  }
-
-  static Future<String?> getPass() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(pass);
   }
 
   static Future<String?> getImg() async {

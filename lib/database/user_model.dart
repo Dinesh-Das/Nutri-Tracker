@@ -86,9 +86,10 @@ class UserModel {
     );
   }
 
-  //sending data to our server
+  // Sending data to Firestore. Null values and client-owned protected fields
+  // are omitted so profile edits do not erase existing server data.
   Map<String, dynamic> toMap() {
-    return {
+    final data = <String, dynamic>{
       'uid': uid,
       'bmi': bmi,
       'email': email,
@@ -106,13 +107,14 @@ class UserModel {
       'targetWeight': targetWeight,
       'activityLevel': activityLevel,
       'dietaryPreference': dietaryPreference,
-      'allergies': allergies ?? const <String>[],
+      'allergies': allergies,
       'dailyCalorieGoal': dailyCalorieGoal,
-      'isAdmin': isAdmin ?? false,
       'lastBmiDate':
           lastBmiDate == null ? null : Timestamp.fromDate(lastBmiDate!),
       'weightGoal': weightGoal,
-      'isOnboardingDone': isOnboardingDone ?? false,
+      'isOnboardingDone': isOnboardingDone,
     };
+    data.removeWhere((key, value) => value == null);
+    return data;
   }
 }

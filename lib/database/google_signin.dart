@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -18,24 +19,35 @@ class GoogleSignInProvider extends ChangeNotifier {
       if (googleUser == null) return;
       _user = googleUser;
 
-      this.userModel = UserModel(
-        name: this._user!.displayName,
-        email: this._user!.email,
-        uid: this._user!.id,
-        photoURL: this._user!.photoUrl,
-      );
-
       //Local Data Shared Preference
       UserLocalData.saveGLoginData(true);
-      UserLocalData.saveGImg(_user?.photoUrl);
-      UserLocalData.saveGMail(_user?.email);
-      UserLocalData.saveGName(_user?.displayName);
+      UserLocalData.saveGImg(_user?.photoUrl ?? '');
+      UserLocalData.saveGMail(_user?.email ?? '');
+      UserLocalData.saveGName(_user?.displayName ?? '');
 
       final googleAuth = await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final result =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      final firebaseUser = result.user;
+      if (firebaseUser != null) {
+        userModel = UserModel(
+          name: firebaseUser.displayName ?? _user?.displayName,
+          email: firebaseUser.email ?? _user?.email,
+          uid: firebaseUser.uid,
+          photoURL: firebaseUser.photoURL ?? _user?.photoUrl,
+        );
+
+        final ref = FirebaseFirestore.instance
+            .collection('user_details')
+            .doc(firebaseUser.uid);
+        final doc = await ref.get();
+        final data = userModel!.toMap();
+        if (!doc.exists) data['isOnboardingDone'] = false;
+        await ref.set(data, SetOptions(merge: true));
+      }
 
       notifyListeners();
     } catch (error) {

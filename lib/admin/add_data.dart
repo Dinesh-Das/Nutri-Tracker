@@ -38,7 +38,6 @@ class _AddDataState extends State<AddData> {
                 final SharedPreferences sharedPreferences =
                     await SharedPreferences.getInstance();
                 sharedPreferences.clear();
-                sharedPreferences.remove('logintype');
                 await FirebaseAuth.instance.signOut();
                 Navigator.pushReplacement(
                     context,
@@ -211,7 +210,7 @@ class _AddDataState extends State<AddData> {
                                 print(selectedCategory);
                                 print(selectedSubCategory);
                                 if (adminkey.currentState!.validate()) {
-                                  addNutritionalData(
+                                  addFoodData(
                                       selectedCategory,
                                       selectedSubCategory,
                                       imageURLController.text,
@@ -277,7 +276,7 @@ class _AddDataState extends State<AddData> {
   }
 }
 
-void addNutritionalData(
+Future<void> addFoodData(
     String category,
     String subCat,
     String img,
@@ -286,99 +285,39 @@ void addNutritionalData(
     String nfacts,
     String benifits,
     String sideEffects,
-    BuildContext context) {
-  var db = FirebaseFirestore.instance.collection("NutritionalData");
-  Map<String, dynamic> addData = {
-    "image": img,
-    "name": name,
-    "desc": desc,
-    "nfact": nfacts,
-    "benefits": benifits,
-    "side_effects": sideEffects
+    BuildContext context) async {
+  final data = <String, dynamic>{
+    'imageURL': img,
+    'name': name,
+    'description': desc,
+    'nutriFacts': nfacts,
+    'benefits': benifits,
+    'sideEffects': sideEffects,
+    'category': category,
+    'subCategory': subCat,
+    'createdAt': FieldValue.serverTimestamp(),
+    // Legacy aliases keep older static/admin readers tolerant while the app
+    // moves to the documented food_data schema.
+    'image': img,
+    'desc': desc,
+    'nfact': nfacts,
+    'side_effects': sideEffects,
   };
 
-  Map<String, dynamic> addMeal = {
-    "image": img,
-    "name": name,
-    "ingredients": desc,
-    "nfact": nfacts,
-    "recipie": benifits,
-  };
-  //add overweight data
-  if (category == 'OverWeight') {
-    if (subCat == 'Fruits') {
-      db
-          .doc("OverWeight")
-          .collection('Fruits')
-          .add(addData)
-          .then((value) => print('success'));
-    }
-    if (subCat == 'Drinks') {
-      db
-          .doc("OverWeight")
-          .collection('Drinks')
-          .add(addData)
-          .then((value) => print('success'));
-    }
-    if (subCat == 'Meals') {
-      db
-          .doc("OverWeight")
-          .collection('Meals')
-          .add(addMeal)
-          .then((value) => print('success'));
-    }
-  }
-  //Add underweight data
-  if (category == 'UnderWeight') {
-    if (subCat == 'Fruits') {
-      db
-          .doc("UnderWeight")
-          .collection('Fruits')
-          .add(addData)
-          .then((value) => print('success'));
-    }
-    if (subCat == 'Drinks') {
-      db
-          .doc("UnderWeight")
-          .collection('Drinks')
-          .add(addData)
-          .then((value) => print('success'));
-    }
-    if (subCat == 'Meals') {
-      db
-          .doc("UnderWeight")
-          .collection('Meals')
-          .add(addMeal)
-          .then((value) => print('success'));
-    }
+  if (subCat == 'Meals') {
+    data['ingredients'] = desc;
+    data['recipe'] = benifits;
+    data['recipie'] = benifits;
   }
 
-  //Add normal data
-  if (category == 'Normal') {
-    if (subCat == 'Fruits') {
-      db
-          .doc("Normal")
-          .collection('Fruits')
-          .add(addData)
-          .then((value) => print('success'));
-    }
-    if (subCat == 'Drinks') {
-      db
-          .doc("Normal")
-          .collection('Drinks')
-          .add(addData)
-          .then((value) => print('success'));
-    }
-    if (subCat == 'Meals') {
-      db
-          .doc("Normal")
-          .collection('Meals')
-          .add(addMeal)
-          .then((value) => print('success'));
-    }
+  try {
+    await FirebaseFirestore.instance.collection('food_data').add(data);
+    showConfirmationDialog(context);
+  } catch (error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Unable to add food data: $error')),
+    );
   }
-
-  showConfirmationDialog(context);
 }
 
 showConfirmationDialog(BuildContext context) {

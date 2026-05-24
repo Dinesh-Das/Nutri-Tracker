@@ -73,8 +73,10 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             value: _cuisine,
             decoration: const InputDecoration(labelText: 'Cuisine'),
             items: const [
-              DropdownMenuItem(value: 'North Indian', child: Text('North Indian')),
-              DropdownMenuItem(value: 'South Indian', child: Text('South Indian')),
+              DropdownMenuItem(
+                  value: 'North Indian', child: Text('North Indian')),
+              DropdownMenuItem(
+                  value: 'South Indian', child: Text('South Indian')),
               DropdownMenuItem(value: 'Mixed', child: Text('Mixed')),
             ],
             onChanged: (value) => setState(() => _cuisine = value ?? _cuisine),
@@ -108,12 +110,28 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
         ),
         conversationHistory: const [],
       );
-      final jsonText = response.substring(response.indexOf('{'), response.lastIndexOf('}') + 1);
+      final jsonText = _extractJsonObject(response);
+      if (jsonText == null) {
+        throw const FormatException(
+            'The AI response did not contain a JSON meal plan.');
+      }
       setState(() => _plan = MealPlan.fromJson(jsonDecode(jsonText)));
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to generate meal plan: $error')),
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
+}
+
+String? _extractJsonObject(String value) {
+  final start = value.indexOf('{');
+  final end = value.lastIndexOf('}');
+  if (start == -1 || end == -1 || end <= start) return null;
+  return value.substring(start, end + 1);
 }
 
 class _MealPlanView extends StatelessWidget {
@@ -143,7 +161,8 @@ class _MealPlanView extends StatelessWidget {
                         icon: const Icon(Icons.share),
                         onPressed: () => Share.share(
                           day.meals.values
-                              .map((meal) => '${meal.name}: ${meal.description}')
+                              .map(
+                                  (meal) => '${meal.name}: ${meal.description}')
                               .join('\n'),
                         ),
                       ),

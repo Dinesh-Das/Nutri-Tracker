@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/firebase_options.dart';
 import 'package:nutri_tracker/services/notification_service.dart';
@@ -10,7 +9,6 @@ import 'database/google_signin.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

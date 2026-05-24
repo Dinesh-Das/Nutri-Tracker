@@ -1,40 +1,75 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return signedIn() &&
+        get(/databases/$(database)/documents/user_details/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    function createsNoProtectedUserFields(userId) {
+      return request.resource.data.uid == userId &&
+        !request.resource.data.keys().hasAny(['isAdmin']);
+    }
+
+    function keepsProtectedUserFieldsUnchanged() {
+      return request.resource.data.uid == resource.data.uid &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin']);
+    }
+
+    function validAiMessage() {
+      return request.resource.data.keys().hasOnly(['role', 'content', 'timestamp']) &&
+        request.resource.data.role in ['user', 'assistant'] &&
+        request.resource.data.content is string &&
+        request.resource.data.content.size() <= 8000 &&
+        request.resource.data.timestamp is timestamp;
+    }
+
     match /user_details/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && createsNoProtectedUserFields(userId);
+      allow update: if isOwner(userId) && keepsProtectedUserFieldsUnchanged();
+      allow delete: if false;
 
       match /favourites/{itemId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, write: if isOwner(userId);
       }
 
       match /mealPlans/{planId} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read, write: if isOwner(userId);
       }
     }
 
     match /calorie_logs/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if isOwner(userId);
     }
 
     match /weight_logs/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if isOwner(userId);
     }
 
     match /indian_foods/{docId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null &&
-        get(/databases/$(database)/documents/user_details/$(request.auth.uid)).data.isAdmin == true;
+      allow read: if signedIn();
+      allow write: if isAdmin();
     }
 
     match /food_data/{docId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null &&
-        get(/databases/$(database)/documents/user_details/$(request.auth.uid)).data.isAdmin == true;
+      allow read: if signedIn();
+      allow write: if isAdmin();
     }
 
-    match /ai_chats/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+    match /ai_chats/{userId}/messages/{messageId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId) && validAiMessage();
+      allow update: if false;
+      allow delete: if isOwner(userId);
     }
   }
 }

@@ -51,6 +51,11 @@ class _NutritionEstimatorScreenState extends State<NutritionEstimatorScreen> {
     try {
       final result = await _ai.estimateNutrition(_controller.text.trim());
       if (mounted) setState(() => _result = result);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to estimate nutrition: $error')),
+      );
     } finally {
       if (mounted) setState(() => _loading = false);
     }

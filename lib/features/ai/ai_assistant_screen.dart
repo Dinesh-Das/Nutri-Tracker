@@ -37,7 +37,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return const Scaffold(body: Center(child: Text('Please sign in.')));
+    if (uid == null)
+      return const Scaffold(body: Center(child: Text('Please sign in.')));
     return Scaffold(
       appBar: AppBar(
         title: const Text('NutriBot'),
@@ -88,7 +89,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                   itemCount: messages.length + (_sending ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index >= messages.length) {
-                      return const AIMessageBubble(role: 'assistant', content: 'Typing...');
+                      return const AIMessageBubble(
+                          role: 'assistant', content: 'Typing...');
                     }
                     final message = messages[index];
                     return AIMessageBubble(
@@ -153,7 +155,7 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
         uid: uid,
         role: 'assistant',
         content:
-            'I could not reach NutriBot right now. Please check the API key and try again.',
+            'I could not reach NutriBot right now. Please check the secure AI proxy configuration and try again.',
       );
     } finally {
       if (mounted) setState(() => _sending = false);

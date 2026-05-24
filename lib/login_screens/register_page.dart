@@ -5,8 +5,6 @@ import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 
-import '../homepage/bottom_navigation.dart';
-
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({Key? key}) : super(key: key);
 
@@ -15,7 +13,6 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  bool isOtpVerified = false;
   bool isHiddenPassword = true;
   bool isHiddenConfirmPassword = true;
   final _auth = FirebaseAuth.instance;
@@ -28,7 +25,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final passwordEditingController = TextEditingController();
   final confirmPasswordEditingController = TextEditingController();
   final phoneEditingController = TextEditingController();
-  final otpEditingController = TextEditingController();
 
   @override
   void initState() {
@@ -43,22 +39,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     passwordEditingController.dispose();
     confirmPasswordEditingController.dispose();
     phoneEditingController.dispose();
-    otpEditingController.dispose();
-  }
-
-  void sendOTP() async {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Email verification is sent after account creation.'),
-      ),
-    );
-  }
-
-  void verifyOTP() {
-    isOtpVerified = true;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Verification step accepted.')),
-    );
   }
 
   @override
@@ -140,52 +120,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       },
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
-          suffix: SizedBox(
-              height: 30,
-              child: TextButton(
-                onPressed: () {
-                  sendOTP();
-                },
-                child: const Text("Send OTP"),
-              )),
           prefixIcon: const Icon(Icons.email),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Email",
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
-    );
-    //otp text field
-    final otpField = TextFormField(
-      autofocus: false,
-      controller: otpEditingController,
-      keyboardType: TextInputType.number,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return ("Enter OTP !");
-        }
-        //Regular Expression for name validation
-        if (!RegExp(r"^[0-9]*$").hasMatch(value)) {
-          return ("Enter Valid OTP ");
-        } else if (value.length > 6 || value.length < 6) {
-          return ("Enter Valid OTP");
-        }
-        return null;
-      },
-      onSaved: (value) {
-        otpEditingController.text = value!;
-      },
-      textInputAction: TextInputAction.next,
-      decoration: InputDecoration(
-          prefixIcon: const Icon(Icons.sentiment_very_satisfied_outlined),
-          suffix: SizedBox(
-              height: 30,
-              child: TextButton(
-                onPressed: () {
-                  verifyOTP();
-                },
-                child: const Text("Verify OTP"),
-              )),
-          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-          hintText: "OTP",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
     //Password Text Field
@@ -320,10 +257,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      otpField,
-                      const SizedBox(
-                        height: 20,
-                      ),
                       passwordField,
                       const SizedBox(
                         height: 20,
@@ -347,30 +280,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
-      if (isOtpVerified) {
-        try {
-          UserLocalData.saveLoginData(true);
-          UserLocalData.savePass(passwordEditingController.text);
-          UserLocalData.saveMail(emailEditingController.text);
-          await _auth.createUserWithEmailAndPassword(
-              email: email, password: password);
-          await _auth.currentUser?.sendEmailVerification();
-          postDetailsToFirestore();
-        } on FirebaseAuthException catch (e) {
-          if (e.code == 'email-already-in-use') {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Email Already in use'),
-              ),
-            );
-          }
+      try {
+        UserLocalData.saveLoginData(true);
+        UserLocalData.saveMail(emailEditingController.text);
+        await _auth.createUserWithEmailAndPassword(
+            email: email, password: password);
+        await _auth.currentUser?.sendEmailVerification();
+        postDetailsToFirestore();
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-already-in-use') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Email Already in use'),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(e.message ?? 'Registration failed')),
+          );
         }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please Verify OTP Before Signing In'),
-          ),
-        );
       }
     }
   }
@@ -394,7 +322,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .set(userModel.toMap());
 
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Account Created succesfully'),
+      content:
+          Text('Account created. Please verify your email from your inbox.'),
     ));
 
     Navigator.pushAndRemoveUntil(

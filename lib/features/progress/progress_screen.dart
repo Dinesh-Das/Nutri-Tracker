@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/models/weight_entry.dart';
 import 'package:nutri_tracker/services/calorie_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
@@ -12,7 +13,8 @@ class ProgressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return const Scaffold(body: Center(child: Text('Please sign in.')));
+    if (uid == null)
+      return const Scaffold(body: Center(child: Text('Please sign in.')));
     return Scaffold(
       appBar: AppBar(title: const Text('Progress')),
       body: FutureBuilder<List<WeightEntry>>(
@@ -38,8 +40,10 @@ class ProgressScreen extends StatelessWidget {
               _TodayMacros(uid: uid),
               Row(
                 children: [
-                  Expanded(child: _StatCard(label: 'Log streak', value: '0 days')),
-                  Expanded(child: _StatCard(label: 'BMI checks', value: '${entries.length}')),
+                  Expanded(child: _LogStreak(uid: uid)),
+                  Expanded(
+                      child: _StatCard(
+                          label: 'BMI checks', value: '${entries.length}')),
                 ],
               ),
             ],
@@ -62,7 +66,8 @@ class ProgressScreen extends StatelessWidget {
         LineChartBarData(
           isCurved: true,
           spots: [
-            for (var i = 0; i < entries.length; i++) FlSpot(i.toDouble(), entries[i].bmi),
+            for (var i = 0; i < entries.length; i++)
+              FlSpot(i.toDouble(), entries[i].bmi),
           ],
           dotData: const FlDotData(show: true),
         ),
@@ -92,6 +97,35 @@ class ProgressScreen extends StatelessWidget {
   }
 }
 
+class _LogStreak extends StatelessWidget {
+  const _LogStreak({required this.uid});
+  final String uid;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<DailyCalorieLog>>(
+      future: Future.wait(List.generate(30, (index) {
+        return CalorieService().getDailyLog(
+          uid,
+          DateTime.now().subtract(Duration(days: index)),
+        );
+      })),
+      builder: (context, snapshot) {
+        final logs = snapshot.data ?? const <DailyCalorieLog>[];
+        var streak = 0;
+        for (final log in logs) {
+          if (log.totalCalories > 0 || log.meals.isNotEmpty) {
+            streak++;
+          } else {
+            break;
+          }
+        }
+        return _StatCard(label: 'Log streak', value: '$streak days');
+      },
+    );
+  }
+}
+
 class _WeeklyCalories extends StatelessWidget {
   const _WeeklyCalories({required this.uid});
   final String uid;
@@ -117,7 +151,8 @@ class _WeeklyCalories extends StatelessWidget {
                   BarChartGroupData(
                     x: i,
                     barRods: [
-                      BarChartRodData(toY: logs[i].totalCalories.toDouble(), width: 9),
+                      BarChartRodData(
+                          toY: logs[i].totalCalories.toDouble(), width: 9),
                       BarChartRodData(toY: 2000, width: 9, color: Colors.grey),
                     ],
                   ),

@@ -27,7 +27,9 @@ class WaterTrackerWidget extends StatelessWidget {
             return IconButton(
               tooltip: '${index + 1} cups',
               onPressed: () {
-                CalorieService().updateWaterIntake(uid, date, index + 1);
+                final nextCups =
+                    filled && index == cups - 1 ? index : index + 1;
+                CalorieService().updateWaterIntake(uid, date, nextCups);
               },
               icon: Icon(
                 filled ? Icons.water_drop : Icons.water_drop_outlined,

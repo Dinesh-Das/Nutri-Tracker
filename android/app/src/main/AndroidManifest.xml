@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.nutri_tracker">
    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
    <application
         android:label="NutriTrack India"
         android:icon="@mipmap/ic_launcher">

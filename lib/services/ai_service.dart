@@ -1,13 +1,12 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
 
 class AIService {
-  static const String _baseUrl = 'https://api.anthropic.com/v1/messages';
+  static const String _proxyUrl = String.fromEnvironment('NUTRIBOT_PROXY_URL');
   static const String _model = 'claude-sonnet-4-20250514';
 
   Future<String> sendMessage({
@@ -15,9 +14,11 @@ class AIService {
     required List<Map<String, String>> conversationHistory,
     UserModel? userContext,
   }) async {
-    final apiKey = dotenv.env['ANTHROPIC_API_KEY'] ?? '';
-    if (apiKey.isEmpty) {
-      throw Exception('Missing ANTHROPIC_API_KEY in .env');
+    if (_proxyUrl.trim().isEmpty) {
+      throw Exception(
+        'NutriBot is not configured. Run the app with '
+        '--dart-define=NUTRIBOT_PROXY_URL=https://your-secure-proxy.example.com/messages',
+      );
     }
 
     var systemPrompt = nutriBotSystemPrompt;
@@ -37,17 +38,27 @@ Current user context:
 ''';
     }
 
+    final cleanedHistory = conversationHistory
+        .where((message) =>
+            (message['role'] == 'user' || message['role'] == 'assistant') &&
+            (message['content']?.trim().isNotEmpty ?? false))
+        .map((message) => {
+              'role': message['role']!,
+              'content': message['content']!.trim(),
+            })
+        .toList();
+    final recentHistory = cleanedHistory.length <= 20
+        ? cleanedHistory
+        : cleanedHistory.sublist(cleanedHistory.length - 20);
     final messages = [
-      ...conversationHistory,
+      ...recentHistory,
       {'role': 'user', 'content': userMessage},
     ];
 
     final response = await http.post(
-      Uri.parse(_baseUrl),
+      Uri.parse(_proxyUrl),
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
       },
       body: jsonEncode({
         'model': _model,
@@ -59,7 +70,16 @@ Current user context:
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
-      return data['content'][0]['text'] as String;
+      final text = data['text'];
+      if (text is String) return text;
+      final content = data['content'];
+      if (content is List && content.isNotEmpty) {
+        final first = content.first;
+        if (first is Map && first['text'] is String) {
+          return first['text'] as String;
+        }
+      }
+      throw Exception('AI proxy returned an unexpected response format.');
     }
     throw Exception('AI request failed: ${response.statusCode}');
   }
@@ -74,7 +94,8 @@ Current user context:
     if (start == -1 || end == -1 || end <= start) {
       throw Exception('AI response did not include valid JSON');
     }
-    return jsonDecode(response.substring(start, end + 1)) as Map<String, dynamic>;
+    return jsonDecode(response.substring(start, end + 1))
+        as Map<String, dynamic>;
   }
 
   Future<void> saveChatMessage({
@@ -82,6 +103,10 @@ Current user context:
     required String role,
     required String content,
   }) {
+    if (role != 'user' && role != 'assistant') {
+      throw ArgumentError.value(role, 'role', 'Role must be user or assistant');
+    }
+    if (content.trim().isEmpty) return Future.value();
     return FirebaseFirestore.instance
         .collection('ai_chats')
         .doc(uid)
@@ -100,12 +125,13 @@ Current user context:
         .collection('messages')
         .orderBy('timestamp')
         .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => {
-                  'role': (doc.data()['role'] ?? 'user').toString(),
-                  'content': (doc.data()['content'] ?? '').toString(),
-                })
-            .toList());
+        .map((snapshot) => snapshot.docs.map((doc) {
+              final role = (doc.data()['role'] ?? 'user').toString();
+              return {
+                'role': role == 'assistant' ? 'assistant' : 'user',
+                'content': (doc.data()['content'] ?? '').toString(),
+              };
+            }).toList());
   }
 
   Future<void> clearChat(String uid) async {

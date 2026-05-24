@@ -266,7 +266,6 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       // nutritracker@admin.in
       try {
-        UserLocalData.savePass(passwordController.text);
         UserLocalData.saveMail(emailController.text);
 
         await _auth.signInWithEmailAndPassword(
@@ -285,8 +284,10 @@ class _LoginScreenState extends State<LoginScreen> {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const AdminPage()));
         } else if (data['isOnboardingDone'] != true) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const OnboardingScreen()));
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const OnboardingScreen()));
         } else {
           Navigator.pushReplacement(
               context,

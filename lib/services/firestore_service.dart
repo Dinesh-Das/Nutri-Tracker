@@ -43,6 +43,7 @@ class FirestoreService {
     String? activityLevel,
   }) async {
     await _firestore.collection('user_details').doc(uid).set({
+      'uid': uid,
       'bmi': bmi.toStringAsFixed(1),
       'weight': weight.toStringAsFixed(1),
       'height': height.toStringAsFixed(0),

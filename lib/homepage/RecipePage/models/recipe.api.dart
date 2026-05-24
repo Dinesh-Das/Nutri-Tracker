@@ -4,22 +4,28 @@ import 'package:http/http.dart' as http;
 
 class RecipeApi {
   static Future<List<Recipe>> getRecipe() async {
-    var uri = Uri.https('yummly2.p.rapidapi.com', '/feeds/list',
-        {"limit": "18", "start": "0", "tag": "list.recipe.popular"});
+    final uri = Uri.https(
+      'www.themealdb.com',
+      '/api/json/v1/1/filter.php',
+      {'a': 'Indian'},
+    );
 
-    final response = await http.get(uri, headers: {
-      "x-rapidapi-key": "ebf3c1f6a9msh4e30596b8fc34bfp1b368bjsn64baeb2e2fe5",
-      "x-rapidapi-host": "yummly2.p.rapidapi.com",
-      "useQueryString": "true"
-    });
-
-    Map data = jsonDecode(response.body);
-    List _temp = [];
-
-    for (var i in data['feed']) {
-      _temp.add(i['content']['details']);
+    final response = await http.get(uri);
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('Recipe request failed: ${response.statusCode}');
     }
 
-    return Recipe.recipesFromSnapshot(_temp);
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    final meals = (data['meals'] as List?) ?? const [];
+
+    return meals
+        .whereType<Map<String, dynamic>>()
+        .map((meal) => Recipe(
+              name: (meal['strMeal'] ?? '').toString(),
+              images: (meal['strMealThumb'] ?? '').toString(),
+              rating: 0,
+              totalTime: 'Indian',
+            ))
+        .toList();
   }
 }

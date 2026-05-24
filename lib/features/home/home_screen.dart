@@ -10,6 +10,7 @@ import 'package:nutri_tracker/drawer/drawermenu.dart';
 import 'package:nutri_tracker/features/ai/ai_assistant_screen.dart';
 import 'package:nutri_tracker/features/calories/calorie_log_screen.dart';
 import 'package:nutri_tracker/homepage/home/quotes.dart';
+import 'package:nutri_tracker/models/indian_recipe.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/services/calorie_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
@@ -31,6 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
   final _calorieService = CalorieService();
   final _recipeApi = RecipeApiService();
   final quote = mylist[Random().nextInt(mylist.length)];
+  late final Future<IndianRecipe?> _featuredRecipeFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _featuredRecipeFuture = _recipeApi.randomIndianRecipe();
+  }
 
   String greetings() {
     final hour = DateTime.now().hour;
@@ -42,7 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return const Scaffold(body: Center(child: Text('Please sign in.')));
+    if (uid == null)
+      return const Scaffold(body: Center(child: Text('Please sign in.')));
     return StreamBuilder<UserModel>(
       stream: _firestoreService.watchUser(uid),
       builder: (context, userSnapshot) {
@@ -56,7 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
             stream: _calorieService.watchDailyLog(uid, DateTime.now()),
             builder: (context, logSnapshot) {
               final log = logSnapshot.data ??
-                  DailyCalorieLog.empty(_calorieService.dateKey(DateTime.now()));
+                  DailyCalorieLog.empty(
+                      _calorieService.dateKey(DateTime.now()));
               return ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -70,7 +80,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: InkWell(
                       onTap: () => Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const CalorieLogScreen()),
+                        MaterialPageRoute(
+                            builder: (_) => const CalorieLogScreen()),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -113,13 +124,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('BMI Status', style: Theme.of(context).textTheme.titleLarge),
+                          Text('BMI Status',
+                              style: Theme.of(context).textTheme.titleLarge),
                           const SizedBox(height: 8),
                           if (bmi <= 0)
                             FilledButton(
                               onPressed: () => Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (_) => CalculatorScreen()),
+                                MaterialPageRoute(
+                                    builder: (_) => CalculatorScreen()),
                               ),
                               child: const Text('Calculate your BMI'),
                             )
@@ -137,7 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: 'Log Meal',
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const CalorieLogScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => const CalorieLogScreen()),
                         ),
                       ),
                       _QuickAction(
@@ -168,7 +182,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: 'NutriBot',
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const AIAssistantScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => const AIAssistantScreen()),
                         ),
                       ),
                     ],
@@ -197,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   FutureBuilder(
-                    future: _recipeApi.randomIndianRecipe(),
+                    future: _featuredRecipeFuture,
                     builder: (context, snapshot) {
                       final recipe = snapshot.data;
                       if (recipe == null) return const SizedBox.shrink();
@@ -215,7 +230,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Padding(
                               padding: const EdgeInsets.all(16),
                               child: Text('Featured: ${recipe.name}',
-                                  style: Theme.of(context).textTheme.titleLarge),
+                                  style:
+                                      Theme.of(context).textTheme.titleLarge),
                             ),
                           ],
                         ),
@@ -249,7 +265,8 @@ class _RecommendedFoods extends StatelessWidget {
       builder: (context, snapshot) {
         final docs = snapshot.data?.docs ?? [];
         if (docs.isEmpty) {
-          return const Center(child: Text('Seed Indian foods to see suggestions.'));
+          return const Center(
+              child: Text('Seed Indian foods to see suggestions.'));
         }
         return ListView.builder(
           scrollDirection: Axis.horizontal,

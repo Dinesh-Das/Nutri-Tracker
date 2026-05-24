@@ -57,22 +57,40 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   _Step(
                     title: 'Welcome to NutriTrack India',
                     child: Icon(Icons.local_dining,
-                        size: 120, color: Theme.of(context).colorScheme.primary),
+                        size: 120,
+                        color: Theme.of(context).colorScheme.primary),
                   ),
                   _Step(
                     title: 'Tell us about yourself',
                     child: Column(
                       children: [
-                        _SliderRow(label: 'Age', value: _age.toDouble(), min: 10, max: 90, onChanged: (v) => setState(() => _age = v.round())),
-                        _SliderRow(label: 'Height cm', value: _height, min: 120, max: 220, onChanged: (v) => setState(() => _height = v)),
-                        _SliderRow(label: 'Weight kg', value: _weight, min: 30, max: 180, onChanged: (v) => setState(() => _weight = v)),
+                        _SliderRow(
+                            label: 'Age',
+                            value: _age.toDouble(),
+                            min: 10,
+                            max: 90,
+                            onChanged: (v) => setState(() => _age = v.round())),
+                        _SliderRow(
+                            label: 'Height cm',
+                            value: _height,
+                            min: 120,
+                            max: 220,
+                            onChanged: (v) => setState(() => _height = v)),
+                        _SliderRow(
+                            label: 'Weight kg',
+                            value: _weight,
+                            min: 30,
+                            max: 180,
+                            onChanged: (v) => setState(() => _weight = v)),
                         SegmentedButton<String>(
                           segments: const [
                             ButtonSegment(value: 'Male', label: Text('Male')),
-                            ButtonSegment(value: 'Female', label: Text('Female')),
+                            ButtonSegment(
+                                value: 'Female', label: Text('Female')),
                           ],
                           selected: {_gender},
-                          onSelectionChanged: (v) => setState(() => _gender = v.first),
+                          onSelectionChanged: (v) =>
+                              setState(() => _gender = v.first),
                         ),
                       ],
                     ),
@@ -84,19 +102,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         DropdownButtonFormField<String>(
                           value: _goal,
                           items: const [
-                            DropdownMenuItem(value: 'lose', child: Text('Lose weight')),
-                            DropdownMenuItem(value: 'maintain', child: Text('Maintain')),
-                            DropdownMenuItem(value: 'gain', child: Text('Gain weight')),
+                            DropdownMenuItem(
+                                value: 'lose', child: Text('Lose weight')),
+                            DropdownMenuItem(
+                                value: 'maintain', child: Text('Maintain')),
+                            DropdownMenuItem(
+                                value: 'gain', child: Text('Gain weight')),
                           ],
                           onChanged: (v) => setState(() => _goal = v ?? _goal),
                         ),
                         DropdownButtonFormField<String>(
                           value: _diet,
                           items: const [
-                            DropdownMenuItem(value: 'vegetarian', child: Text('Vegetarian')),
-                            DropdownMenuItem(value: 'non_vegetarian', child: Text('Non-vegetarian')),
-                            DropdownMenuItem(value: 'vegan', child: Text('Vegan')),
-                            DropdownMenuItem(value: 'eggetarian', child: Text('Eggetarian')),
+                            DropdownMenuItem(
+                                value: 'vegetarian', child: Text('Vegetarian')),
+                            DropdownMenuItem(
+                                value: 'non_vegetarian',
+                                child: Text('Non-vegetarian')),
+                            DropdownMenuItem(
+                                value: 'vegan', child: Text('Vegan')),
+                            DropdownMenuItem(
+                                value: 'eggetarian', child: Text('Eggetarian')),
                           ],
                           onChanged: (v) => setState(() => _diet = v ?? _diet),
                         ),
@@ -110,12 +136,20 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         DropdownButtonFormField<String>(
                           value: _activity,
                           items: const [
-                            DropdownMenuItem(value: 'sedentary', child: Text('Sedentary')),
-                            DropdownMenuItem(value: 'lightly_active', child: Text('Lightly active')),
-                            DropdownMenuItem(value: 'moderately_active', child: Text('Moderately active')),
-                            DropdownMenuItem(value: 'very_active', child: Text('Very active')),
+                            DropdownMenuItem(
+                                value: 'sedentary', child: Text('Sedentary')),
+                            DropdownMenuItem(
+                                value: 'lightly_active',
+                                child: Text('Lightly active')),
+                            DropdownMenuItem(
+                                value: 'moderately_active',
+                                child: Text('Moderately active')),
+                            DropdownMenuItem(
+                                value: 'very_active',
+                                child: Text('Very active')),
                           ],
-                          onChanged: (v) => setState(() => _activity = v ?? _activity),
+                          onChanged: (v) =>
+                              setState(() => _activity = v ?? _activity),
                         ),
                         const SizedBox(height: 24),
                         Text('Your daily calorie goal: $_calorieGoal kcal',
@@ -146,7 +180,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void _next() {
-    _page.nextPage(duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+    _page.nextPage(
+        duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
   }
 
   Future<void> _finish() async {
@@ -154,11 +189,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (uid == null) return;
     final bmi = calculateBmi(_weight, _height);
     await FirebaseFirestore.instance.collection('user_details').doc(uid).set({
+      'uid': uid,
       'height': _height.toStringAsFixed(0),
       'weight': _weight.toStringAsFixed(1),
       'gender': _gender,
       'bmi': bmi.toStringAsFixed(1),
-      'bmr': calculateBmr(gender: _gender, weightKg: _weight, heightCm: _height, age: _age).toStringAsFixed(0),
+      'bmr': calculateBmr(
+              gender: _gender, weightKg: _weight, heightCm: _height, age: _age)
+          .toStringAsFixed(0),
       'weightGoal': _goal,
       'dietaryPreference': _diet,
       'activityLevel': _activity,
@@ -187,7 +225,9 @@ class _Step extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(title, textAlign: TextAlign.center, style: Theme.of(context).textTheme.headlineSmall),
+          Text(title,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 28),
           child,
         ],

@@ -7,6 +7,7 @@ import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/database/google_signin.dart';
+import 'package:nutri_tracker/features/favourites/favourites_screen.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 // import 'package:nutri_tracker/bottom_navigation.dart';
@@ -105,6 +106,15 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   ),
                   buildMenuItem(
                     context: context,
+                    text: 'Favourites',
+                    icon: Icons.favorite,
+                    onClicked: () => selectedItem(context, 5),
+                  ),
+                  const SizedBox(
+                    height: 13,
+                  ),
+                  buildMenuItem(
+                    context: context,
                     text: 'Settings',
                     icon: Icons.settings,
                     onClicked: () => selectedItem(context, 2),
@@ -180,7 +190,6 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
     sharedPreferences.clear();
-    sharedPreferences.remove('logintype');
     user = await FirebaseAuth.instance.currentUser!;
     if (user!.providerData[0].providerId == "google.com") {
       final provider =
@@ -286,6 +295,10 @@ void selectedItem(BuildContext context, int index) {
     case 4:
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => BottomNavigation()));
+      break;
+    case 5:
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const FavouritesScreen()));
       break;
   }
 }
