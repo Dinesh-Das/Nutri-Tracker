@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/drawer/AboutUs/data_developers.dart';
 
 class ViewAbout extends StatelessWidget {
-  const ViewAbout({Key? key, required this.about1}) : super(key: key);
+  const ViewAbout({super.key, required this.about1});
   final About about1;
 
   @override

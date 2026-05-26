@@ -5,7 +5,7 @@ import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/onbparding_components/content_model.dart';
 
 class Onboarding extends StatefulWidget {
-  const Onboarding({Key? key}) : super(key: key);
+  const Onboarding({super.key});
 
   @override
   _OnboardingState createState() => _OnboardingState();

@@ -14,10 +14,10 @@ class MyColors {
   // static Color backColor = Color(0XFFE29578);
 
   // ashu.deshmukh560@gmail.com
-  static Color bottomNav = Color(0XFFFFDDD2);
-  static Color heading = Color(0XFF222223B);
-  static Color subHeading = Color(0xFF4A4E69);
-  static Color shortDesc = Color(0XFF9A8C98);
-  static Color iconsColor = Color(0xFFC9ADA7);
-  static Color backColor = Color(0XFFF2E9E4);
+  static Color bottomNav = const Color(0XFFFFDDD2);
+  static Color heading = const Color(0xff222223b);
+  static Color subHeading = const Color(0xFF4A4E69);
+  static Color shortDesc = const Color(0XFF9A8C98);
+  static Color iconsColor = const Color(0xFFC9ADA7);
+  static Color backColor = const Color(0XFFF2E9E4);
 }

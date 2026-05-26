@@ -4,8 +4,9 @@ import 'package:nutri_tracker/bmi/utils/reusable_card.dart';
 import 'package:nutri_tracker/homepage/bottom_navigation.dart';
 
 class ResultsPage extends StatelessWidget {
-  ResultsPage(
-      {required this.interpretation,
+  const ResultsPage(
+      {super.key,
+      required this.interpretation,
       required this.bmiResult,
       required this.resultText});
 
@@ -17,7 +18,7 @@ class ResultsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BMI CALCULATOR'),
+        title: const Text('BMI CALCULATOR'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -25,9 +26,9 @@ class ResultsPage extends StatelessWidget {
         children: <Widget>[
           Expanded(
             child: Container(
-              padding: EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(15.0),
               alignment: Alignment.bottomLeft,
-              child: Text(
+              child: const Text(
                 'Your Result',
                 style: kTitleTextStyle,
               ),
@@ -67,20 +68,20 @@ class ResultsPage extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Container(
-                  child: Center(
+                  color: kBottomContainerColour,
+                  margin: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  width: MediaQuery.of(context).size.width * 0.47,
+                  height: kBottomContainerHeight,
+                  child: const Center(
                     child: Text(
                       'RE-CALCULATE',
                       style: kLargeButtonTextStyle,
                     ),
                   ),
-                  color: kBottomContainerColour,
-                  margin: EdgeInsets.only(top: 10.0),
-                  padding: EdgeInsets.only(bottom: 20.0),
-                  width: MediaQuery.of(context).size.width * 0.47,
-                  height: kBottomContainerHeight,
                 ),
               ),
-              Divider(
+              const Divider(
                 indent: 5,
                 thickness: 1,
                 height: 100,
@@ -90,20 +91,20 @@ class ResultsPage extends StatelessWidget {
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => BottomNavigation()));
+                          builder: (context) => const BottomNavigation()));
                 },
                 child: Container(
-                  child: Center(
+                  color: kBottomContainerColour,
+                  margin: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  width: MediaQuery.of(context).size.width * 0.47,
+                  height: kBottomContainerHeight,
+                  child: const Center(
                     child: Text(
                       'Continue',
                       style: kLargeButtonTextStyle,
                     ),
                   ),
-                  color: kBottomContainerColour,
-                  margin: EdgeInsets.only(top: 10.0),
-                  padding: EdgeInsets.only(bottom: 20.0),
-                  width: MediaQuery.of(context).size.width * 0.47,
-                  height: kBottomContainerHeight,
                 ),
               ),
             ],

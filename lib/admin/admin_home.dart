@@ -8,7 +8,7 @@ import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 
 class AdminPage extends StatefulWidget {
-  const AdminPage({Key? key}) : super(key: key);
+  const AdminPage({super.key});
 
   @override
   _AdminPageState createState() => _AdminPageState();
@@ -80,42 +80,42 @@ class _AdminPageState extends State<AdminPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => AddData()));
+                                    builder: (context) => const AddData()));
                           },
-                          child: Text("Add Data"),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context)
                                   .appBarTheme
                                   .foregroundColor),
+                          child: const Text("Add Data"),
                         ),
                         ElevatedButton(
                           onPressed: () {},
-                          child: Text("Update Data"),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context)
                                   .appBarTheme
                                   .foregroundColor),
+                          child: const Text("Update Data"),
                         ),
                         ElevatedButton(
                           onPressed: () {},
-                          child: Text("Delete Data"),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context)
                                   .appBarTheme
                                   .foregroundColor),
+                          child: const Text("Delete Data"),
                         ),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ViewData()));
+                                    builder: (context) => const ViewData()));
                           },
-                          child: Text("View Data"),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context)
                                   .appBarTheme
                                   .foregroundColor),
+                          child: const Text("View Data"),
                         ),
                         ElevatedButton(
                           onPressed: () {
@@ -125,11 +125,11 @@ class _AdminPageState extends State<AdminPage> {
                                     builder: (context) =>
                                         const IndianFoodsAdminScreen()));
                           },
-                          child: Text("Indian Foods"),
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context)
                                   .appBarTheme
                                   .foregroundColor),
+                          child: const Text("Indian Foods"),
                         ),
                       ],
                     ),

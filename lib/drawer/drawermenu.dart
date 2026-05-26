@@ -10,6 +10,7 @@ import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/features/favourites/favourites_screen.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 // import 'package:nutri_tracker/bottom_navigation.dart';
 import 'package:nutri_tracker/sharedPreferences/local_data.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
@@ -20,7 +21,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../homepage/bottom_navigation.dart';
 
 class NavigationDrawer extends StatefulWidget {
-  const NavigationDrawer({Key? key}) : super(key: key);
+  const NavigationDrawer({super.key});
 
   @override
   _NavigationDrawerState createState() => _NavigationDrawerState();
@@ -190,7 +191,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     final SharedPreferences sharedPreferences =
         await SharedPreferences.getInstance();
     sharedPreferences.clear();
-    user = await FirebaseAuth.instance.currentUser!;
+    user = FirebaseAuth.instance.currentUser!;
     if (user!.providerData[0].providerId == "google.com") {
       final provider =
           Provider.of<GoogleSignInProvider>(context, listen: false);
@@ -219,12 +220,10 @@ Widget buildHeader({
         child: Row(
           children: [
             Container(
-              child: CircleAvatar(
-                  radius: 30, backgroundImage: NetworkImage(urlImage)),
               decoration: BoxDecoration(
                 border: Border.all(
                   width: 4,
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -235,6 +234,7 @@ Widget buildHeader({
                 ],
                 shape: BoxShape.circle,
               ),
+              child: CachedCircleImage(imageUrl: urlImage, size: 60),
             ),
             const SizedBox(width: 20),
             Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -281,8 +281,8 @@ void selectedItem(BuildContext context, int index) {
           MaterialPageRoute(builder: (context) => const EditProfile()));
       break;
     case 1:
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => BottomNavigation()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const BottomNavigation()));
       break;
     case 2:
       Navigator.push(context,
@@ -293,8 +293,8 @@ void selectedItem(BuildContext context, int index) {
           'https://drive.google.com/file/d/18XAjRC9_k825xVOZMFBFTpMPzi4xBvOm/view?usp=sharing');
       break;
     case 4:
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => BottomNavigation()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const BottomNavigation()));
       break;
     case 5:
       Navigator.push(context,

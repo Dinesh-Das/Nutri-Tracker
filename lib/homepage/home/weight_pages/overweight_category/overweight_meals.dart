@@ -1,16 +1,12 @@
 // ignore_for_file: prefer_const_constructors, avoid_print
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:nutri_tracker/homepage/home/home.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages/overweight_category/overweight_meals_details/overweight_meals_details.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages_model/meal%20model/weight_loss_meal.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages_model/weight_gain_frt_model.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class overweightmeals extends StatefulWidget {
-  const overweightmeals({Key? key}) : super(key: key);
+  const overweightmeals({super.key});
 
   @override
   _overweightmealsState createState() => _overweightmealsState();
@@ -24,7 +20,6 @@ class _overweightmealsState extends State<overweightmeals> {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: CustomScrollView(slivers: [
         SliverAppBar(
@@ -85,7 +80,7 @@ class _overweightmealsState extends State<overweightmeals> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           image: DecorationImage(
-                            image: NetworkImage(
+                            image: cachedNetworkImageProvider(
                               Wlossmeal[index].image,
                             ),
                             fit: BoxFit.cover,
@@ -118,51 +113,6 @@ class _overweightmealsState extends State<overweightmeals> {
                         ),
                       ),
                     ),
-                    //  Column(
-                    //   children: [
-                    //     Image.network(
-                    //       Wlossmeal[index].image,
-                    //       height: height * 0.20,
-                    //       width: 200,
-                    //       fit: BoxFit.cover,
-                    //     ),
-                    //     SizedBox(
-                    //       height: 20,
-                    //     ),
-                    //     // SizedBox(
-                    //     //   height: 60,
-                    //     //   child: Transform.translate(
-                    //     //     offset: Offset(50, -150),
-                    //     //     child: Container(
-                    //     //       margin: EdgeInsets.symmetric(
-                    //     //           horizontal: 40, vertical: 10),
-                    //     //       decoration: BoxDecoration(
-                    //     //           borderRadius: BorderRadius.circular(10),
-                    //     //           color: Colors.white),
-                    //     //       child: IconButton(
-                    //     //           onPressed: () {
-                    //     //             Navigator.push(
-                    //     //               context,
-                    //     //               MaterialPageRoute(
-                    //     //                 builder: (context) => home(),
-                    //     //               ),
-                    //     //             );
-                    //     //           },
-                    //     //           icon: Icon(Icons.bookmark_add_outlined)),
-                    //     //     ),
-                    //     //   ),
-                    //     // ),
-                    //     Padding(
-                    //       padding:
-                    //           const EdgeInsets.only(left: 8.0, right: 7.0),
-                    //       child: Text(
-                    //         Wlossmeal[index].name,
-                    //         style: TextStyle(
-                    //             fontSize: 18, fontWeight: FontWeight.bold),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                   ),
                 ),
               ),

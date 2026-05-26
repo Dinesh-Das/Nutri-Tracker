@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import '../homepage/bottom_navigation.dart';
 
-updateDetailsToFirestore(
+Future<void> updateDetailsToFirestore(
     String? photoURL,
     String? username,
     String? name,
@@ -40,11 +39,22 @@ updateDetailsToFirestore(
   }..removeWhere((key, value) => value == null);
 
   showLoadingAlertDialog(context, 'Saving Data');
-  await firebaseFirestore
-      .collection("user_details")
-      .doc(user.uid)
-      .set(data, SetOptions(merge: true));
+  try {
+    await firebaseFirestore
+        .collection("user_details")
+        .doc(user.uid)
+        .set(data, SetOptions(merge: true));
+  } catch (error) {
+    if (!context.mounted) return;
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Unable to save profile: $error')),
+    );
+    return;
+  }
 
+  if (!context.mounted) return;
+  Navigator.pop(context);
   ScaffoldMessenger.of(context).showSnackBar(
     const SnackBar(
       content: Text('Data updated Successfully'),
@@ -57,33 +67,21 @@ updateDetailsToFirestore(
       (route) => false);
 }
 
-updateProfilePicToFirestore(String? photoURL) async {
-  // calling firestore
+Future<void> updateProfilePicToFirestore(String? photoURL) async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) return;
 
-  User? user = FirebaseAuth.instance.currentUser;
-  UserModel userModel = UserModel();
-
-  userModel.uid = user!.uid;
-
-  user.updatePhotoURL(photoURL).then((value) {
-    FirebaseFirestore.instance
-        .collection("user_details")
-        .where('uid', isEqualTo: user.uid)
-        .get()
-        .then((value) {
-      FirebaseFirestore.instance
-          .doc("user_details/${value.docs[0].id}")
-          .update({'photoURL': photoURL}).then(
-              (value) => print('Updated Profile Picture'));
-    }).catchError((e) {
-      print(e.toString());
-    });
-  }).catchError((e) {
-    print(e.toString());
-  });
+  await user.updatePhotoURL(photoURL);
+  await FirebaseFirestore.instance
+      .collection("user_details")
+      .doc(user.uid)
+      .set({
+    'uid': user.uid,
+    'photoURL': photoURL,
+  }, SetOptions(merge: true));
 }
 
-updateBMIData(
+Future<void> updateBMIData(
   String? height,
   String? weight,
   String? bmi,

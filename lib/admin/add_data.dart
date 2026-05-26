@@ -6,7 +6,7 @@ import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddData extends StatefulWidget {
-  const AddData({Key? key}) : super(key: key);
+  const AddData({super.key});
 
   @override
   _AddDataState createState() => _AddDataState();
@@ -20,10 +20,10 @@ TextEditingController nutriFactsController = TextEditingController();
 TextEditingController benifitsController = TextEditingController();
 TextEditingController sideEffectsController = TextEditingController();
 var userCategory = ['UnderWeight', 'OverWeight', 'Normal'];
-late String selectedCategory = userCategory.first;
+String selectedCategory = userCategory.first;
 bool isCategoryChanged = false;
 var subCategory = ['Fruits', 'Drinks', 'Meals'];
-late String selectedSubCategory = subCategory.first;
+String selectedSubCategory = subCategory.first;
 bool isSubCategoryChanged = false;
 
 class _AddDataState extends State<AddData> {
@@ -58,7 +58,7 @@ class _AddDataState extends State<AddData> {
                 key: adminkey,
                 child: Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     //Categories dropdwon
@@ -76,7 +76,8 @@ class _AddDataState extends State<AddData> {
                               size: 32,
                             ),
                             labelText: 'User Category Update',
-                            labelStyle: TextStyle(fontWeight: FontWeight.bold)),
+                            labelStyle:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                         value: selectedCategory,
                         // updateData.gender == ''    ? selectedGender: updateData.gender,
                         icon: Icon(Icons.arrow_drop_down,
@@ -120,7 +121,8 @@ class _AddDataState extends State<AddData> {
                               size: 32,
                             ),
                             labelText: 'Sub Category',
-                            labelStyle: TextStyle(fontWeight: FontWeight.bold)),
+                            labelStyle:
+                                const TextStyle(fontWeight: FontWeight.bold)),
                         value: selectedSubCategory,
                         // updateData.gender == ''    ? selectedGender: updateData.gender,
                         icon: Icon(Icons.arrow_drop_down,
@@ -232,9 +234,10 @@ class _AddDataState extends State<AddData> {
                                 Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => AdminPage()));
+                                        builder: (context) =>
+                                            const AdminPage()));
                               },
-                              child: Text("Cancel")),
+                              child: const Text("Cancel")),
                         ),
                       ],
                     ),

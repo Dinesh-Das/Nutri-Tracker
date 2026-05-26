@@ -5,9 +5,10 @@ import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:intl/intl.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class ViewProfile extends StatefulWidget {
-  const ViewProfile({Key? key}) : super(key: key);
+  const ViewProfile({super.key});
 
   @override
   State<ViewProfile> createState() => _ViewProfileState();
@@ -50,13 +51,12 @@ class _ViewProfileState extends State<ViewProfile> {
                 children: [
                   ClipPath(
                     clipper: MyCustomClipper(),
-                    child: Container(
+                    child: SizedBox(
                       height: 250,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(defaultProfileViewingUrl),
-                        ),
+                      width: double.infinity,
+                      child: CachedAppImage(
+                        imageUrl: defaultProfileViewingUrl,
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
@@ -76,16 +76,11 @@ class _ViewProfileState extends State<ViewProfile> {
                           child: Container(
                             width: 120,
                             height: 120,
-                            child: CircleAvatar(
-                              backgroundImage: (retrivedData.photoURL == "" ||
-                                      retrivedData.photoURL == null)
-                                  ? NetworkImage(defaultProfileUrl)
-                                  : NetworkImage(
-                                      retrivedData.photoURL.toString()),
-                            ),
                             decoration: BoxDecoration(
                               border: Border.all(
-                                  width: 4, color: theme.colorScheme.surfaceVariant),
+                                  width: 4,
+                                  color: theme
+                                      .colorScheme.surfaceContainerHighest),
                               boxShadow: [
                                 BoxShadow(
                                     spreadRadius: 2,
@@ -94,6 +89,13 @@ class _ViewProfileState extends State<ViewProfile> {
                                     offset: const Offset(0, 10)),
                               ],
                               shape: BoxShape.circle,
+                            ),
+                            child: CachedCircleImage(
+                              imageUrl: (retrivedData.photoURL == "" ||
+                                      retrivedData.photoURL == null)
+                                  ? defaultProfileUrl
+                                  : retrivedData.photoURL.toString(),
+                              size: 120,
                             ),
                           ),
                         ),
@@ -206,7 +208,7 @@ class _ViewProfileState extends State<ViewProfile> {
                 ),
                 Text(
                   data,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14.0,
                     // color: Colors.grey[700],
                   ),
@@ -247,11 +249,11 @@ viewProfilePicDialog(BuildContext context, String photoLink, String name) {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.white),
-                padding: EdgeInsets.all(15),
+                padding: const EdgeInsets.all(15),
                 width: MediaQuery.of(context).size.width * 0.9,
                 height: 410,
-                child: Image.network(
-                  photoLink,
+                child: CachedAppImage(
+                  imageUrl: photoLink,
                   width: MediaQuery.of(context).size.width * 0.9,
                   fit: BoxFit.cover,
                   height: 390,

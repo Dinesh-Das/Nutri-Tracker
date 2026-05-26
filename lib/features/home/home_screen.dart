@@ -17,6 +17,7 @@ import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/services/recipe_api_service.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
 import 'package:nutri_tracker/widgets/bmi_gauge_widget.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 import 'package:nutri_tracker/widgets/macro_chart_widget.dart';
 import 'package:nutri_tracker/widgets/water_tracker_widget.dart';
 
@@ -50,8 +51,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null)
+    if (uid == null) {
       return const Scaffold(body: Center(child: Text('Please sign in.')));
+    }
     return StreamBuilder<UserModel>(
       stream: _firestoreService.watchUser(uid),
       builder: (context, userSnapshot) {
@@ -60,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final goal = user.dailyCalorieGoal ?? 2000;
         return Scaffold(
           appBar: AppBar(title: const Text('NutriTrack India')),
-          drawer: NavigationDrawer(),
+          drawer: const NavigationDrawer(),
           body: StreamBuilder(
             stream: _calorieService.watchDailyLog(uid, DateTime.now()),
             builder: (context, logSnapshot) {
@@ -132,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               onPressed: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => CalculatorScreen()),
+                                    builder: (_) => const CalculatorScreen()),
                               ),
                               child: const Text('Calculate your BMI'),
                             )
@@ -174,7 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: 'Weigh In',
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => CalculatorScreen()),
+                          MaterialPageRoute(
+                              builder: (_) => const CalculatorScreen()),
                         ),
                       ),
                       _QuickAction(
@@ -221,8 +224,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Image.network(
-                              recipe.thumbnailUrl,
+                            CachedAppImage(
+                              imageUrl: recipe.thumbnailUrl,
                               height: 200,
                               width: double.infinity,
                               fit: BoxFit.cover,

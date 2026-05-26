@@ -4,7 +4,7 @@ NutriTrack India is a Flutter 3 + Firebase nutrition app focused on Indian eatin
 
 ## Features
 
-- Email/password auth, Google Sign-In, forgot password, and Firebase email verification
+- Email/password auth, Google Sign-In, forgot password, Firebase email verification, and Phone Auth OTP during registration
 - First-run onboarding for age, height, weight, gender, diet preference, goal, and activity level
 - Five bottom tabs: Home, Log, Recipes, Progress, NutriBot
 - Dashboard with calorie progress, macro chart, water tracker, BMI gauge, recommended foods, quote, and featured recipe
@@ -86,6 +86,10 @@ flutter pub run build_runner build --delete-conflicting-outputs
 The second command is only needed when Hive-generated files are introduced or changed. It is safe to run.
 
 ## Firebase Configuration Process
+
+For the full setup, rules deployment, SHA fingerprint, Storage, email
+verification, and Phone Auth OTP troubleshooting guide, see
+[FIREBASE_SETUP.md](FIREBASE_SETUP.md).
 
 ### 1. Create a Firebase Project
 
@@ -432,6 +436,7 @@ The codebase still has many legacy lint warnings from older files, mostly naming
 ### Auth
 
 - Register with email/password.
+- Send and verify phone OTP during registration.
 - Confirm Firebase sends an email verification message.
 - Log in with email/password.
 - Log in with Google after adding SHA fingerprints.
@@ -520,6 +525,12 @@ Add SHA-1 and SHA-256 fingerprints to Firebase Console, then rerun:
 ```bash
 flutterfire configure
 ```
+
+### Phone OTP is not delivered
+
+Enable Phone provider in Firebase Authentication, add Android SHA-1/SHA-256
+fingerprints, download a fresh `google-services.json`, and test with Firebase
+Console test phone numbers. See [FIREBASE_SETUP.md](FIREBASE_SETUP.md).
 
 ### Firestore permission denied
 

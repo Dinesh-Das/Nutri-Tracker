@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages_model/meal%20model/weight_loss_meal.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class overweight_meals_details extends StatefulWidget {
   final int index;
   const overweight_meals_details(
     this.index, {
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<overweight_meals_details> createState() =>
@@ -27,15 +28,15 @@ class _overweight_meals_detailsState extends State<overweight_meals_details> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: 250,
               width: 392,
-              child: Image.network(
-                Wlossmeal[currentItem].image,
+              child: CachedAppImage(
+                imageUrl: Wlossmeal[currentItem].image,
                 fit: BoxFit.cover,
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 2,
               endIndent: 30,
               indent: 30,
@@ -63,7 +64,7 @@ class _overweight_meals_detailsState extends State<overweight_meals_details> {
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 2,
               endIndent: 30,
               indent: 30,
@@ -71,14 +72,14 @@ class _overweight_meals_detailsState extends State<overweight_meals_details> {
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: Container(
-                margin: EdgeInsets.only(right: 180),
+                margin: const EdgeInsets.only(right: 180),
                 child: Text(
                   Wlossmeal[currentItem].nfacts,
                   style: const TextStyle(fontSize: 18),
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               thickness: 2,
               endIndent: 30,
               indent: 30,

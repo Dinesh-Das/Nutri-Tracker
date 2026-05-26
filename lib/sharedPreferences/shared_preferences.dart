@@ -30,17 +30,17 @@ class UserLocalData {
 
   static Future<String?> getGName() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(gname);
+    return preferences.getString(gname);
   }
 
   static Future<String?> getGEmail() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(gmail);
+    return preferences.getString(gmail);
   }
 
   static Future<String?> getGImg() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(gimg);
+    return preferences.getString(gimg);
   }
 
   static Future<bool> saveGLoginData(bool isUserLoggedIn) async {
@@ -50,7 +50,7 @@ class UserLocalData {
 
   static Future getGLogData() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getBool(glogkey!);
+    return preferences.getBool(glogkey!);
   }
 
   // Normal Login Data Saving
@@ -72,17 +72,17 @@ class UserLocalData {
 
   static Future<String?> getName() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(name);
+    return preferences.getString(name);
   }
 
   static Future<String?> getEmail() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(mail);
+    return preferences.getString(mail);
   }
 
   static Future<String?> getImg() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(img);
+    return preferences.getString(img);
   }
 
   static Future<bool> saveLoginData(bool isUserLoggedIn) async {
@@ -92,7 +92,7 @@ class UserLocalData {
 
   static Future getLogData() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getBool(logkey!);
+    return preferences.getBool(logkey!);
   }
 
   //Theme Data
@@ -103,7 +103,7 @@ class UserLocalData {
 
   static Future<String?> getTheme() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    return await preferences.getString(theme);
+    return preferences.getString(theme);
   }
 }
 //init me name = UserLocalData.getUserName() ?? '';

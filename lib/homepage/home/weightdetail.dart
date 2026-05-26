@@ -1,13 +1,12 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:nutri_tracker/homepage/home/weightdetailmodel.dart';
 import 'package:nutri_tracker/themes.dart';
 
 class foodDetail extends StatelessWidget {
   final FoodModel foodModel;
-  const foodDetail({Key? key, required this.foodModel}) : super(key: key);
+  const foodDetail({super.key, required this.foodModel});
 
   @override
   Widget build(BuildContext context) {
@@ -55,38 +54,37 @@ class foodDetail extends StatelessWidget {
     );
   }
 }
- 
-      // Column(
-      //   children: [
-      //     SizedBox(
-      //       height: 50,
-      //     ),
-      //     Container(
-      //       margin: const EdgeInsets.only(right: 200),
-      //       child: ClipRRect(
-      //         borderRadius:
-      //             const BorderRadius.only(bottomRight: Radius.circular(120)),
-      //         child: Image.asset(
-      //           foodModel.foodImage,
-      //           width: 500,
-      //           height: 200,
-      //           fit: BoxFit.fill,
-      //         ),
-      //       ),
-      //     ),
-      //     CustomScrollView(
-      //       slivers: [
-      //         SliverAppBar(
-      //           title: Text("dataaa"),
-      //           backgroundColor: Colors.amber,
-      //           expandedHeight: 350.0,
-      //           flexibleSpace: FlexibleSpaceBar(
-      //             title: Text("data"),
-      //           ),
-      //         ),
-      //       ],
-      //     ),
-      //     Text("data"),
-      //   ],
-      // ),
-  
+
+// Column(
+//   children: [
+//     SizedBox(
+//       height: 50,
+//     ),
+//     Container(
+//       margin: const EdgeInsets.only(right: 200),
+//       child: ClipRRect(
+//         borderRadius:
+//             const BorderRadius.only(bottomRight: Radius.circular(120)),
+//         child: Image.asset(
+//           foodModel.foodImage,
+//           width: 500,
+//           height: 200,
+//           fit: BoxFit.fill,
+//         ),
+//       ),
+//     ),
+//     CustomScrollView(
+//       slivers: [
+//         SliverAppBar(
+//           title: Text("dataaa"),
+//           backgroundColor: Colors.amber,
+//           expandedHeight: 350.0,
+//           flexibleSpace: FlexibleSpaceBar(
+//             title: Text("data"),
+//           ),
+//         ),
+//       ],
+//     ),
+//     Text("data"),
+//   ],
+// ),

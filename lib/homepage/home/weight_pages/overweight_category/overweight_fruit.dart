@@ -1,10 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages_model/weight_loss_frt_model.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class overweightfruits extends StatefulWidget {
-  const overweightfruits({Key? key}) : super(key: key);
+  const overweightfruits({super.key});
 
   @override
   _overweightfruitsState createState() => _overweightfruitsState();
@@ -53,7 +52,7 @@ class _overweightfruitsState extends State<overweightfruits> {
               SliverChildBuilderDelegate((BuildContext context, int index) {
             return Padding(
               padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-              child: Container(
+              child: SizedBox(
                 height: 220,
                 width: 200,
                 child: ClipRRect(
@@ -62,18 +61,18 @@ class _overweightfruitsState extends State<overweightfruits> {
                   ),
                   child: Column(
                     children: [
-                      Image.network(
-                        WLFruitsList[index].image,
+                      CachedAppImage(
+                        imageUrl: WLFruitsList[index].image,
                         height: height * 0.20,
                         width: 200,
                         fit: BoxFit.cover,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(
                         WLFruitsList[index].name,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],

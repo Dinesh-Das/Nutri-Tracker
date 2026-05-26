@@ -7,7 +7,7 @@ import 'package:nutri_tracker/features/progress/progress_screen.dart';
 import 'package:nutri_tracker/features/recipes/recipe_screen.dart';
 
 class BottomNavigation extends StatefulWidget {
-  const BottomNavigation({Key? key}) : super(key: key);
+  const BottomNavigation({super.key});
 
   @override
   _BottomNavigationState createState() => _BottomNavigationState();
@@ -38,7 +38,8 @@ class _BottomNavigationState extends State<BottomNavigation> {
       bottomNavigationBar: CurvedNavigationBar(
         key: navigationKey,
         color: Theme.of(context).colorScheme.surface,
-        buttonBackgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        buttonBackgroundColor:
+            Theme.of(context).colorScheme.surfaceContainerHighest,
         backgroundColor: Colors.transparent,
         items: items,
         height: 50,

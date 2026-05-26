@@ -1,19 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:nutri_tracker/admin/admin_home.dart';
 import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
 import 'package:nutri_tracker/homepage/bottom_navigation.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
-import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -75,15 +71,10 @@ class _LoginScreenState extends State<LoginScreen> {
       obscureText: isHiddenPassword,
       controller: passwordController,
       validator: (value) {
-        RegExp regex = RegExp(
-            r"^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,20}$");
-
         if (value!.isEmpty) {
           return ("Password Is Required For Login");
         }
-        if (!regex.hasMatch(value)) {
-          return ("Enter Valid Password(Min.8 Character)");
-        }
+        return null;
       },
       onSaved: (value) {
         passwordController.text = value!;
@@ -113,14 +104,14 @@ class _LoginScreenState extends State<LoginScreen> {
         onPressed: () {
           signIn(emailController.text, passwordController.text);
         },
+        padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+        minWidth: MediaQuery.of(context).size.width,
         child: const Text(
           'Login',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-        minWidth: MediaQuery.of(context).size.width,
       ),
     );
 
@@ -270,16 +261,39 @@ class _LoginScreenState extends State<LoginScreen> {
 
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
+        final user = _auth.currentUser;
+        final isPasswordUser = user?.providerData
+                .any((provider) => provider.providerId == 'password') ??
+            false;
+        if (isPasswordUser && user?.emailVerified != true) {
+          var message =
+              'Please verify your email before signing in. I sent a new verification link.';
+          try {
+            await user?.sendEmailVerification();
+          } on FirebaseAuthException catch (error) {
+            message = error.code == 'too-many-requests'
+                ? 'Please verify your email before signing in. Try resending again later.'
+                : 'Please verify your email before signing in.';
+          }
+          await _auth.signOut();
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(message),
+          ));
+          return;
+        }
+
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text('Login Successful'),
         ));
 
-        final user = _auth.currentUser;
         final doc = await FirebaseFirestore.instance
             .collection('user_details')
             .doc(user!.uid)
             .get();
         final data = doc.data() ?? {};
+        if (!mounted) return;
         if (data['isAdmin'] == true) {
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const AdminPage()));

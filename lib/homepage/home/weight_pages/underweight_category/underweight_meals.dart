@@ -1,12 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages_model/meal%20model/weight_gain_meal.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages_model/meal%20model/weight_loss_meal.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages_model/weight_gain_frt_model.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class underweightmeals extends StatefulWidget {
-  const underweightmeals({Key? key}) : super(key: key);
+  const underweightmeals({super.key});
 
   @override
   _underweightmealsState createState() => _underweightmealsState();
@@ -56,7 +53,7 @@ class _underweightmealsState extends State<underweightmeals> {
               SliverChildBuilderDelegate((BuildContext context, int index) {
             return Padding(
               padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-              child: Container(
+              child: SizedBox(
                 height: 220,
                 width: 200,
                 child: ClipRRect(
@@ -65,18 +62,18 @@ class _underweightmealsState extends State<underweightmeals> {
                   ),
                   child: Column(
                     children: [
-                      Image.network(
-                        Wgainmeal[index].image,
+                      CachedAppImage(
+                        imageUrl: Wgainmeal[index].image,
                         height: height * 0.20,
                         width: 200,
                         fit: BoxFit.cover,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Text(
                         Wgainmeal[index].name,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],

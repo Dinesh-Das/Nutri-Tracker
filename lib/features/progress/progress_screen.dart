@@ -13,8 +13,9 @@ class ProgressScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null)
+    if (uid == null) {
       return const Scaffold(body: Center(child: Text('Please sign in.')));
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('Progress')),
       body: FutureBuilder<List<WeightEntry>>(
@@ -132,35 +133,44 @@ class _WeeklyCalories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _ChartCard(
-      title: 'Weekly Calories',
-      child: FutureBuilder(
-        future: Future.wait(List.generate(7, (index) {
-          final date = DateTime.now().subtract(Duration(days: 6 - index));
-          return CalorieService().getDailyLog(uid, date);
-        })),
-        builder: (context, snapshot) {
-          final logs = snapshot.data ?? [];
-          if (logs.every((log) => log.totalCalories == 0)) {
-            return const _EmptyState(text: 'No calorie logs this week.');
-          }
-          return BarChart(
-            BarChartData(
-              barGroups: [
-                for (var i = 0; i < logs.length; i++)
-                  BarChartGroupData(
-                    x: i,
-                    barRods: [
-                      BarChartRodData(
-                          toY: logs[i].totalCalories.toDouble(), width: 9),
-                      BarChartRodData(toY: 2000, width: 9, color: Colors.grey),
-                    ],
-                  ),
-              ],
-            ),
-          );
-        },
-      ),
+    return FutureBuilder(
+      future: FirestoreService().getUser(uid),
+      builder: (context, userSnapshot) {
+        final goal = userSnapshot.data?.dailyCalorieGoal ?? 2000;
+        return _ChartCard(
+          title: 'Weekly Calories',
+          child: FutureBuilder(
+            future: Future.wait(List.generate(7, (index) {
+              final date = DateTime.now().subtract(Duration(days: 6 - index));
+              return CalorieService().getDailyLog(uid, date);
+            })),
+            builder: (context, snapshot) {
+              final logs = snapshot.data ?? [];
+              if (logs.every((log) => log.totalCalories == 0)) {
+                return const _EmptyState(text: 'No calorie logs this week.');
+              }
+              return BarChart(
+                BarChartData(
+                  barGroups: [
+                    for (var i = 0; i < logs.length; i++)
+                      BarChartGroupData(
+                        x: i,
+                        barRods: [
+                          BarChartRodData(
+                              toY: logs[i].totalCalories.toDouble(), width: 9),
+                          BarChartRodData(
+                              toY: goal.toDouble(),
+                              width: 9,
+                              color: Colors.grey),
+                        ],
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

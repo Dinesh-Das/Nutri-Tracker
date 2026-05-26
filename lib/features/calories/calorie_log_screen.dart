@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nutri_tracker/features/ai/ai_assistant_screen.dart';
 import 'package:nutri_tracker/features/calories/add_meal_bottom_sheet.dart';
+import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/services/calorie_service.dart';
+import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/widgets/water_tracker_widget.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -17,6 +19,7 @@ class CalorieLogScreen extends StatefulWidget {
 
 class _CalorieLogScreenState extends State<CalorieLogScreen> {
   final _service = CalorieService();
+  final _firestoreService = FirestoreService();
   DateTime _selectedDate = DateTime.now();
 
   @override
@@ -24,104 +27,121 @@ class _CalorieLogScreenState extends State<CalorieLogScreen> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return const Center(child: Text('Please sign in.'));
 
-    return StreamBuilder<DailyCalorieLog>(
-      stream: _service.watchDailyLog(uid, _selectedDate),
-      builder: (context, snapshot) {
-        final log = snapshot.data ?? DailyCalorieLog.empty(_service.dateKey(_selectedDate));
-        const goal = 2000;
-        final percent = (log.totalCalories / goal).clamp(0.0, 1.0);
-        return Scaffold(
-          appBar: AppBar(title: const Text('Log')),
-          body: ListView(
-            padding: const EdgeInsets.all(16),
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return StreamBuilder<UserModel>(
+      stream: _firestoreService.watchUser(uid),
+      builder: (context, userSnapshot) {
+        final goal = userSnapshot.data?.dailyCalorieGoal ?? 2000;
+        return StreamBuilder<DailyCalorieLog>(
+          stream: _service.watchDailyLog(uid, _selectedDate),
+          builder: (context, snapshot) {
+            final log = snapshot.data ??
+                DailyCalorieLog.empty(_service.dateKey(_selectedDate));
+            final percent = (log.totalCalories / goal).clamp(0.0, 1.0);
+            return Scaffold(
+              appBar: AppBar(title: const Text('Log')),
+              body: ListView(
+                padding: const EdgeInsets.all(16),
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed: () => setState(() {
-                      _selectedDate = _selectedDate.subtract(const Duration(days: 1));
-                    }),
-                  ),
-                  Text(DateFormat('EEE, d MMM').format(_selectedDate),
-                      style: Theme.of(context).textTheme.titleMedium),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right),
-                    onPressed: () => setState(() {
-                      _selectedDate = _selectedDate.add(const Duration(days: 1));
-                    }),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Center(
-                child: CircularPercentIndicator(
-                  radius: 82,
-                  lineWidth: 12,
-                  percent: percent,
-                  progressColor: Theme.of(context).colorScheme.primary,
-                  center: Column(
-                    mainAxisSize: MainAxisSize.min,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${log.totalCalories}', style: Theme.of(context).textTheme.headlineMedium),
-                      const Text('kcal'),
+                      IconButton(
+                        icon: const Icon(Icons.chevron_left),
+                        onPressed: () => setState(() {
+                          _selectedDate =
+                              _selectedDate.subtract(const Duration(days: 1));
+                        }),
+                      ),
+                      Text(DateFormat('EEE, d MMM').format(_selectedDate),
+                          style: Theme.of(context).textTheme.titleMedium),
+                      IconButton(
+                        icon: const Icon(Icons.chevron_right),
+                        onPressed: () => setState(() {
+                          _selectedDate =
+                              _selectedDate.add(const Duration(days: 1));
+                        }),
+                      ),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text('Protein ${log.totalProtein.toStringAsFixed(0)}g'),
-                  Text('Carbs ${log.totalCarbs.toStringAsFixed(0)}g'),
-                  Text('Fat ${log.totalFat.toStringAsFixed(0)}g'),
-                ],
-              ),
-              const SizedBox(height: 16),
-              for (final mealType in const ['breakfast', 'lunch', 'dinner', 'snack'])
-                _MealSection(
-                  title: mealType,
-                  meals: log.meals.where((m) => m.mealType == mealType).toList(),
-                  onAdd: () => showModalBottomSheet<void>(
-                    context: context,
-                    isScrollControlled: true,
-                    builder: (_) => AddMealBottomSheet(
-                      uid: uid,
-                      date: _selectedDate,
-                      mealType: mealType,
-                    ),
-                  ),
-                ),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: WaterTrackerWidget(
-                    uid: uid,
-                    date: _selectedDate,
-                    waterIntakeMl: log.waterIntakeMl,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              FilledButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => AIAssistantScreen(
-                        initialPrompt:
-                            "I've eaten ${log.totalCalories} calories today. Is that on track?",
+                  const SizedBox(height: 8),
+                  Center(
+                    child: CircularPercentIndicator(
+                      radius: 82,
+                      lineWidth: 12,
+                      percent: percent,
+                      progressColor: Theme.of(context).colorScheme.primary,
+                      center: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('${log.totalCalories}',
+                              style:
+                                  Theme.of(context).textTheme.headlineMedium),
+                          const Text('kcal'),
+                        ],
                       ),
                     ),
-                  );
-                },
-                icon: const Icon(Icons.auto_awesome),
-                label: const Text('Generate Meal Plan with AI'),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Protein ${log.totalProtein.toStringAsFixed(0)}g'),
+                      Text('Carbs ${log.totalCarbs.toStringAsFixed(0)}g'),
+                      Text('Fat ${log.totalFat.toStringAsFixed(0)}g'),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  for (final mealType in const [
+                    'breakfast',
+                    'lunch',
+                    'dinner',
+                    'snack'
+                  ])
+                    _MealSection(
+                      title: mealType,
+                      meals: log.meals
+                          .where((m) => m.mealType == mealType)
+                          .toList(),
+                      onAdd: () => showModalBottomSheet<void>(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (_) => AddMealBottomSheet(
+                          uid: uid,
+                          date: _selectedDate,
+                          mealType: mealType,
+                        ),
+                      ),
+                    ),
+                  Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: WaterTrackerWidget(
+                        uid: uid,
+                        date: _selectedDate,
+                        waterIntakeMl: log.waterIntakeMl,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  FilledButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AIAssistantScreen(
+                            initialPrompt:
+                                "I've eaten ${log.totalCalories} calories today. Is that on track?",
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.auto_awesome),
+                    label: const Text('Generate Meal Plan with AI'),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -156,7 +176,8 @@ class _MealSection extends StatelessWidget {
           for (final meal in meals)
             ListTile(
               title: Text(meal.foodName),
-              subtitle: Text('${meal.quantity.toStringAsFixed(0)} ${meal.unit}'),
+              subtitle:
+                  Text('${meal.quantity.toStringAsFixed(0)} ${meal.unit}'),
               trailing: Text('${meal.calories} kcal'),
             ),
         ],

@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class ViewData extends StatefulWidget {
-  const ViewData({Key? key}) : super(key: key);
+  const ViewData({super.key});
 
   @override
   _ViewDataState createState() => _ViewDataState();
@@ -28,7 +29,7 @@ class _ViewDataState extends State<ViewData> {
                 itemBuilder: (context, int index) {
                   Map<String, dynamic> doc = snapshot.data!.docs[index].data();
                   if (doc.isEmpty) {
-                    return Center(child: Text("document is empty"));
+                    return const Center(child: Text("document is empty"));
                   }
                   final name = (doc["name"] ?? "Food").toString();
                   final img =
@@ -36,7 +37,12 @@ class _ViewDataState extends State<ViewData> {
                   return ListTile(
                     leading: img.isEmpty
                         ? const Icon(Icons.restaurant)
-                        : Image.network(img),
+                        : CachedAppImage(
+                            imageUrl: img,
+                            width: 56,
+                            height: 56,
+                            errorIcon: Icons.restaurant,
+                          ),
                     title: Text(name),
                     subtitle: Text(
                       '${doc["category"] ?? ""} / ${doc["subCategory"] ?? ""}',
@@ -44,17 +50,17 @@ class _ViewDataState extends State<ViewData> {
                   );
                 },
                 separatorBuilder: (___, ____) {
-                  return Divider();
+                  return const Divider();
                 },
                 itemCount: snapshot.data!.docs.length,
               );
             } else {
-              return Center(
+              return const Center(
                 child: Text("Documents are not available"),
               );
             }
           } else {
-            return Center(child: Text("Error"));
+            return const Center(child: Text("Error"));
           }
         },
       )),

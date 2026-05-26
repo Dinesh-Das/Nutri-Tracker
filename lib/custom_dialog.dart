@@ -4,8 +4,8 @@ showLoadingAlertDialog(BuildContext context, String text) {
   AlertDialog alert = AlertDialog(
     content: Row(
       children: [
-        CircularProgressIndicator(),
-        Container(margin: EdgeInsets.only(left: 5), child: Text(text)),
+        const CircularProgressIndicator(),
+        Container(margin: const EdgeInsets.only(left: 5), child: Text(text)),
       ],
     ),
   );

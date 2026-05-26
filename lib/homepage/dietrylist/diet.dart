@@ -3,7 +3,7 @@ import 'package:nutri_tracker/themes.dart';
 import 'dietry_list.dart';
 
 class diet extends StatelessWidget {
-  const diet({Key? key}) : super(key: key);
+  const diet({super.key});
 
   @override
   Widget build(BuildContext context) {

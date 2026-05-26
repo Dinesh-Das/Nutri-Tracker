@@ -10,7 +10,8 @@ class FavouritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return const Scaffold(body: Center(child: Text('Please sign in.')));
+    if (uid == null)
+      return const Scaffold(body: Center(child: Text('Please sign in.')));
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -26,8 +27,12 @@ class FavouritesScreen extends StatelessWidget {
             final items = snapshot.data ?? [];
             return TabBarView(
               children: [
-                _FavouriteGrid(items: items.where((i) => i.type == 'recipe').toList(), uid: uid),
-                _FavouriteGrid(items: items.where((i) => i.type == 'food').toList(), uid: uid),
+                _FavouriteGrid(
+                    items: items.where((i) => i.type == 'recipe').toList(),
+                    uid: uid),
+                _FavouriteGrid(
+                    items: items.where((i) => i.type == 'food').toList(),
+                    uid: uid),
               ],
             );
           },
@@ -75,7 +80,8 @@ class _FavouriteGrid extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8),
-                  child: Text(item.name, maxLines: 2, overflow: TextOverflow.ellipsis),
+                  child: Text(item.name,
+                      maxLines: 2, overflow: TextOverflow.ellipsis),
                 ),
                 Row(
                   children: [
@@ -87,7 +93,8 @@ class _FavouriteGrid extends StatelessWidget {
                     const Spacer(),
                     IconButton(
                       icon: const Icon(Icons.favorite),
-                      onPressed: () => FirestoreService().removeFavourite(uid, item.id),
+                      onPressed: () =>
+                          FirestoreService().removeFavourite(uid, item.id),
                     ),
                   ],
                 ),

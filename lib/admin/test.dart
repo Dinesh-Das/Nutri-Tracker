@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 
 class TestFirebase extends StatefulWidget {
-  const TestFirebase({Key? key}) : super(key: key);
+  const TestFirebase({super.key});
 
   @override
   _TestFirebaseState createState() => _TestFirebaseState();

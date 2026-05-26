@@ -4,7 +4,7 @@ import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
 
 class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({Key? key}) : super(key: key);
+  const ForgotPassword({super.key});
 
   @override
   _ForgotPasswordState createState() => _ForgotPasswordState();
@@ -130,11 +130,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           SizedBox(
                             width: 130,
                             child: FloatingActionButton(
-                              child: const Text(
-                                "Send Email",
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
                               onPressed: () {
@@ -147,16 +142,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               },
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50.0)),
+                              child: const Text(
+                                "Send Email",
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                           SizedBox(
                             width: 130,
                             child: FloatingActionButton(
-                              child: const Text(
-                                "Login?",
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
                               onPressed: () {
                                 Navigator.pushReplacement(
                                     context,
@@ -168,6 +163,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(50.0)),
+                              child: const Text(
+                                "Login?",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
                             ),
                           ),
                         ],

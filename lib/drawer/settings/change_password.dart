@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 
 class ChangePassword extends StatefulWidget {
-  const ChangePassword({Key? key}) : super(key: key);
+  const ChangePassword({super.key});
 
   @override
   State<ChangePassword> createState() => _ChangePasswordState();
@@ -11,7 +11,7 @@ class ChangePassword extends StatefulWidget {
 
 class _ChangePasswordState extends State<ChangePassword> {
   void _changePassword(String currentPassword, String newPassword) async {
-    final user = await FirebaseAuth.instance.currentUser;
+    final user = FirebaseAuth.instance.currentUser;
     final cred = EmailAuthProvider.credential(
         email: user!.email!, password: currentPassword);
 
@@ -98,6 +98,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       if (!regex.hasMatch(value)) {
                         return ("Enter Valid Password(Min.8 Character)");
                       }
+                      return null;
                     },
                     onSaved: (value) {
                       oldPassword.text = value!;
@@ -140,6 +141,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       if (!regex.hasMatch(value)) {
                         return ("Enter Valid Password(Min.8 Character)");
                       }
+                      return null;
                     },
                     onSaved: (value) {
                       newPass.text = value!;
@@ -181,6 +183,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       if (!regex.hasMatch(value)) {
                         return ("Enter Valid Password(Min.8 Character)");
                       }
+                      return null;
                     },
                     onSaved: (value) {
                       confirmNewPass.text = value!;
@@ -217,6 +220,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                           _changePassword(oldPassword.text, newPass.text);
                         }
                       },
+                      padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                      minWidth: MediaQuery.of(context).size.width,
                       child: const Text(
                         'Change Password',
                         textAlign: TextAlign.center,
@@ -225,8 +230,6 @@ class _ChangePasswordState extends State<ChangePassword> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
-                      padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                      minWidth: MediaQuery.of(context).size.width,
                     ),
                   ),
                 ],

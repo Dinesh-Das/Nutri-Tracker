@@ -17,8 +17,8 @@ class RecipeApiService {
   }
 
   Future<List<IndianRecipe>> searchRecipes(String query) async {
-    final response =
-        await http.get(Uri.parse('${_base}search.php?s=${Uri.encodeQueryComponent(query)}'));
+    final response = await http.get(
+        Uri.parse('${_base}search.php?s=${Uri.encodeQueryComponent(query)}'));
     _throwIfBad(response);
     final data = jsonDecode(response.body) as Map<String, dynamic>;
     return ((data['meals'] as List?) ?? const [])

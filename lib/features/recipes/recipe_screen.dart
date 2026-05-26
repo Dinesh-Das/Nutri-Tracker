@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/features/recipes/recipe_detail_screen.dart';
 import 'package:nutri_tracker/models/indian_recipe.dart';
 import 'package:nutri_tracker/services/recipe_api_service.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 import 'package:nutri_tracker/widgets/recipe_card_widget.dart';
 
 class RecipeScreen extends StatefulWidget {
@@ -53,9 +54,9 @@ class _RecipeScreenState extends State<RecipeScreen> {
             onChanged: _onSearchChanged,
           ),
           const SizedBox(height: 12),
-          Wrap(
+          const Wrap(
             spacing: 8,
-            children: const [
+            children: [
               Chip(label: Text('All')),
               Chip(label: Text('Vegetarian')),
               Chip(label: Text('Breakfast')),
@@ -69,7 +70,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
             _FeaturedRecipe(recipe: _featured!, onTap: () => _open(_featured!)),
           ],
           const SizedBox(height: 16),
-          Text('Indian Classics', style: Theme.of(context).textTheme.titleLarge),
+          Text('Indian Classics',
+              style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
           SizedBox(
             height: 220,
@@ -150,7 +152,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
     _debounce = Timer(const Duration(milliseconds: 350), () {
       if (!mounted) return;
       setState(() {
-        _results = value.trim().isEmpty ? null : _service.searchRecipes(value.trim());
+        _results =
+            value.trim().isEmpty ? null : _service.searchRecipes(value.trim());
       });
     });
   }
@@ -177,8 +180,8 @@ class _FeaturedRecipe extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-            Image.network(
-              recipe.thumbnailUrl,
+            CachedAppImage(
+              imageUrl: recipe.thumbnailUrl,
               height: 210,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -189,7 +192,10 @@ class _FeaturedRecipe extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.65)],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.65)
+                    ],
                   ),
                 ),
               ),

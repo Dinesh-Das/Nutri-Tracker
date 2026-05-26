@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -9,7 +7,6 @@ import 'package:nutri_tracker/bmi/utils/icon_content.dart';
 import 'package:nutri_tracker/bmi/utils/reusable_card.dart';
 import 'package:nutri_tracker/bmi/utils/round_icon_button.dart';
 import 'package:nutri_tracker/database/update_data.dart';
-import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/themes.dart';
 
 import 'result_screen.dart';
@@ -20,6 +17,8 @@ enum Gender {
 }
 
 class CalculatorScreen extends StatefulWidget {
+  const CalculatorScreen({super.key});
+
   @override
   CalculatorScreenState createState() => CalculatorScreenState();
 }
@@ -34,7 +33,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     return Scaffold(
       backgroundColor: MyColors.subHeading,
       appBar: AppBar(
-        title: Text('BMI CALCULATOR'),
+        title: const Text('BMI CALCULATOR'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -52,7 +51,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                   colour: selectedGender == Gender.Male
                       ? kActiveCardColour
                       : kInactiveCardColour,
-                  cardChild: IconContent(
+                  cardChild: const IconContent(
                     icon: FontAwesomeIcons.mars,
                     label: 'MALE',
                   ),
@@ -68,7 +67,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                   colour: selectedGender == Gender.Female
                       ? kActiveCardColour
                       : kInactiveCardColour,
-                  cardChild: IconContent(
+                  cardChild: const IconContent(
                     icon: FontAwesomeIcons.venus,
                     label: 'FEMALE',
                   ),
@@ -82,7 +81,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
               cardChild: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
+                  const Text(
                     'HEIGHT',
                     style: kLabelTextStyle,
                   ),
@@ -95,7 +94,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                         height.toString(),
                         style: kNumberTextStyle,
                       ),
-                      Text(
+                      const Text(
                         'cm',
                         style: kLabelTextStyle,
                       )
@@ -103,14 +102,14 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                   ),
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
-                      inactiveTrackColor: Color(0xFF8D8E98),
+                      inactiveTrackColor: const Color(0xFF8D8E98),
                       activeTrackColor: Colors.white,
-                      thumbColor: Color(0xFFEB1555),
-                      overlayColor: Color(0x29EB1555),
+                      thumbColor: const Color(0xFFEB1555),
+                      overlayColor: const Color(0x29EB1555),
                       thumbShape:
-                          RoundSliderThumbShape(enabledThumbRadius: 15.0),
+                          const RoundSliderThumbShape(enabledThumbRadius: 15.0),
                       overlayShape:
-                          RoundSliderOverlayShape(overlayRadius: 30.0),
+                          const RoundSliderOverlayShape(overlayRadius: 30.0),
                     ),
                     child: Slider(
                       value: height.toDouble(),
@@ -137,7 +136,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                     cardChild: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text(
+                        const Text(
                           'WEIGHT',
                           style: kLabelTextStyle,
                         ),
@@ -155,7 +154,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                                     weight--;
                                   });
                                 }),
-                            SizedBox(
+                            const SizedBox(
                               width: 10.0,
                             ),
                             RoundIconButton(
@@ -179,7 +178,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                     cardChild: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text(
+                        const Text(
                           'AGE',
                           style: kLabelTextStyle,
                         ),
@@ -200,7 +199,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                                 );
                               },
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10.0,
                             ),
                             RoundIconButton(
@@ -252,17 +251,17 @@ class CalculatorScreenState extends State<CalculatorScreen> {
               );
             },
             child: Container(
-              child: Center(
+              color: kBottomContainerColour,
+              margin: const EdgeInsets.only(top: 10.0),
+              padding: const EdgeInsets.only(bottom: 20.0),
+              width: double.infinity,
+              height: kBottomContainerHeight,
+              child: const Center(
                 child: Text(
                   'CALCULATE',
                   style: kLargeButtonTextStyle,
                 ),
               ),
-              color: kBottomContainerColour,
-              margin: EdgeInsets.only(top: 10.0),
-              padding: EdgeInsets.only(bottom: 20.0),
-              width: double.infinity,
-              height: kBottomContainerHeight,
             ),
           ),
         ],

@@ -7,7 +7,6 @@ import 'package:nutri_tracker/bmi/screens/calculator_screen.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/homepage/home/quotes.dart';
@@ -15,11 +14,11 @@ import 'package:nutri_tracker/homepage/home/weight_pages/normalweight_home.dart'
 import 'package:nutri_tracker/homepage/home/weight_pages/overweight_home.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages/underweight_home.dart';
 import 'package:nutri_tracker/homepage/home/weightdetailmodel.dart';
-import 'package:nutri_tracker/themes.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class home extends StatefulWidget {
-  home({Key? key}) : super(key: key);
+  const home({super.key});
 
   static List<String> foodName = [
     'Under Weight',
@@ -164,20 +163,12 @@ class _homeState extends State<home> {
                                                 ViewProfile()));
                                   },
                                   child: Container(
-                                    child: CircleAvatar(
-                                      radius: 35,
-                                      backgroundImage: loggedInUser.photoURL ==
-                                                  '' ||
-                                              loggedInUser.photoURL == null
-                                          ? NetworkImage(defaultProfileUrl)
-                                          : NetworkImage(
-                                              loggedInUser.photoURL.toString()),
-                                    ),
                                     decoration: BoxDecoration(
                                       border: Border.all(
                                         width: 4,
-                                        color:
-                                            Theme.of(context).colorScheme.surfaceVariant,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceContainerHighest,
                                       ),
                                       boxShadow: [
                                         BoxShadow(
@@ -188,6 +179,13 @@ class _homeState extends State<home> {
                                             offset: const Offset(0, 10)),
                                       ],
                                       shape: BoxShape.circle,
+                                    ),
+                                    child: CachedCircleImage(
+                                      imageUrl: loggedInUser.photoURL == '' ||
+                                              loggedInUser.photoURL == null
+                                          ? defaultProfileUrl
+                                          : loggedInUser.photoURL.toString(),
+                                      size: 70,
                                     ),
                                   ),
                                 ),
@@ -214,7 +212,7 @@ class _homeState extends State<home> {
                                   animation: true,
                                   animationDuration: 2000,
                                   center: Text(
-                                    "${loggedInUser.bmi ?? "BMI"}",
+                                    loggedInUser.bmi ?? "BMI",
                                     style: TextStyle(fontSize: 24),
                                   ),
                                 ),

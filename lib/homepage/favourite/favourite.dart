@@ -4,7 +4,7 @@ import 'package:nutri_tracker/drawer/drawermenu.dart';
 import '../../../themes.dart';
 
 class FavouritePage extends StatefulWidget {
-  const FavouritePage({Key? key}) : super(key: key);
+  const FavouritePage({super.key});
 
   @override
   _FavouritePageState createState() => _FavouritePageState();
@@ -14,7 +14,7 @@ class _FavouritePageState extends State<FavouritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        drawer: NavigationDrawer(),
+        drawer: const NavigationDrawer(),
         appBar: AppBar(
           title: Text(
             'Favourites',
@@ -25,7 +25,7 @@ class _FavouritePageState extends State<FavouritePage> {
           backgroundColor: MyColors.backColor,
           elevation: 0,
         ),
-        body: Center(
+        body: const Center(
           child: Text('Hi'),
         ));
   }

@@ -7,6 +7,8 @@ import 'package:nutri_tracker/homepage/RecipePage/widgets/recipe_card.dart';
 import 'package:nutri_tracker/themes.dart';
 
 class recipe extends StatefulWidget {
+  const recipe({super.key});
+
   @override
   _recipeState createState() => _recipeState();
 }

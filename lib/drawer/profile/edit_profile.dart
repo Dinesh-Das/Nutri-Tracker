@@ -12,9 +12,10 @@ import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:intl/intl.dart';
 import 'package:nutri_tracker/homepage/bottom_navigation.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({Key? key}) : super(key: key);
+  const EditProfile({super.key});
 
   @override
   _EditProfileState createState() => _EditProfileState();
@@ -63,7 +64,7 @@ class _EditProfileState extends State<EditProfile> {
         firstDate: DateTime(1900),
         lastDate: DateTime(2100));
     if (picked != null) {
-      setState(() => {birthdateController.text = dateFormat.format(picked)});
+      setState(() => birthdateController.text = dateFormat.format(picked));
     }
   }
 
@@ -115,59 +116,66 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   void _openGallery(BuildContext context) async {
-    // Open gallery code
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
 
+    if (!mounted) return;
+    Navigator.pop(context);
+    if (pickedFile == null) return;
+
     setState(() {
       imageFile = pickedFile;
       isImagePicked = true;
     });
-    Navigator.pop(context);
     await uploadPicture();
   }
 
   void _openCamera(BuildContext context) async {
-    //Camera code
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.camera,
     );
+
+    if (!mounted) return;
+    Navigator.pop(context);
+    if (pickedFile == null) return;
+
     setState(() {
       imageFile = pickedFile;
       isImagePicked = true;
     });
-    Navigator.pop(context);
     await uploadPicture();
   }
 
   Future uploadPicture() async {
     showLoadingAlertDialog(context, 'Uploading Profile Picture');
-    if (imageFile != null) {
-      // File filename = File(imageFile!.path);
+    try {
+      if (imageFile == null) {
+        throw Exception('No image selected.');
+      }
       var file = File(imageFile!.path);
-      Reference firebaseStorage = await FirebaseStorage.instance
-          .ref()
-          .child("images/${updateData.uid}");
+      Reference firebaseStorage =
+          FirebaseStorage.instance.ref().child("images/${user!.uid}");
 
-      UploadTask uploadTask = firebaseStorage.putFile(file);
+      final uploadTask = await firebaseStorage.putFile(file);
+      updateData.photoURL = await uploadTask.ref.getDownloadURL();
+      await updateProfilePicToFirestore(updateData.photoURL);
 
-      uploadTask.whenComplete(() async {
-        updateData.photoURL = await firebaseStorage.getDownloadURL();
-        print(updateData.photoURL);
-        updateProfilePicToFirestore(
-          isImagePicked || updateData.photoURL != ''
-              ? updateData.photoURL
-              : defaultProfileUrl,
-        );
-        setState(() {});
-        Navigator.pop(context);
-      });
-    } else {
-      const ScaffoldMessenger(
-        child: SnackBar(content: Text('No Image Path Received')),
+      if (!mounted) return;
+      setState(() {});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile picture updated.')),
       );
-      Navigator.pop(context);
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Unable to upload profile picture: $error')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -183,8 +191,10 @@ class _EditProfileState extends State<EditProfile> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => BottomNavigation()));
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const BottomNavigation()));
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -223,17 +233,12 @@ class _EditProfileState extends State<EditProfile> {
                             Container(
                               width: 130,
                               height: 130,
-                              child: CircleAvatar(
-                                backgroundImage: updateData.photoURL == '' ||
-                                        updateData.photoURL == null
-                                    ? NetworkImage(defaultProfileUrl)
-                                    : NetworkImage(
-                                        updateData.photoURL.toString()),
-                              ),
                               decoration: BoxDecoration(
                                 border: Border.all(
                                     width: 4,
-                                    color: Theme.of(context).colorScheme.surfaceVariant),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .surfaceContainerHighest),
                                 boxShadow: [
                                   BoxShadow(
                                       spreadRadius: 2,
@@ -242,6 +247,13 @@ class _EditProfileState extends State<EditProfile> {
                                       offset: const Offset(0, 10)),
                                 ],
                                 shape: BoxShape.circle,
+                              ),
+                              child: CachedCircleImage(
+                                imageUrl: updateData.photoURL == '' ||
+                                        updateData.photoURL == null
+                                    ? defaultProfileUrl
+                                    : updateData.photoURL.toString(),
+                                size: 130,
                               ),
                             )
                           ],
@@ -258,12 +270,14 @@ class _EditProfileState extends State<EditProfile> {
                               shape: BoxShape.circle,
                               border: Border.all(
                                   width: 4,
-                                  color: Theme.of(context).colorScheme.surfaceVariant)),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest)),
                           child: IconButton(
                             onPressed: () async {
                               _showChoiceDialog(context);
                             },
-                            padding: EdgeInsets.only(right: 2),
+                            padding: const EdgeInsets.only(right: 2),
                             icon: const Icon(
                               Icons.add_a_photo,
                             ),
@@ -330,6 +344,7 @@ class _EditProfileState extends State<EditProfile> {
                     if (value!.isEmpty) {
                       return 'Choose Date';
                     }
+                    return null;
                   },
                 ),
               ),
@@ -344,10 +359,10 @@ class _EditProfileState extends State<EditProfile> {
                         size: 32,
                       ),
                       labelText: 'Gender',
-                      labelStyle: TextStyle(fontWeight: FontWeight.bold)),
-                  value: updateData.gender == ''
-                      ? selectedGender
-                      : updateData.gender,
+                      labelStyle: const TextStyle(fontWeight: FontWeight.bold)),
+                  value: genderList.contains(updateData.gender)
+                      ? updateData.gender
+                      : selectedGender,
                   icon: Icon(Icons.arrow_drop_down,
                       color: Theme.of(context).appBarTheme.foregroundColor),
                   iconSize: 26,
@@ -384,73 +399,19 @@ class _EditProfileState extends State<EditProfile> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // OutlineButton(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 50),
-                  //   shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20)),
-                  //   onPressed: () {
-                  //     Navigator.pop(context);
-                  //   },
-                  //   child: const Text(
-                  //     "Cancel",
-                  //     style: TextStyle(
-                  //       fontSize: 14,
-                  //       letterSpacing: 2.2,
-                  //     ),
-                  //   ),
-                  // ),
-                  // RaisedButton(
-                  //   color: Colors.green,
-                  //   onPressed: () async {
-                  //     await updateDetailsToFirestore(
-                  //         isImagePicked || updateData.photoURL != ''
-                  //             ? updateData.photoURL
-                  //             : defaultProfileUrl,
-                  //         (usernameController.text == '')
-                  //             ? updateData.username
-                  //             : usernameController.text,
-                  //         (nameController.text == '')
-                  //             ? updateData.name
-                  //             : nameController.text,
-                  //         (phoneController.text == '')
-                  //             ? updateData.mobile
-                  //             : phoneController.text,
-                  //         (locationController.text == '')
-                  //             ? updateData.location
-                  //             : locationController.text,
-                  //         (birthdateController.text == '')
-                  //             ? updateData.birthdate
-                  //             : birthdateController.text,
-                  //         (bioController.text == '')
-                  //             ? updateData.bio
-                  //             : bioController.text,
-                  //         (heightController.text == '')
-                  //             ? updateData.height
-                  //             : heightController.text,
-                  //         (weightController.text == '')
-                  //             ? updateData.weight
-                  //             : weightController.text,
-                  //         (selectedGender != updateData.gender &&
-                  //                 isGenderChanged == true)
-                  //             ? selectedGender
-                  //             : updateData.gender,
-                  //         updateData.bmi,
-                  //         updateData.bmr,
-                  //         context);
-                  //   },
-                  //   elevation: 2,
-                  //   padding: const EdgeInsets.symmetric(horizontal: 50),
-                  //   shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20)),
-                  //   child: const Text(
-                  //     "Save",
-                  //     style: TextStyle(
-                  //       fontSize: 14,
-                  //       letterSpacing: 2.2,
-                  //       // color: Colors.white
-                  //     ),
-                  //   ),
-                  // ),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("Cancel"),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: _saveProfile,
+                      child: const Text("Save"),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(
@@ -463,6 +424,39 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+  Future<void> _saveProfile() async {
+    final photoURL = (updateData.photoURL?.isNotEmpty ?? false)
+        ? updateData.photoURL
+        : defaultProfileUrl;
+    final gender = isGenderChanged
+        ? selectedGender
+        : (updateData.gender?.isNotEmpty == true
+            ? updateData.gender
+            : selectedGender);
+
+    await updateDetailsToFirestore(
+      photoURL,
+      _editedOrExisting(usernameController, updateData.username),
+      _editedOrExisting(nameController, updateData.name),
+      _editedOrExisting(phoneController, updateData.mobile),
+      _editedOrExisting(locationController, updateData.location),
+      _editedOrExisting(birthdateController, updateData.birthdate),
+      _editedOrExisting(bioController, updateData.bio),
+      _editedOrExisting(heightController, updateData.height),
+      _editedOrExisting(weightController, updateData.weight),
+      gender,
+      updateData.bmi,
+      updateData.bmr,
+      context,
+    );
+  }
+
+  String? _editedOrExisting(
+      TextEditingController controller, String? existing) {
+    final edited = controller.text.trim();
+    return edited.isEmpty ? existing : edited;
+  }
+
   Widget buildTextField(String lableText, String placeHolder, IconData icon,
       TextEditingController text, bool isEmail) {
     return Padding(
@@ -472,6 +466,7 @@ class _EditProfileState extends State<EditProfile> {
           if (value!.isEmpty) {
             return 'Empty';
           }
+          return null;
         },
         controller: text,
         onSaved: (value) {

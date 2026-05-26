@@ -2,9 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/themes.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class dietrylist extends StatelessWidget {
-  const dietrylist({Key? key}) : super(key: key);
+  const dietrylist({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +13,8 @@ class dietrylist extends StatelessWidget {
       body: Container(
         child: ListView(
           children: [
-            // ignore: prefer_const_constructors
             Padding(
               padding: const EdgeInsets.all(16.0),
-              // ignore: prefer_const_constructors
               child: Text(
                 'Veggies',
                 style: TextStyle(
@@ -46,7 +45,7 @@ class dietrylist extends StatelessWidget {
                                   Colors.black.withOpacity(0.35),
                                   BlendMode.multiply),
                               fit: BoxFit.cover,
-                              image: NetworkImage(
+                              image: cachedNetworkImageProvider(
                                   "https://images.unsplash.com/photo-1630855907465-99267502dfbd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80"),
                             ),
                           ),
@@ -62,7 +61,7 @@ class dietrylist extends StatelessWidget {
                       height: 150,
                       width: 350,
                       child: const Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: EdgeInsets.all(16.0),
                         child: Text(
                           'Snow Peas',
                           style: TextStyle(
@@ -81,7 +80,7 @@ class dietrylist extends StatelessWidget {
                       height: 150,
                       width: 350,
                       child: const Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: EdgeInsets.all(16.0),
                         child: Text(
                           'Cucumber',
                           style: TextStyle(
@@ -100,7 +99,7 @@ class dietrylist extends StatelessWidget {
                       height: 150,
                       width: 350,
                       child: const Padding(
-                        padding: const EdgeInsets.all(16.0),
+                        padding: EdgeInsets.all(16.0),
                         child: Text(
                           'Cabbage',
                           style: TextStyle(

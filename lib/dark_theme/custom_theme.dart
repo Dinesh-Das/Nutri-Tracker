@@ -5,7 +5,6 @@ CustomTheme currentTheme = CustomTheme();
 
 class CustomTheme with ChangeNotifier {
   static bool _isDarkTheme = false;
-  static bool _isSystemTheme = false;
   ThemeMode get currentTheme => _isDarkTheme ? ThemeMode.dark : ThemeMode.light;
   bool isDarkTheme() {
     if (_isDarkTheme) return true;

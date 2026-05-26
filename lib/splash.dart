@@ -11,7 +11,7 @@ import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 import 'homepage/bottom_navigation.dart';
 
 class Splash extends StatefulWidget {
-  const Splash({Key? key}) : super(key: key);
+  const Splash({super.key});
 
   @override
   State<Splash> createState() => _SplashState();
@@ -26,7 +26,7 @@ class _SplashState extends State<Splash> {
 
   void checkGoogleUser() async {
     final FirebaseAuth auth = FirebaseAuth.instance;
-    final user = await auth.currentUser;
+    final user = auth.currentUser;
     if (user != null) {
       DataConstant.gname = (await UserLocalData.getGName());
       DataConstant.gmail = (await UserLocalData.getGEmail());
@@ -43,24 +43,28 @@ class _SplashState extends State<Splash> {
       if (data['isAdmin'] == true) {
         Timer(
             const Duration(milliseconds: 6000),
-            () => Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => const AdminPage())));
+            () => Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const AdminPage())));
       } else if (data['isOnboardingDone'] != true) {
         Timer(
             const Duration(milliseconds: 6000),
             () => Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => const OnboardingScreen())));
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const OnboardingScreen())));
       } else {
         Timer(
             const Duration(milliseconds: 6000),
-            () => Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const BottomNavigation())));
+            () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const BottomNavigation())));
       }
     } else {
       Timer(
           const Duration(milliseconds: 6000),
-          () => Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => Onboarding())));
+          () => Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const Onboarding())));
     }
   }
 

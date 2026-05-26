@@ -97,8 +97,8 @@ class _AddMealBottomSheetState extends State<AddMealBottomSheet> {
         return StatefulBuilder(
           builder: (context, setModalState) {
             final factor = _quantity / 100;
-            final calories = ((food['caloriesPer100g'] as num? ?? 0) * factor)
-                .round();
+            final calories =
+                ((food['caloriesPer100g'] as num? ?? 0) * factor).round();
             return Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -147,7 +147,8 @@ class _AddMealBottomSheetState extends State<AddMealBottomSheet> {
                         quantity: _quantity,
                         unit: _unit,
                       );
-                      await _service.addMealEntry(widget.uid, widget.date, entry);
+                      await _service.addMealEntry(
+                          widget.uid, widget.date, entry);
                       if (mounted) Navigator.pop(context);
                       if (mounted) Navigator.pop(context);
                     },

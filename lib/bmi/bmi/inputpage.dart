@@ -3,11 +3,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'enum_file.dart';
 import 'results_page.dart';
 
 class InputPage extends StatefulWidget {
-  InputPage({Key? key}) : super(key: key);
+  const InputPage({super.key});
 
   @override
   _InputPageState createState() => _InputPageState();
@@ -40,6 +39,13 @@ class _InputPageState extends State<InputPage> {
                       });
                     },
                     child: Container(
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: selectedCard == Gender.male
+                            ? Colors.lightGreen
+                            : Colors.lightBlueAccent,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -54,13 +60,6 @@ class _InputPageState extends State<InputPage> {
                           ),
                         ],
                       ),
-                      margin: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: selectedCard == Gender.male
-                            ? Colors.lightGreen
-                            : Colors.lightBlueAccent,
-                      ),
                     ),
                   ),
                 ),
@@ -72,6 +71,13 @@ class _InputPageState extends State<InputPage> {
                       });
                     },
                     child: Container(
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: selectedCard == Gender.female
+                            ? Colors.lightGreen
+                            : Colors.lightBlueAccent,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -86,13 +92,6 @@ class _InputPageState extends State<InputPage> {
                           ),
                         ],
                       ),
-                      margin: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: selectedCard == Gender.female
-                            ? Colors.lightGreen
-                            : Colors.lightBlueAccent,
-                      ),
                     ),
                   ),
                 ),
@@ -104,6 +103,11 @@ class _InputPageState extends State<InputPage> {
               children: [
                 Expanded(
                   child: Container(
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.lightBlueAccent,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -141,11 +145,6 @@ class _InputPageState extends State<InputPage> {
                         ),
                       ],
                     ),
-                    margin: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.lightBlueAccent,
-                    ),
                   ),
                 ),
               ],
@@ -156,6 +155,11 @@ class _InputPageState extends State<InputPage> {
               children: [
                 Expanded(
                   child: Container(
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.lightBlueAccent,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -207,15 +211,15 @@ class _InputPageState extends State<InputPage> {
                         )
                       ],
                     ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
                     margin: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.lightBlueAccent,
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Container(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -266,11 +270,6 @@ class _InputPageState extends State<InputPage> {
                           ],
                         )
                       ],
-                    ),
-                    margin: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: Colors.lightBlueAccent,
                     ),
                   ),
                 ),

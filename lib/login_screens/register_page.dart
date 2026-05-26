@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
+import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 
 class RegistrationScreen extends StatefulWidget {
-  const RegistrationScreen({Key? key}) : super(key: key);
+  const RegistrationScreen({super.key});
 
   @override
   _RegistrationScreenState createState() => _RegistrationScreenState();
@@ -25,6 +25,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final passwordEditingController = TextEditingController();
   final confirmPasswordEditingController = TextEditingController();
   final phoneEditingController = TextEditingController();
+  final otpEditingController = TextEditingController();
+  String? _verificationId;
+  int? _forceResendingToken;
+  PhoneAuthCredential? _phoneCredential;
+  bool _isSendingOtp = false;
+  bool _isVerifyingOtp = false;
+  bool _phoneVerified = false;
 
   @override
   void initState() {
@@ -39,6 +46,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     passwordEditingController.dispose();
     confirmPasswordEditingController.dispose();
     phoneEditingController.dispose();
+    otpEditingController.dispose();
   }
 
   @override
@@ -73,18 +81,17 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     final phoneField = TextFormField(
       autofocus: false,
       controller: phoneEditingController,
-      keyboardType: TextInputType.number,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return ("Enter Your Phone Number !");
-        }
-        //Regular Expression for name validation
-        if (!RegExp(r"^[0-9]*$").hasMatch(value)) {
-          return ("Enter Valid Phone Number ");
-        } else if (value.length > 10 || value.length < 10) {
-          return ("Enter Valid Phone Number");
-        }
-        return null;
+      keyboardType: TextInputType.phone,
+      validator: _validatePhoneNumber,
+      onChanged: (_) {
+        if (_verificationId == null && _phoneCredential == null) return;
+        setState(() {
+          _verificationId = null;
+          _forceResendingToken = null;
+          _phoneCredential = null;
+          _phoneVerified = false;
+          otpEditingController.clear();
+        });
       },
       onSaved: (value) {
         phoneEditingController.text = value!;
@@ -94,6 +101,26 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           prefixIcon: const Icon(Icons.phone),
           contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
           hintText: "Mobile Number",
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+    );
+
+    final otpField = TextFormField(
+      autofocus: false,
+      controller: otpEditingController,
+      keyboardType: TextInputType.number,
+      validator: (value) {
+        if (_phoneVerified) return null;
+        if (_verificationId == null) return 'Send phone OTP first';
+        if (value == null || value.trim().length < 6) {
+          return 'Enter the OTP sent to your phone';
+        }
+        return null;
+      },
+      textInputAction: TextInputAction.next,
+      decoration: InputDecoration(
+          prefixIcon: const Icon(Icons.sms_outlined),
+          contentPadding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+          hintText: "Phone OTP",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
     );
 
@@ -142,6 +169,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         if (!regex.hasMatch(value)) {
           return ("Enter Valid Password(Min.8 Character)");
         }
+        return null;
       },
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
@@ -199,14 +227,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         onPressed: () {
           signUp(emailEditingController.text, passwordEditingController.text);
         },
+        padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+        minWidth: MediaQuery.of(context).size.width,
         child: const Text(
           'Signup',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-        minWidth: MediaQuery.of(context).size.width,
       ),
     );
 
@@ -251,6 +279,61 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       ),
                       phoneField,
                       const SizedBox(
+                        height: 8,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              onPressed: _phoneVerified || _isSendingOtp
+                                  ? null
+                                  : _sendPhoneOtp,
+                              icon: _isSendingOtp
+                                  ? const SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Icon(Icons.sms_outlined),
+                              label: Text(_verificationId == null
+                                  ? 'Send OTP'
+                                  : 'Resend OTP'),
+                            ),
+                          ),
+                          if (_phoneVerified) ...[
+                            const SizedBox(width: 12),
+                            const Icon(Icons.verified, color: Colors.green),
+                          ],
+                        ],
+                      ),
+                      if (_verificationId != null && !_phoneVerified) ...[
+                        const SizedBox(
+                          height: 12,
+                        ),
+                        otpField,
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: OutlinedButton.icon(
+                            onPressed: _isVerifyingOtp ? null : _verifyPhoneOtp,
+                            icon: _isVerifyingOtp
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.check_circle_outline),
+                            label: const Text('Verify OTP'),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(
                         height: 20,
                       ),
                       emailField,
@@ -278,20 +361,141 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     );
   }
 
+  Future<void> _sendPhoneOtp() async {
+    final validationMessage = _validatePhoneNumber(phoneEditingController.text);
+    if (validationMessage != null) {
+      _showAuthMessage(validationMessage);
+      return;
+    }
+
+    setState(() => _isSendingOtp = true);
+    try {
+      await _auth.verifyPhoneNumber(
+        phoneNumber: _firebasePhoneNumber,
+        forceResendingToken: _forceResendingToken,
+        verificationCompleted: (credential) {
+          if (!mounted) return;
+          setState(() {
+            _phoneCredential = credential;
+            _phoneVerified = true;
+            _isSendingOtp = false;
+          });
+          _showAuthMessage('Phone number verified automatically.');
+        },
+        verificationFailed: (error) {
+          if (!mounted) return;
+          setState(() => _isSendingOtp = false);
+          _showAuthMessage(_phoneAuthErrorMessage(error));
+        },
+        codeSent: (verificationId, resendToken) {
+          if (!mounted) return;
+          setState(() {
+            _verificationId = verificationId;
+            _forceResendingToken = resendToken;
+            _phoneCredential = null;
+            _phoneVerified = false;
+            _isSendingOtp = false;
+          });
+          _showAuthMessage('OTP sent to $_firebasePhoneNumber.');
+        },
+        codeAutoRetrievalTimeout: (verificationId) {
+          if (!mounted) return;
+          setState(() => _verificationId = verificationId);
+        },
+      );
+    } on FirebaseAuthException catch (error) {
+      if (!mounted) return;
+      setState(() => _isSendingOtp = false);
+      _showAuthMessage(_phoneAuthErrorMessage(error));
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isSendingOtp = false);
+      _showAuthMessage('Unable to send OTP. Check Firebase Phone Auth setup.');
+    }
+  }
+
+  void _verifyPhoneOtp() {
+    if (_verificationId == null) {
+      _showAuthMessage('Send phone OTP first.');
+      return;
+    }
+    if (otpEditingController.text.trim().length < 6) {
+      _showAuthMessage('Enter the OTP sent to your phone.');
+      return;
+    }
+
+    setState(() => _isVerifyingOtp = true);
+    final credential = PhoneAuthProvider.credential(
+      verificationId: _verificationId!,
+      smsCode: otpEditingController.text.trim(),
+    );
+    setState(() {
+      _phoneCredential = credential;
+      _phoneVerified = true;
+      _isVerifyingOtp = false;
+    });
+    _showAuthMessage(
+        'OTP captured. Complete signup to verify it with Firebase.');
+  }
+
   void signUp(String email, String password) async {
     if (_formKey.currentState!.validate()) {
+      if (_phoneCredential == null || !_phoneVerified) {
+        _showAuthMessage('Verify phone OTP before signing up.');
+        return;
+      }
       try {
         UserLocalData.saveLoginData(true);
         UserLocalData.saveMail(emailEditingController.text);
-        await _auth.createUserWithEmailAndPassword(
+        final phoneCredential = _phoneCredential!;
+        final credential = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
-        await _auth.currentUser?.sendEmailVerification();
-        postDetailsToFirestore();
+        final user = credential.user ?? _auth.currentUser;
+        try {
+          await user?.linkWithCredential(phoneCredential);
+        } on FirebaseAuthException {
+          try {
+            await user?.delete();
+          } catch (_) {
+            await _auth.signOut();
+          }
+          rethrow;
+        }
+        var verificationEmailSent = false;
+        try {
+          await user?.sendEmailVerification();
+          verificationEmailSent = true;
+        } on FirebaseAuthException catch (error) {
+          debugPrint('Unable to send verification email: ${error.code}');
+        }
+        await postDetailsToFirestore(
+          verificationEmailSent: verificationEmailSent,
+        );
       } on FirebaseAuthException catch (e) {
+        if (!mounted) return;
         if (e.code == 'email-already-in-use') {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Email Already in use'),
+            ),
+          );
+        } else if (e.code == 'credential-already-in-use') {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content:
+                  Text('This phone number is already linked to an account.'),
+            ),
+          );
+        } else if (e.code == 'invalid-verification-code' ||
+            e.code == 'invalid-credential') {
+          setState(() {
+            _phoneCredential = null;
+            _phoneVerified = false;
+            otpEditingController.clear();
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Invalid OTP. Please resend and try again.'),
             ),
           );
         } else {
@@ -303,7 +507,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
-  postDetailsToFirestore() async {
+  Future<void> postDetailsToFirestore({
+    required bool verificationEmailSent,
+  }) async {
     // calling firestore
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     User? user = _auth.currentUser;
@@ -313,7 +519,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     userModel.email = user!.email;
     userModel.uid = user.uid;
     userModel.name = nameEditingController.text;
-    userModel.mobile = phoneEditingController.text;
+    userModel.mobile = _firebasePhoneNumber;
     userModel.isOnboardingDone = false;
 
     await firebaseFirestore
@@ -321,14 +527,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         .doc(user.uid)
         .set(userModel.toMap());
 
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content:
-          Text('Account created. Please verify your email from your inbox.'),
+    await _auth.signOut();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(
+        verificationEmailSent
+            ? 'Account created. Please verify your email from the link in your inbox.'
+            : 'Account created, but the verification email was not sent. Sign in once to resend it.',
+      ),
     ));
 
     Navigator.pushAndRemoveUntil(
         (context),
-        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
         (route) => false);
   }
 
@@ -342,5 +553,47 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     setState(() {
       isHiddenConfirmPassword = !isHiddenConfirmPassword;
     });
+  }
+
+  String? _validatePhoneNumber(String? value) {
+    final phone = value?.trim() ?? '';
+    if (phone.isEmpty) {
+      return 'Enter Your Phone Number !';
+    }
+    if (phone.startsWith('+')) {
+      return RegExp(r'^\+[1-9]\d{7,14}$').hasMatch(phone)
+          ? null
+          : 'Enter phone in E.164 format';
+    }
+    return RegExp(r'^[0-9]{10}$').hasMatch(phone)
+        ? null
+        : 'Enter Valid Phone Number';
+  }
+
+  String get _firebasePhoneNumber {
+    final phone = phoneEditingController.text.trim();
+    return phone.startsWith('+') ? phone : '+91$phone';
+  }
+
+  String _phoneAuthErrorMessage(FirebaseAuthException error) {
+    switch (error.code) {
+      case 'invalid-phone-number':
+        return 'Enter a valid phone number with country code.';
+      case 'too-many-requests':
+        return 'Too many OTP requests. Try again later.';
+      case 'quota-exceeded':
+        return 'Firebase SMS quota exceeded.';
+      case 'operation-not-allowed':
+        return 'Enable Phone provider in Firebase Authentication.';
+      default:
+        return error.message ?? 'Unable to send OTP. Check Firebase setup.';
+    }
+  }
+
+  void _showAuthMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 }

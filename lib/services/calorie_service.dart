@@ -65,14 +65,15 @@ class CalorieService {
   }
 
   Stream<QuerySnapshot<Map<String, dynamic>>> searchIndianFoods(String query) {
-    var ref = _firestore.collection('indian_foods').limit(20);
+    var ref = _firestore.collection('indian_foods').orderBy('name').limit(20);
     final trimmed = query.trim();
     if (trimmed.isEmpty) return ref.snapshots();
+    final normalized = trimmed.toLowerCase();
     return _firestore
         .collection('indian_foods')
-        .orderBy('name')
-        .startAt([trimmed])
-        .endAt(['$trimmed\uf8ff'])
+        .orderBy('searchName')
+        .startAt([normalized])
+        .endAt(['$normalized\uf8ff'])
         .limit(20)
         .snapshots();
   }

@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages/overweight_category/overeight_drinks.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages/overweight_category/overweight_fruit.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages/overweight_category/overweight_meals.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class overweightHome extends StatelessWidget {
-  const overweightHome({Key? key}) : super(key: key);
+  const overweightHome({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class overweightHome extends StatelessWidget {
                               Colors.black.withOpacity(0.5),
                               BlendMode.multiply),
                           fit: BoxFit.cover,
-                          image: NetworkImage(
+                          image: cachedNetworkImageProvider(
                               "https://images.pexels.com/photos/1128678/pexels-photo-1128678.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"),
                         ),
                       ),
@@ -86,7 +87,7 @@ class overweightHome extends StatelessWidget {
                               Colors.black.withOpacity(0.5),
                               BlendMode.multiply),
                           fit: BoxFit.cover,
-                          image: NetworkImage(
+                          image: cachedNetworkImageProvider(
                               "https://images.pexels.com/photos/1149302/pexels-photo-1149302.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"),
                         ),
                       ),
@@ -126,7 +127,7 @@ class overweightHome extends StatelessWidget {
                               Colors.black.withOpacity(0.5),
                               BlendMode.multiply),
                           fit: BoxFit.cover,
-                          image: NetworkImage(
+                          image: cachedNetworkImageProvider(
                               "https://images.pexels.com/photos/6544381/pexels-photo-6544381.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"),
                         ),
                       ),

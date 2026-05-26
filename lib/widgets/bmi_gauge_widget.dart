@@ -31,12 +31,20 @@ class BmiGaugeWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: Stack(
             children: [
-              Row(
-                children: const [
-                  Expanded(child: ColoredBox(color: Colors.blue, child: SizedBox(height: 10))),
-                  Expanded(child: ColoredBox(color: Colors.green, child: SizedBox(height: 10))),
-                  Expanded(child: ColoredBox(color: Colors.orange, child: SizedBox(height: 10))),
-                  Expanded(child: ColoredBox(color: Colors.red, child: SizedBox(height: 10))),
+              const Row(
+                children: [
+                  Expanded(
+                      child: ColoredBox(
+                          color: Colors.blue, child: SizedBox(height: 10))),
+                  Expanded(
+                      child: ColoredBox(
+                          color: Colors.green, child: SizedBox(height: 10))),
+                  Expanded(
+                      child: ColoredBox(
+                          color: Colors.orange, child: SizedBox(height: 10))),
+                  Expanded(
+                      child: ColoredBox(
+                          color: Colors.red, child: SizedBox(height: 10))),
                 ],
               ),
               FractionallySizedBox(
@@ -49,7 +57,13 @@ class BmiGaugeWidget extends StatelessWidget {
         const SizedBox(height: 4),
         const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Text('16'), Text('18.5'), Text('25'), Text('30'), Text('40')],
+          children: [
+            Text('16'),
+            Text('18.5'),
+            Text('25'),
+            Text('30'),
+            Text('40')
+          ],
         ),
       ],
     );

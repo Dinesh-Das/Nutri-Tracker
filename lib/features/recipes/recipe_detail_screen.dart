@@ -5,6 +5,7 @@ import 'package:nutri_tracker/models/favourite_item.dart';
 import 'package:nutri_tracker/models/indian_recipe.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/services/recipe_api_service.dart';
+import 'package:nutri_tracker/widgets/cached_app_image.dart';
 import 'package:share_plus/share_plus.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
@@ -50,7 +51,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(recipe.name),
-              background: Image.network(recipe.thumbnailUrl, fit: BoxFit.cover),
+              background: CachedAppImage(imageUrl: recipe.thumbnailUrl),
             ),
             actions: [
               IconButton(
@@ -84,18 +85,21 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 Wrap(
                   spacing: 8,
                   children: [
-                    if (recipe.category.isNotEmpty) Chip(label: Text(recipe.category)),
+                    if (recipe.category.isNotEmpty)
+                      Chip(label: Text(recipe.category)),
                     if (recipe.area.isNotEmpty) Chip(label: Text(recipe.area)),
                     const Chip(label: Text('~35 min')),
                   ],
                 ),
                 const SizedBox(height: 16),
-                Text('Ingredients', style: Theme.of(context).textTheme.titleLarge),
+                Text('Ingredients',
+                    style: Theme.of(context).textTheme.titleLarge),
                 for (final ingredient in recipe.ingredients)
                   CheckboxListTile(
                     value: false,
                     onChanged: (_) {},
-                    title: Text('${ingredient.measure} ${ingredient.name}'.trim()),
+                    title:
+                        Text('${ingredient.measure} ${ingredient.name}'.trim()),
                     controlAffinity: ListTileControlAffinity.leading,
                   ),
                 const SizedBox(height: 16),

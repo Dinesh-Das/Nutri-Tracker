@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/services/ai_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/widgets/ai_message_bubble.dart';
@@ -37,8 +36,9 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
   @override
   Widget build(BuildContext context) {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null)
+    if (uid == null) {
       return const Scaffold(body: Center(child: Text('Please sign in.')));
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('NutriBot'),
@@ -144,9 +144,11 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     try {
       await _ai.saveChatMessage(uid: uid, role: 'user', content: text);
       final user = await _firestore.getUser(uid);
+      final recentHistory =
+          history.length <= 12 ? history : history.sublist(history.length - 12);
       final reply = await _ai.sendMessage(
         userMessage: text,
-        conversationHistory: history.take(12).toList(),
+        conversationHistory: recentHistory,
         userContext: user,
       );
       await _ai.saveChatMessage(uid: uid, role: 'assistant', content: reply);

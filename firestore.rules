@@ -36,7 +36,7 @@ service cloud.firestore {
       allow read: if isOwner(userId);
       allow create: if isOwner(userId) && createsNoProtectedUserFields(userId);
       allow update: if isOwner(userId) && keepsProtectedUserFieldsUnchanged();
-      allow delete: if false;
+      allow delete: if isOwner(userId);
 
       match /favourites/{itemId} {
         allow read, write: if isOwner(userId);
@@ -47,12 +47,20 @@ service cloud.firestore {
       }
     }
 
-    match /calorie_logs/{userId}/{document=**} {
-      allow read, write: if isOwner(userId);
+    match /calorie_logs/{userId} {
+      allow delete: if isOwner(userId);
+
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
     }
 
-    match /weight_logs/{userId}/{document=**} {
-      allow read, write: if isOwner(userId);
+    match /weight_logs/{userId} {
+      allow delete: if isOwner(userId);
+
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
     }
 
     match /indian_foods/{docId} {
@@ -65,11 +73,15 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    match /ai_chats/{userId}/messages/{messageId} {
-      allow read: if isOwner(userId);
-      allow create: if isOwner(userId) && validAiMessage();
-      allow update: if false;
+    match /ai_chats/{userId} {
       allow delete: if isOwner(userId);
+
+      match /messages/{messageId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && validAiMessage();
+        allow update: if false;
+        allow delete: if isOwner(userId);
+      }
     }
   }
 }

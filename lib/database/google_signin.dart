@@ -57,7 +57,7 @@ class GoogleSignInProvider extends ChangeNotifier {
 
   googleLogOut() async {
     UserLocalData.saveGLoginData(false);
-    this._user = await googleSignIn.disconnect();
+    _user = await googleSignIn.disconnect();
     userModel = null;
     notifyListeners();
   }

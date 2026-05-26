@@ -12,12 +12,12 @@ class AuthService {
 
   //Get UID
   Future<String> getCurrentUID() async {
-    return (await FirebaseAuth.instance.currentUser!.uid);
+    return (FirebaseAuth.instance.currentUser!.uid);
   }
 
 //Get CurrentUser
   Future getCurrentUser() async {
-    return await FirebaseAuth.instance.currentUser;
+    return FirebaseAuth.instance.currentUser;
   }
 
 // Email & Password Sign Up
@@ -61,7 +61,7 @@ class AuthService {
 
   Future convertUserWithEmail(
       String email, String password, String? name) async {
-    final currentUser = await FirebaseAuth.instance.currentUser!;
+    final currentUser = FirebaseAuth.instance.currentUser!;
 
     final credential =
         EmailAuthProvider.credential(email: email, password: password);
@@ -70,13 +70,12 @@ class AuthService {
   }
 
   Future convertWithGoogle() async {
-    final currentUser = await FirebaseAuth.instance.currentUser!;
+    final currentUser = FirebaseAuth.instance.currentUser!;
     final GoogleSignInAccount? account = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication _googleAuth =
-        await account!.authentication;
+    final GoogleSignInAuthentication googleAuth = await account!.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
-      idToken: _googleAuth.idToken,
-      accessToken: _googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+      accessToken: googleAuth.accessToken,
     );
     await currentUser.linkWithCredential(credential);
     await updateUserName(_googleSignIn.currentUser!.displayName, currentUser);
@@ -85,11 +84,10 @@ class AuthService {
   // GOOGLE
   Future<String> signInWithGoogle() async {
     final GoogleSignInAccount? account = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication _googleAuth =
-        await account!.authentication;
+    final GoogleSignInAuthentication googleAuth = await account!.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
-      idToken: _googleAuth.idToken,
-      accessToken: _googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+      accessToken: googleAuth.accessToken,
     );
     return (await _firebaseAuth.signInWithCredential(credential)).user!.uid;
   }
