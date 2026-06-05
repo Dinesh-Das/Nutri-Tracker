@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:nutri_tracker/features/ai/ai_assistant_screen.dart';
 import 'package:nutri_tracker/features/calories/add_meal_bottom_sheet.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/services/calorie_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/widgets/water_tracker_widget.dart';
@@ -39,6 +40,17 @@ class _CalorieLogScreenState extends State<CalorieLogScreen> {
             final percent = (log.totalCalories / goal).clamp(0.0, 1.0);
             return Scaffold(
               appBar: AppBar(title: const Text('Log')),
+              floatingActionButton: FloatingActionButton.extended(
+                onPressed: () => context.push(
+                  AppRoutes.photoMeal,
+                  extra: {
+                    'date': _selectedDate,
+                    'mealType': 'snack',
+                  },
+                ),
+                icon: const Icon(Icons.camera_alt),
+                label: const Text('Photo'),
+              ),
               body: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
@@ -124,17 +136,11 @@ class _CalorieLogScreenState extends State<CalorieLogScreen> {
                   ),
                   const SizedBox(height: 12),
                   FilledButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => AIAssistantScreen(
-                            initialPrompt:
-                                "I've eaten ${log.totalCalories} calories today. Is that on track?",
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: () => context.push(
+                      AppRoutes.aiChat,
+                      extra:
+                          "I've eaten ${log.totalCalories} calories today. Is that on track?",
+                    ),
                     icon: const Icon(Icons.auto_awesome),
                     label: const Text('Generate Meal Plan with AI'),
                   ),

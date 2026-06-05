@@ -1,8 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/features/ai/ai_assistant_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/models/favourite_item.dart';
 import 'package:nutri_tracker/models/indian_recipe.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/services/recipe_api_service.dart';
 import 'package:nutri_tracker/widgets/cached_app_image.dart';
@@ -111,14 +112,10 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                   ),
                 const SizedBox(height: 16),
                 FilledButton.icon(
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => AIAssistantScreen(
-                        initialPrompt:
-                            'What are the nutritional benefits of ${recipe.name}?',
-                      ),
-                    ),
+                  onPressed: () => context.push(
+                    AppRoutes.aiChat,
+                    extra:
+                        'What are the nutritional benefits of ${recipe.name}?',
                   ),
                   icon: const Icon(Icons.auto_awesome),
                   label: const Text('Get Nutrition Info'),

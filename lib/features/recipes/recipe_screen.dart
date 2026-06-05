@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/features/recipes/recipe_detail_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/models/indian_recipe.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/services/recipe_api_service.dart';
 import 'package:nutri_tracker/widgets/cached_app_image.dart';
 import 'package:nutri_tracker/widgets/recipe_card_widget.dart';
@@ -159,10 +160,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
   }
 
   void _open(IndianRecipe recipe) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => RecipeDetailScreen(recipe: recipe)),
-    );
+    context.push(AppRoutes.recipeDetail, extra: recipe);
   }
 }
 

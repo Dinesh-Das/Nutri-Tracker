@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/models/achievement.dart';
 import 'package:nutri_tracker/models/favourite_item.dart';
 import 'package:nutri_tracker/models/weight_entry.dart';
+import 'package:nutri_tracker/services/achievement_service.dart';
+import 'package:nutri_tracker/services/health_service.dart';
 
 class FirestoreService {
   FirestoreService({FirebaseFirestore? firestore})
@@ -44,11 +47,11 @@ class FirestoreService {
   }) async {
     await _firestore.collection('user_details').doc(uid).set({
       'uid': uid,
-      'bmi': bmi.toStringAsFixed(1),
+      'bmi': bmi,
       'weight': weight.toStringAsFixed(1),
       'height': height.toStringAsFixed(0),
       'gender': gender,
-      'bmr': bmr.toStringAsFixed(0),
+      'bmr': bmr,
       'dailyCalorieGoal': dailyCalorieGoal,
       'activityLevel': activityLevel,
       'lastBmiDate': Timestamp.now(),
@@ -64,6 +67,17 @@ class FirestoreService {
       'date': Timestamp.now(),
       'note': '',
     });
+    try {
+      await HealthService().writeWeightEntry(weight, DateTime.now());
+    } catch (_) {}
+    if (bmi >= 18.5 && bmi < 25) {
+      try {
+        await AchievementService().checkAndAward(
+          uid,
+          AchievementType.bmiNormal,
+        );
+      } catch (_) {}
+    }
   }
 
   Future<List<WeightEntry>> getWeightHistory(String uid) async {

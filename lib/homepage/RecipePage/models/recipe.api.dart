@@ -1,21 +1,18 @@
-import 'dart:convert';
 import 'recipe.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class RecipeApi {
   static Future<List<Recipe>> getRecipe() async {
-    final uri = Uri.https(
-      'www.themealdb.com',
-      '/api/json/v1/1/filter.php',
-      {'a': 'Indian'},
+    final response = await Dio().get<Map<String, dynamic>>(
+      'https://www.themealdb.com/api/json/v1/1/filter.php',
+      queryParameters: {'a': 'Indian'},
     );
-
-    final response = await http.get(uri);
-    if (response.statusCode < 200 || response.statusCode >= 300) {
+    final statusCode = response.statusCode ?? 500;
+    if (statusCode < 200 || statusCode >= 300) {
       throw Exception('Recipe request failed: ${response.statusCode}');
     }
 
-    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = response.data ?? const <String, dynamic>{};
     final meals = (data['meals'] as List?) ?? const [];
 
     return meals

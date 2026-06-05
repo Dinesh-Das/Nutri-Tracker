@@ -22,8 +22,21 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>NutriTrack uses your camera to scan food barcodes and analyse meal photos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>NutriTrack accesses your photos to let you log meals from your gallery.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>NutriTrack reads your fitness data to personalise your calorie and nutrition goals.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>NutriTrack writes your meals and weight to Apple Health for a complete health record.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+		<string>fetch</string>
+	</array>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UISupportedInterfaceOrientations</key>

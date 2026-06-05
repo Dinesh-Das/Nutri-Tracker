@@ -190,16 +190,16 @@ String buildMealPlanPrompt({
   required String dietaryPreference,
   required String goal,
   required String cuisinePreference,
-  required String? userBmi,
+  required double? userBmi,
 }) {
-  final bmi = double.tryParse(userBmi ?? '0') ?? 0;
+  final bmi = userBmi ?? 0.0;
   return '''
 Create a $days-day Indian meal plan with these requirements:
 - Daily calorie target: $calorieTarget calories
 - Dietary preference: $dietaryPreference
 - Goal: $goal
 - Cuisine: $cuisinePreference
-- BMI: ${userBmi ?? 'not set'} (${getBmiCategory(bmi)})
+- BMI: ${userBmi?.toStringAsFixed(1) ?? 'not set'} (${getBmiCategory(bmi)})
 
 For each day provide breakfast, lunch, dinner, and 2 snacks.
 Use common Indian foods. Include portion sizes.

@@ -1,34 +1,46 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/models/meal_plan.dart';
+import 'package:nutri_tracker/services/config_service.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
+import 'package:uuid/uuid.dart';
 
 class AIService {
-  static const String _proxyUrl = String.fromEnvironment('NUTRIBOT_PROXY_URL');
   static const String _model = 'claude-sonnet-4-20250514';
+
+  AIService({Dio? dio, ConfigService? configService})
+      : _dio = dio ?? Dio(),
+        _configService = configService ?? ConfigService();
+
+  final Dio _dio;
+  final ConfigService _configService;
 
   Future<String> sendMessage({
     required String userMessage,
     required List<Map<String, String>> conversationHistory,
     UserModel? userContext,
   }) async {
-    if (_proxyUrl.trim().isEmpty) {
+    final proxyUrl = await _configService.getNutriBotProxyUrl();
+    if (proxyUrl.trim().isEmpty) {
       throw Exception(
-        'NutriBot is not configured. Run the app with '
-        '--dart-define=NUTRIBOT_PROXY_URL=https://your-secure-proxy.example.com/messages',
+        'NutriBot is not configured. Set nutribot_proxy_url in Firebase Remote Config.',
       );
     }
 
     var systemPrompt = nutriBotSystemPrompt;
     if (userContext != null) {
-      final bmi = double.tryParse(userContext.bmi ?? '0') ?? 0;
+      final bmi = userContext.bmi ?? 0.0;
       systemPrompt += '''
 
 Current user context:
 - Name: ${userContext.name ?? 'not set'}
-- BMI: ${userContext.bmi ?? 'not calculated'} (${getBmiCategory(bmi)})
+- BMI: ${userContext.bmi?.toStringAsFixed(1) ?? 'not calculated'} (${getBmiCategory(bmi)})
 - Weight: ${userContext.weight ?? 'not set'}kg
 - Height: ${userContext.height ?? 'not set'}cm
 - Gender: ${userContext.gender ?? 'not set'}
@@ -55,21 +67,27 @@ Current user context:
       {'role': 'user', 'content': userMessage},
     ];
 
-    final response = await http.post(
-      Uri.parse(_proxyUrl),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
+    final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+    final response = await _dio.post<dynamic>(
+      proxyUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          if (idToken != null) 'Authorization': 'Bearer $idToken',
+        },
+      ),
+      data: {
         'model': _model,
         'max_tokens': 1024,
         'system': systemPrompt,
         'messages': messages,
-      }),
+      },
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = response.data is String
+          ? jsonDecode(response.data as String) as Map<String, dynamic>
+          : Map<String, dynamic>.from(response.data as Map);
       final text = data['text'];
       if (text is String) return text;
       final content = data['content'];
@@ -89,13 +107,122 @@ Current user context:
       userMessage: buildNutritionPrompt(mealDescription),
       conversationHistory: const [],
     );
-    final start = response.indexOf('{');
-    final end = response.lastIndexOf('}');
-    if (start == -1 || end == -1 || end <= start) {
-      throw Exception('AI response did not include valid JSON');
+    return _extractJsonMap(response);
+  }
+
+  Future<Map<String, dynamic>> estimateNutritionFromPhoto(
+      File imageFile) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception('Sign in before analysing meal photos.');
+
+    final id = const Uuid().v4();
+    final ref =
+        FirebaseStorage.instance.ref().child('food_photos/${user.uid}/$id.jpg');
+    await ref.putFile(
+      imageFile,
+      SettableMetadata(contentType: 'image/jpeg'),
+    );
+
+    try {
+      await ref.getDownloadURL();
+      final proxyUrl = await _configService.getNutriBotProxyUrl();
+      if (proxyUrl.trim().isEmpty) {
+        throw Exception(
+          'NutriBot is not configured. Set nutribot_proxy_url in Firebase Remote Config.',
+        );
+      }
+      final idToken = await user.getIdToken();
+      final base64Image = base64Encode(await imageFile.readAsBytes());
+      final response = await _dio.post<dynamic>(
+        proxyUrl,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            if (idToken != null) 'Authorization': 'Bearer $idToken',
+          },
+        ),
+        data: {
+          'model': _model,
+          'max_tokens': 1024,
+          'system': nutriBotSystemPrompt,
+          'messages': [
+            {
+              'role': 'user',
+              'content': [
+                {
+                  'type': 'image',
+                  'source': {
+                    'type': 'base64',
+                    'media_type': 'image/jpeg',
+                    'data': base64Image,
+                  },
+                },
+                {
+                  'type': 'text',
+                  'text': buildNutritionPrompt('this meal in the photo'),
+                },
+              ],
+            },
+          ],
+        },
+      );
+      if (response.statusCode != 200) {
+        throw Exception('AI request failed: ${response.statusCode}');
+      }
+      final data = response.data is String
+          ? jsonDecode(response.data as String) as Map<String, dynamic>
+          : Map<String, dynamic>.from(response.data as Map);
+      final text = data['text']?.toString() ??
+          ((data['content'] as List?)?.firstOrNull as Map?)?['text']
+              ?.toString();
+      if (text == null || text.isEmpty) {
+        throw Exception('AI proxy returned an unexpected response format.');
+      }
+      return _extractJsonMap(text);
+    } finally {
+      await ref.delete().catchError((_) {});
     }
-    return jsonDecode(response.substring(start, end + 1))
-        as Map<String, dynamic>;
+  }
+
+  Future<List<MealPlanDay>> generateMealPlan(
+    UserModel user, {
+    String? goal,
+  }) async {
+    final bmi = user.bmi ?? 0.0;
+    final response = await sendMessage(
+      userMessage: '''
+Generate a 7-day personalised Indian meal plan as JSON.
+
+User:
+- BMI: ${user.bmi?.toStringAsFixed(1) ?? 'not calculated'} (${getBmiCategory(bmi)})
+- Weight: ${user.weight ?? 'not set'} kg
+- Goal: ${goal ?? user.weightGoal ?? 'not set'}
+- Dietary preference: ${user.dietaryPreference ?? 'not specified'}
+- Allergies: ${(user.allergies ?? const <String>[]).join(', ')}
+- Daily calorie goal: ${user.dailyCalorieGoal ?? 2000}
+
+Return ONLY this JSON shape:
+{
+  "days": [
+    {
+      "day": 1,
+      "totalCalories": 1800,
+      "meals": {
+        "breakfast": {"name": "", "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "description": ""},
+        "lunch": {"name": "", "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "description": ""},
+        "dinner": {"name": "", "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "description": ""},
+        "snack": {"name": "", "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "description": ""}
+      }
+    }
+  ]
+}
+
+Use practical Indian meals, regional variety, and clear portion descriptions.
+''',
+      conversationHistory: const [],
+      userContext: user,
+    );
+    return MealPlan.fromJson(_extractJsonMap(response)).days;
   }
 
   Future<void> saveChatMessage({
@@ -146,6 +273,20 @@ Current user context:
     }
     await batch.commit();
   }
+
+  Map<String, dynamic> _extractJsonMap(String response) {
+    final start = response.indexOf('{');
+    final end = response.lastIndexOf('}');
+    if (start == -1 || end == -1 || end <= start) {
+      throw Exception('AI response did not include valid JSON');
+    }
+    return jsonDecode(response.substring(start, end + 1))
+        as Map<String, dynamic>;
+  }
+}
+
+extension _FirstOrNull<T> on List<T> {
+  T? get firstOrNull => isEmpty ? null : first;
 }
 
 const nutriBotSystemPrompt = '''

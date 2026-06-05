@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/firebase_options.dart';
+import 'package:nutri_tracker/router/app_router.dart';
 import 'package:nutri_tracker/services/notification_service.dart';
-import 'package:nutri_tracker/splash.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:provider/provider.dart';
-import 'database/google_signin.dart';
+import 'package:dynamic_color/dynamic_color.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await Hive.initFlutter();
   await NotificationService.instance.init();
 
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
@@ -35,16 +37,22 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => GoogleSignInProvider(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'NutriTrack India',
-        theme: CustomTheme.lightTheme,
-        darkTheme: CustomTheme.darkTheme,
-        themeMode: currentTheme.currentTheme,
-        home: const Splash(),
-      ),
+    final router = ref.watch(appRouterProvider);
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'NutriTrack India',
+          theme: CustomTheme.lightTheme.copyWith(
+            colorScheme: lightDynamic ?? CustomTheme.lightTheme.colorScheme,
+          ),
+          darkTheme: CustomTheme.darkTheme.copyWith(
+            colorScheme: darkDynamic ?? CustomTheme.darkTheme.colorScheme,
+          ),
+          themeMode: currentTheme.currentTheme,
+          routerConfig: router,
+        );
+      },
     );
   }
 }

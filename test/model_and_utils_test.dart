@@ -24,6 +24,17 @@ void main() {
       expect(activityMultiplier('moderately_active'), 1.55);
       expect(activityMultiplier(null), 1.2);
     });
+
+    test('estimates exercise calories with MET values', () {
+      expect(
+        estimateCaloriesBurned(
+          exercise: 'running',
+          durationMinutes: 30,
+          weightKg: 70,
+        ),
+        closeTo(360, 20),
+      );
+    });
   });
 
   group('models', () {
@@ -38,6 +49,20 @@ void main() {
       expect(map['email'], 'user@example.com');
       expect(map.containsKey('isAdmin'), isFalse);
       expect(map.containsValue(null), isFalse);
+    });
+
+    test('UserModel.fromMap parses bmi and bmr as doubles', () {
+      final model = UserModel.fromMap({'bmi': 22.5, 'bmr': 1800});
+
+      expect(model.bmi, 22.5);
+      expect(model.bmr, 1800.0);
+    });
+
+    test('UserModel.fromMap keeps legacy string bmi backward-compatible', () {
+      final model = UserModel.fromMap({'bmi': '22.5', 'bmr': '1800'});
+
+      expect(model.bmi, 22.5);
+      expect(model.bmr, 1800.0);
     });
 
     test('MealEntry serializes and parses Firestore maps', () {

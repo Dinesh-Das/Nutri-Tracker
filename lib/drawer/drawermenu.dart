@@ -6,7 +6,6 @@ import 'package:nutri_tracker/drawer/AboutUs/aboutus01.dart';
 import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
-import 'package:nutri_tracker/database/google_signin.dart';
 import 'package:nutri_tracker/features/favourites/favourites_screen.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/database/user_model.dart';
@@ -14,7 +13,7 @@ import 'package:nutri_tracker/widgets/cached_app_image.dart';
 // import 'package:nutri_tracker/bottom_navigation.dart';
 import 'package:nutri_tracker/sharedPreferences/local_data.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
-import 'package:provider/provider.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -59,15 +58,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
         ? defaultProfileUrl
         : loggedInUser.photoURL;
 
-    //google account data
     user = FirebaseAuth.instance.currentUser!;
-    if (user!.providerData[0].providerId == "google.com") {
-      final provider =
-          Provider.of<GoogleSignInProvider>(context, listen: false);
-      email = provider.userModel?.email!;
-      name = provider.userModel?.name!;
-      urlImage = provider.userModel?.photoURL!;
-    }
 
     if (email == null) {
       name = DataConstant.gname.toString();
@@ -193,9 +184,11 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     sharedPreferences.clear();
     user = FirebaseAuth.instance.currentUser!;
     if (user!.providerData[0].providerId == "google.com") {
-      final provider =
-          Provider.of<GoogleSignInProvider>(context, listen: false);
-      provider.googleLogOut();
+      try {
+        await GoogleSignIn().disconnect();
+      } catch (_) {
+        await GoogleSignIn().signOut();
+      }
     }
     UserLocalData.saveLoginData(false);
     await FirebaseAuth.instance.signOut();

@@ -15,8 +15,8 @@ Future<void> updateDetailsToFirestore(
     String? height,
     String? weight,
     String? gender,
-    String? bmi,
-    String? bmr,
+    double? bmi,
+    double? bmr,
     BuildContext context) async {
   // calling firestore
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
@@ -96,8 +96,8 @@ Future<void> updateBMIData(
     'uid': user.uid,
     'height': height,
     'weight': weight,
-    'bmi': bmi,
-    'bmr': bmr,
+    'bmi': double.tryParse(bmi ?? ''),
+    'bmr': double.tryParse(bmr ?? ''),
     'gender': gender,
     'lastBmiDate': Timestamp.now(),
   }, SetOptions(merge: true));

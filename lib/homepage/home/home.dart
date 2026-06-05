@@ -212,7 +212,8 @@ class _homeState extends State<home> {
                                   animation: true,
                                   animationDuration: 2000,
                                   center: Text(
-                                    loggedInUser.bmi ?? "BMI",
+                                    loggedInUser.bmi?.toStringAsFixed(1) ??
+                                        "BMI",
                                     style: TextStyle(fontSize: 24),
                                   ),
                                 ),

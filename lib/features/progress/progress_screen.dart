@@ -1,8 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/models/weight_entry.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/services/calorie_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/widgets/macro_chart_widget.dart';
@@ -21,6 +23,11 @@ class ProgressScreen extends StatelessWidget {
       body: FutureBuilder<List<WeightEntry>>(
         future: FirestoreService().getWeightHistory(uid),
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Unable to load progress: ${snapshot.error}'),
+            );
+          }
           final entries = snapshot.data ?? [];
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -39,6 +46,15 @@ class ProgressScreen extends StatelessWidget {
               ),
               _WeeklyCalories(uid: uid),
               _TodayMacros(uid: uid),
+              Card(
+                child: ListTile(
+                  leading: const CircleAvatar(child: Icon(Icons.emoji_events)),
+                  title: const Text('Achievements'),
+                  subtitle: const Text('View badges and milestones'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(AppRoutes.achievements),
+                ),
+              ),
               Row(
                 children: [
                   Expanded(child: _LogStreak(uid: uid)),
@@ -104,23 +120,13 @@ class _LogStreak extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<DailyCalorieLog>>(
-      future: Future.wait(List.generate(30, (index) {
-        return CalorieService().getDailyLog(
-          uid,
-          DateTime.now().subtract(Duration(days: index)),
-        );
-      })),
+    return FutureBuilder<int>(
+      future: CalorieService().getLogStreak(uid),
       builder: (context, snapshot) {
-        final logs = snapshot.data ?? const <DailyCalorieLog>[];
-        var streak = 0;
-        for (final log in logs) {
-          if (log.totalCalories > 0 || log.meals.isNotEmpty) {
-            streak++;
-          } else {
-            break;
-          }
+        if (snapshot.hasError) {
+          return const _StatCard(label: 'Log streak', value: '--');
         }
+        final streak = snapshot.data ?? 0;
         return _StatCard(label: 'Log streak', value: '$streak days');
       },
     );
@@ -136,16 +142,43 @@ class _WeeklyCalories extends StatelessWidget {
     return FutureBuilder(
       future: FirestoreService().getUser(uid),
       builder: (context, userSnapshot) {
+        if (userSnapshot.hasError) {
+          return const _ChartCard(
+            title: 'Weekly Calories',
+            child: Center(child: Text('Unable to load goal.')),
+          );
+        }
         final goal = userSnapshot.data?.dailyCalorieGoal ?? 2000;
+        final today = DateTime.now();
+        final start = today.subtract(const Duration(days: 6));
         return _ChartCard(
           title: 'Weekly Calories',
-          child: FutureBuilder(
-            future: Future.wait(List.generate(7, (index) {
-              final date = DateTime.now().subtract(Duration(days: 6 - index));
-              return CalorieService().getDailyLog(uid, date);
-            })),
+          child: FutureBuilder<List<DailyCalorieLog>>(
+            future: CalorieService().getDailyLogsInRange(
+              uid,
+              start: start,
+              end: today,
+            ),
             builder: (context, snapshot) {
-              final logs = snapshot.data ?? [];
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Unable to load calories: ${snapshot.error}'),
+                );
+              }
+              final logsByDate = {
+                for (final log in snapshot.data ?? const <DailyCalorieLog>[])
+                  log.date: log,
+              };
+              final service = CalorieService();
+              final logs = [
+                for (var i = 0; i < 7; i++)
+                  logsByDate[service.dateKey(
+                        start.add(Duration(days: i)),
+                      )] ??
+                      DailyCalorieLog.empty(
+                        service.dateKey(start.add(Duration(days: i))),
+                      ),
+              ];
               if (logs.every((log) => log.totalCalories == 0)) {
                 return const _EmptyState(text: 'No calorie logs this week.');
               }

@@ -4,10 +4,10 @@ class UserModel {
   String? uid;
   String? email;
   String? name;
-  String? bmi;
+  double? bmi;
   String? photoURL;
   String? username;
-  String? bmr;
+  double? bmr;
   String? gender;
   String? height;
   String? mobile;
@@ -24,6 +24,7 @@ class UserModel {
   DateTime? lastBmiDate;
   String? weightGoal;
   bool? isOnboardingDone;
+  String? timezone;
 
   UserModel({
     this.uid,
@@ -49,6 +50,7 @@ class UserModel {
     this.lastBmiDate,
     this.weightGoal,
     this.isOnboardingDone,
+    this.timezone,
   });
 
   //reciving data from server
@@ -57,7 +59,7 @@ class UserModel {
     final lastBmiValue = map['lastBmiDate'];
     return UserModel(
       uid: map['uid'],
-      bmi: map['bmi']?.toString(),
+      bmi: _toDouble(map['bmi']),
       email: map['email'],
       name: map['name'],
       mobile: map['mobile'],
@@ -69,7 +71,7 @@ class UserModel {
       birthdate: map['birthdate'],
       bio: map['bio'],
       location: map['location'],
-      bmr: map['bmr']?.toString(),
+      bmr: _toDouble(map['bmr']),
       targetWeight: (map['targetWeight'] as num?)?.toDouble(),
       activityLevel: map['activityLevel'],
       dietaryPreference: map['dietaryPreference'],
@@ -83,6 +85,7 @@ class UserModel {
               : null,
       weightGoal: map['weightGoal'],
       isOnboardingDone: map['isOnboardingDone'] == true,
+      timezone: map['timezone'],
     );
   }
 
@@ -113,8 +116,16 @@ class UserModel {
           lastBmiDate == null ? null : Timestamp.fromDate(lastBmiDate!),
       'weightGoal': weightGoal,
       'isOnboardingDone': isOnboardingDone,
+      'timezone': timezone,
     };
     data.removeWhere((key, value) => value == null);
     return data;
+  }
+
+  static double? _toDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toDouble();
+    if (value is String) return double.tryParse(value);
+    return null;
   }
 }

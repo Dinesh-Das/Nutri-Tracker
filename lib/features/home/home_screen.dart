@@ -3,18 +3,21 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart' hide NavigationDrawer;
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:nutri_tracker/bmi/screens/calculator_screen.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/drawer/drawermenu.dart';
-import 'package:nutri_tracker/features/ai/ai_assistant_screen.dart';
-import 'package:nutri_tracker/features/calories/calorie_log_screen.dart';
 import 'package:nutri_tracker/homepage/home/quotes.dart';
 import 'package:nutri_tracker/models/indian_recipe.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
+import 'package:nutri_tracker/models/workout_entry.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/services/calorie_service.dart';
+import 'package:nutri_tracker/services/connectivity_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
+import 'package:nutri_tracker/services/health_service.dart';
 import 'package:nutri_tracker/services/recipe_api_service.dart';
+import 'package:nutri_tracker/services/workout_service.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
 import 'package:nutri_tracker/widgets/bmi_gauge_widget.dart';
 import 'package:nutri_tracker/widgets/cached_app_image.dart';
@@ -58,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       stream: _firestoreService.watchUser(uid),
       builder: (context, userSnapshot) {
         final user = userSnapshot.data ?? UserModel();
-        final bmi = double.tryParse(user.bmi ?? '0') ?? 0;
+        final bmi = user.bmi ?? 0.0;
         final goal = user.dailyCalorieGoal ?? 2000;
         return Scaffold(
           appBar: AppBar(title: const Text('NutriTrack India')),
@@ -72,6 +75,26 @@ class _HomeScreenState extends State<HomeScreen> {
               return ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
+                  StreamBuilder<bool>(
+                    stream: ConnectivityService().isOnline,
+                    initialData: true,
+                    builder: (context, snapshot) {
+                      if (snapshot.data != false) {
+                        return const SizedBox.shrink();
+                      }
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.errorContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text(
+                          'Offline mode: saved data will sync when you reconnect.',
+                        ),
+                      );
+                    },
+                  ),
                   Text(
                     'Good ${greetings()}, ${user.name ?? 'there'}',
                     style: Theme.of(context).textTheme.headlineSmall,
@@ -80,11 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 12),
                   Card(
                     child: InkWell(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const CalorieLogScreen()),
-                      ),
+                      onTap: () => context.push(AppRoutes.calorieLog),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
@@ -98,6 +117,23 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text('${log.totalCalories} / $goal kcal'),
+                            StreamBuilder<List<ExerciseEntry>>(
+                              stream: WorkoutService().watchTodayWorkouts(uid),
+                              builder: (context, workoutSnapshot) {
+                                final burned = (workoutSnapshot.data ??
+                                        const <ExerciseEntry>[])
+                                    .fold<int>(
+                                  0,
+                                  (total, entry) =>
+                                      total + entry.caloriesBurned,
+                                );
+                                final remaining =
+                                    goal - log.totalCalories + burned;
+                                return Text(
+                                  'Burned: $burned kcal - Remaining: $remaining kcal',
+                                );
+                              },
+                            ),
                             Row(
                               children: [
                                 MacroChartWidget(
@@ -120,6 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
+                  _HealthSyncCard(foodCalories: log.totalCalories),
                   Card(
                     child: Padding(
                       padding: const EdgeInsets.all(16),
@@ -131,11 +168,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(height: 8),
                           if (bmi <= 0)
                             FilledButton(
-                              onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const CalculatorScreen()),
-                              ),
+                              onPressed: () =>
+                                  context.push(AppRoutes.bmiCalculator),
                               child: const Text('Calculate your BMI'),
                             )
                           else
@@ -150,11 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       _QuickAction(
                         icon: Icons.restaurant_menu,
                         label: 'Log Meal',
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const CalorieLogScreen()),
-                        ),
+                        onTap: () => context.push(AppRoutes.calorieLog),
                       ),
                       _QuickAction(
                         icon: Icons.water_drop,
@@ -174,20 +204,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       _QuickAction(
                         icon: Icons.monitor_weight,
                         label: 'Weigh In',
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const CalculatorScreen()),
-                        ),
+                        onTap: () => context.push(AppRoutes.bmiCalculator),
+                      ),
+                      _QuickAction(
+                        icon: Icons.fitness_center,
+                        label: 'Workout',
+                        onTap: () => context.push(AppRoutes.workoutLog),
                       ),
                       _QuickAction(
                         icon: Icons.auto_awesome,
                         label: 'NutriBot',
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const AIAssistantScreen()),
-                        ),
+                        onTap: () => context.push(AppRoutes.aiChat),
                       ),
                     ],
                   ),
@@ -301,6 +328,131 @@ class _RecommendedFoods extends StatelessWidget {
       },
     );
   }
+}
+
+class _HealthSyncCard extends StatefulWidget {
+  const _HealthSyncCard({required this.foodCalories});
+
+  final int foodCalories;
+
+  @override
+  State<_HealthSyncCard> createState() => _HealthSyncCardState();
+}
+
+class _HealthSyncCardState extends State<_HealthSyncCard> {
+  late Future<_HealthSnapshot> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _future = _load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: FutureBuilder<_HealthSnapshot>(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const SizedBox(
+                height: 96,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            if (snapshot.hasError) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Health Sync',
+                      style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text('Unable to read Health data: ${snapshot.error}'),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    onPressed: _refresh,
+                    icon: const Icon(Icons.sync),
+                    label: const Text('Retry'),
+                  ),
+                ],
+              );
+            }
+            final data = snapshot.data ?? const _HealthSnapshot();
+            final stepProgress =
+                (data.steps / 10000).clamp(0.0, 1.0).toDouble();
+            final netCalories =
+                widget.foodCalories - data.activeCalories.round();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text('Health Sync',
+                          style: Theme.of(context).textTheme.titleLarge),
+                    ),
+                    IconButton(
+                      tooltip: 'Sync health data',
+                      onPressed: _refresh,
+                      icon: const Icon(Icons.sync),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 64,
+                      height: 64,
+                      child: CircularProgressIndicator(value: stepProgress),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('${data.steps} / 10000 steps'),
+                          Text(
+                            'Active burn: ${data.activeCalories.toStringAsFixed(0)} kcal',
+                          ),
+                          Text('Net calories: $netCalories kcal'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<_HealthSnapshot> _load() async {
+    final service = HealthService();
+    final steps = await service.getTodaySteps();
+    final activeCalories = await service.getTodayActiveCalories();
+    return _HealthSnapshot(
+      steps: steps,
+      activeCalories: activeCalories,
+    );
+  }
+
+  void _refresh() {
+    setState(() => _future = _load());
+  }
+}
+
+class _HealthSnapshot {
+  const _HealthSnapshot({
+    this.steps = 0,
+    this.activeCalories = 0,
+  });
+
+  final int steps;
+  final double activeCalories;
 }
 
 class _QuickAction extends StatelessWidget {

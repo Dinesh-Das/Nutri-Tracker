@@ -49,3 +49,38 @@ double calculateBmr({
   }
   return 447.593 + (9.247 * weightKg) + (3.098 * heightCm) - (4.330 * age);
 }
+
+const Map<String, double> metValues = {
+  'running': 9.8,
+  'walking': 3.5,
+  'cycling': 7.5,
+  'swimming': 8.0,
+  'yoga': 2.5,
+  'strength_training': 5.0,
+  'hiit': 10.0,
+  'cricket': 5.5,
+  'football': 7.0,
+  'badminton': 5.5,
+  'kabaddi': 8.0,
+  'dance': 6.0,
+  'pilates': 3.0,
+  'rowing': 7.0,
+  'elliptical': 5.0,
+  'stair_climbing': 8.8,
+  'tennis': 7.3,
+  'basketball': 6.5,
+  'volleyball': 4.0,
+  'skipping': 11.0,
+  'hiking': 6.0,
+  'surya_namaskar': 3.8,
+};
+
+int estimateCaloriesBurned({
+  required String exercise,
+  required int durationMinutes,
+  required double weightKg,
+}) {
+  final normalized = exercise.toLowerCase().trim().replaceAll(' ', '_');
+  final met = metValues[normalized] ?? 5.0;
+  return ((met * 3.5 * weightKg / 200) * durationMinutes).round();
+}

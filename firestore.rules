@@ -32,6 +32,25 @@ service cloud.firestore {
         request.resource.data.timestamp is timestamp;
     }
 
+    function optionalNumber(field, min, max) {
+      return !request.resource.data.keys().hasAny([field]) ||
+        (request.resource.data[field] is number &&
+          request.resource.data[field] >= min &&
+          request.resource.data[field] <= max);
+    }
+
+    function validCalorieLog() {
+      return request.resource.data.uid == request.auth.uid &&
+        optionalNumber('totalCalories', 0, 20000) &&
+        optionalNumber('totalProtein', 0, 1000) &&
+        optionalNumber('totalCarbs', 0, 2000) &&
+        optionalNumber('totalFat', 0, 1000) &&
+        optionalNumber('waterIntakeMl', 0, 10000) &&
+        (!request.resource.data.keys().hasAny(['meals']) ||
+          request.resource.data.meals is list &&
+          request.resource.data.meals.size() <= 50);
+    }
+
     match /user_details/{userId} {
       allow read: if isOwner(userId);
       allow create: if isOwner(userId) && createsNoProtectedUserFields(userId);
@@ -48,6 +67,24 @@ service cloud.firestore {
     }
 
     match /calorie_logs/{userId} {
+      allow delete: if isOwner(userId);
+
+      match /daily/{dayId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validCalorieLog();
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    match /workout_logs/{userId} {
+      allow delete: if isOwner(userId);
+
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    match /achievements/{userId} {
       allow delete: if isOwner(userId);
 
       match /{document=**} {
