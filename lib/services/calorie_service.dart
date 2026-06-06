@@ -4,6 +4,7 @@ import 'package:nutri_tracker/models/achievement.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/services/achievement_service.dart';
 import 'package:nutri_tracker/services/health_service.dart';
+import 'package:nutri_tracker/services/widget_sync_service.dart';
 
 class CalorieService {
   CalorieService({FirebaseFirestore? firestore})
@@ -98,6 +99,16 @@ class CalorieService {
       'date': key,
       'uid': uid,
     }, SetOptions(merge: true));
+    try {
+      final log = await getDailyLog(uid, date);
+      final user = await _firestore.collection('user_details').doc(uid).get();
+      final dailyGoal =
+          (user.data()?['dailyCalorieGoal'] as num?)?.toInt() ?? 2000;
+      await const WidgetSyncService().syncMealLog(
+        log: log,
+        dailyGoal: dailyGoal,
+      );
+    } catch (_) {}
     try {
       final streak = await getLogStreak(uid);
       if (streak >= 30) {

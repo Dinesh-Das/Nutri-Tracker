@@ -6,6 +6,7 @@ import 'package:nutri_tracker/models/meal_plan.dart';
 import 'package:nutri_tracker/services/ai_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
+import 'package:nutri_tracker/widgets/loading_shimmer.dart';
 import 'package:share_plus/share_plus.dart';
 
 class MealPlanScreen extends StatefulWidget {
@@ -29,67 +30,76 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('AI Meal Plan')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          DropdownButtonFormField<int>(
-            value: _days,
-            decoration: const InputDecoration(labelText: 'Duration'),
-            items: const [
-              DropdownMenuItem(value: 1, child: Text('1 day')),
-              DropdownMenuItem(value: 3, child: Text('3 days')),
-              DropdownMenuItem(value: 7, child: Text('7 days')),
-            ],
-            onChanged: (value) => setState(() => _days = value ?? 1),
-          ),
-          TextFormField(
-            initialValue: '$_calories',
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Calorie target'),
-            onChanged: (value) => _calories = int.tryParse(value) ?? _calories,
-          ),
-          DropdownButtonFormField<String>(
-            value: _diet,
-            decoration: const InputDecoration(labelText: 'Diet'),
-            items: const [
-              DropdownMenuItem(value: 'vegetarian', child: Text('Vegetarian')),
-              DropdownMenuItem(value: 'non_vegetarian', child: Text('Non-veg')),
-              DropdownMenuItem(value: 'vegan', child: Text('Vegan')),
-              DropdownMenuItem(value: 'eggetarian', child: Text('Eggetarian')),
-            ],
-            onChanged: (value) => setState(() => _diet = value ?? _diet),
-          ),
-          DropdownButtonFormField<String>(
-            value: _goal,
-            decoration: const InputDecoration(labelText: 'Goal'),
-            items: const [
-              DropdownMenuItem(value: 'lose', child: Text('Lose weight')),
-              DropdownMenuItem(value: 'maintain', child: Text('Maintain')),
-              DropdownMenuItem(value: 'gain', child: Text('Gain weight')),
-            ],
-            onChanged: (value) => setState(() => _goal = value ?? _goal),
-          ),
-          DropdownButtonFormField<String>(
-            value: _cuisine,
-            decoration: const InputDecoration(labelText: 'Cuisine'),
-            items: const [
-              DropdownMenuItem(
-                  value: 'North Indian', child: Text('North Indian')),
-              DropdownMenuItem(
-                  value: 'South Indian', child: Text('South Indian')),
-              DropdownMenuItem(value: 'Mixed', child: Text('Mixed')),
-            ],
-            onChanged: (value) => setState(() => _cuisine = value ?? _cuisine),
-          ),
-          const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: _loading ? null : _generate,
-            icon: const Icon(Icons.auto_awesome),
-            label: Text(_loading ? 'Generating...' : 'Generate'),
-          ),
-          if (_plan != null) _MealPlanView(plan: _plan!),
-        ],
-      ),
+      body: _loading
+          ? const LoadingShimmer(itemCount: 4)
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                DropdownButtonFormField<int>(
+                  value: _days,
+                  decoration: const InputDecoration(labelText: 'Duration'),
+                  items: const [
+                    DropdownMenuItem(value: 1, child: Text('1 day')),
+                    DropdownMenuItem(value: 3, child: Text('3 days')),
+                    DropdownMenuItem(value: 7, child: Text('7 days')),
+                  ],
+                  onChanged: (value) => setState(() => _days = value ?? 1),
+                ),
+                TextFormField(
+                  initialValue: '$_calories',
+                  keyboardType: TextInputType.number,
+                  decoration:
+                      const InputDecoration(labelText: 'Calorie target'),
+                  onChanged: (value) =>
+                      _calories = int.tryParse(value) ?? _calories,
+                ),
+                DropdownButtonFormField<String>(
+                  value: _diet,
+                  decoration: const InputDecoration(labelText: 'Diet'),
+                  items: const [
+                    DropdownMenuItem(
+                        value: 'vegetarian', child: Text('Vegetarian')),
+                    DropdownMenuItem(
+                        value: 'non_vegetarian', child: Text('Non-veg')),
+                    DropdownMenuItem(value: 'vegan', child: Text('Vegan')),
+                    DropdownMenuItem(
+                        value: 'eggetarian', child: Text('Eggetarian')),
+                  ],
+                  onChanged: (value) => setState(() => _diet = value ?? _diet),
+                ),
+                DropdownButtonFormField<String>(
+                  value: _goal,
+                  decoration: const InputDecoration(labelText: 'Goal'),
+                  items: const [
+                    DropdownMenuItem(value: 'lose', child: Text('Lose weight')),
+                    DropdownMenuItem(
+                        value: 'maintain', child: Text('Maintain')),
+                    DropdownMenuItem(value: 'gain', child: Text('Gain weight')),
+                  ],
+                  onChanged: (value) => setState(() => _goal = value ?? _goal),
+                ),
+                DropdownButtonFormField<String>(
+                  value: _cuisine,
+                  decoration: const InputDecoration(labelText: 'Cuisine'),
+                  items: const [
+                    DropdownMenuItem(
+                        value: 'North Indian', child: Text('North Indian')),
+                    DropdownMenuItem(
+                        value: 'South Indian', child: Text('South Indian')),
+                    DropdownMenuItem(value: 'Mixed', child: Text('Mixed')),
+                  ],
+                  onChanged: (value) =>
+                      setState(() => _cuisine = value ?? _cuisine),
+                ),
+                const SizedBox(height: 16),
+                FilledButton.icon(
+                  onPressed: _loading ? null : _generate,
+                  icon: const Icon(Icons.auto_awesome),
+                  label: Text(_loading ? 'Generating...' : 'Generate'),
+                ),
+                if (_plan != null) _MealPlanView(plan: _plan!),
+              ],
+            ),
     );
   }
 

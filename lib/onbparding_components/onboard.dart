@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/onbparding_components/content_model.dart';
 
@@ -13,13 +12,18 @@ class Onboarding extends StatefulWidget {
 
 class _OnboardingState extends State<Onboarding> {
   int page = 0;
-  late LiquidController liquidController;
-  late UpdateType updateType;
+  late final PageController pageController;
 
   @override
   void initState() {
-    liquidController = LiquidController();
     super.initState();
+    pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 
   pageChangeCallback(int lpage) {
@@ -63,7 +67,8 @@ class _OnboardingState extends State<Onboarding> {
       home: Scaffold(
         body: Stack(
           children: <Widget>[
-            LiquidSwipe.builder(
+            PageView.builder(
+              controller: pageController,
               itemCount: data.length,
               itemBuilder: (context, index) {
                 return Container(
@@ -112,15 +117,7 @@ class _OnboardingState extends State<Onboarding> {
                   ),
                 );
               },
-              positionSlideIcon: 0.8,
-              slideIconWidget: const Icon(Icons.arrow_back_ios),
-              onPageChangeCallback: pageChangeCallback,
-              waveType: WaveType.liquidReveal,
-              liquidController: liquidController,
-              fullTransitionValue: 880,
-              enableSideReveal: true,
-              enableLoop: false,
-              ignoreUserGestureWhileAnimating: true,
+              onPageChanged: pageChangeCallback,
             ),
             Padding(
               padding: const EdgeInsets.all(20),
@@ -140,15 +137,20 @@ class _OnboardingState extends State<Onboarding> {
                 padding: const EdgeInsets.all(25.0),
                 child: TextButton(
                   onPressed: () {
-                    liquidController.currentPage + 1 > data.length - 1 ||
-                            liquidController.currentPage != 0
-                        ? liquidController.jumpToPage(
-                            page: liquidController.currentPage - 1)
-                        : liquidController.animateToPage(
-                            page: data.length - 1, duration: 700);
+                    if (page != 0) {
+                      pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
+                    } else {
+                      pageController.animateToPage(
+                        data.length - 1,
+                        duration: const Duration(milliseconds: 700),
+                        curve: Curves.easeOut,
+                      );
+                    }
                   },
-                  child: liquidController.currentPage + 1 > data.length - 1 ||
-                          liquidController.currentPage != 0
+                  child: page != 0
                       ? const Text("Back",
                           style: TextStyle(fontWeight: FontWeight.bold))
                       : const Text(
@@ -165,12 +167,16 @@ class _OnboardingState extends State<Onboarding> {
                 padding: const EdgeInsets.all(25.0),
                 child: TextButton(
                   onPressed: () {
-                    liquidController.currentPage + 1 > data.length - 1
-                        ? continueToLogin()
-                        : liquidController.jumpToPage(
-                            page: liquidController.currentPage + 1);
+                    if (page + 1 > data.length - 1) {
+                      continueToLogin();
+                    } else {
+                      pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
+                    }
                   },
-                  child: liquidController.currentPage + 1 > data.length - 1
+                  child: page + 1 > data.length - 1
                       ? const Text("Continue",
                           style: TextStyle(fontWeight: FontWeight.bold))
                       : const Text("Next",
