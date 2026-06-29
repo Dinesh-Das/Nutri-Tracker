@@ -8,20 +8,33 @@ import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/features/ai/ai_assistant_screen.dart';
+import 'package:nutri_tracker/features/ai/meal_plan_screen.dart';
+import 'package:nutri_tracker/features/ai/nutrition_estimator.dart';
 import 'package:nutri_tracker/features/calories/barcode_scanner_screen.dart';
-import 'package:nutri_tracker/features/calories/calorie_log_screen.dart';
 import 'package:nutri_tracker/features/calories/nutrition_label_scanner.dart';
 import 'package:nutri_tracker/features/calories/photo_meal_screen.dart';
+import 'package:nutri_tracker/features/goals/goals_screen.dart';
+import 'package:nutri_tracker/features/home/all_in_one_shell.dart';
+import 'package:nutri_tracker/features/nutrition/add_meal_screen.dart';
+import 'package:nutri_tracker/features/nutrition/custom_food_screen.dart';
+import 'package:nutri_tracker/features/nutrition/meal_detail_screen.dart';
 import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
 import 'package:nutri_tracker/features/progress/achievements_screen.dart';
-import 'package:nutri_tracker/features/progress/progress_screen.dart';
 import 'package:nutri_tracker/features/recipes/recipe_detail_screen.dart';
 import 'package:nutri_tracker/features/recipes/recipe_screen.dart';
 import 'package:nutri_tracker/features/workout/workout_log_screen.dart';
-import 'package:nutri_tracker/homepage/bottom_navigation.dart';
+import 'package:nutri_tracker/features/workouts/active_workout_session_screen.dart';
+import 'package:nutri_tracker/features/workouts/exercise_detail_screen.dart';
+import 'package:nutri_tracker/features/workouts/exercise_library_screen.dart';
+import 'package:nutri_tracker/features/workouts/workout_history_screen.dart';
+import 'package:nutri_tracker/features/workouts/workout_program_detail_screen.dart';
+import 'package:nutri_tracker/features/workouts/workout_program_list_screen.dart';
 import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
+import 'package:nutri_tracker/models/exercise.dart';
 import 'package:nutri_tracker/models/indian_recipe.dart';
+import 'package:nutri_tracker/models/meal_entry.dart';
+import 'package:nutri_tracker/models/workout_program.dart';
 import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/splash.dart';
 
@@ -63,7 +76,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.home,
-        builder: (context, state) => const BottomNavigation(),
+        builder: (context, state) => const AllInOneShell(),
+      ),
+      GoRoute(
+        path: AppRoutes.dashboard,
+        builder: (context, state) => const AllInOneShell(),
       ),
       GoRoute(
         path: AppRoutes.bmiCalculator,
@@ -71,7 +88,58 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.calorieLog,
-        builder: (context, state) => const CalorieLogScreen(),
+        builder: (context, state) => const AllInOneShell(initialIndex: 1),
+      ),
+      GoRoute(
+        path: AppRoutes.nutrition,
+        builder: (context, state) => const AllInOneShell(initialIndex: 1),
+      ),
+      GoRoute(
+        path: AppRoutes.addMeal,
+        builder: (context, state) => const AddMealScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.nutritionAdd,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            return AddMealScreen(
+              date: extra['date'] as DateTime?,
+              initialMealType: extra['mealType'] as String? ?? 'snack',
+            );
+          }
+          return const AddMealScreen();
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.nutritionMealDetail,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Map<String, dynamic> &&
+              extra['meal'] is MealEntry &&
+              extra['date'] is DateTime) {
+            return MealDetailScreen(
+              meal: extra['meal'] as MealEntry,
+              date: extra['date'] as DateTime,
+            );
+          }
+          return const RouteErrorScreen(
+            title: 'Meal unavailable',
+            message: 'Open Nutrition and choose a meal again.',
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.mealPlan,
+        builder: (context, state) => const MealPlanScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.nutritionEstimator,
+        builder: (context, state) => const NutritionEstimatorScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.customFood,
+        builder: (context, state) => const CustomFoodScreen(),
       ),
       GoRoute(
         path: AppRoutes.barcodeScanner,
@@ -115,7 +183,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.progress,
-        builder: (context, state) => const ProgressScreen(),
+        builder: (context, state) => const AllInOneShell(initialIndex: 3),
       ),
       GoRoute(
         path: AppRoutes.achievements,
@@ -123,13 +191,69 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.aiChat,
+        builder: (context, state) => const AllInOneShell(initialIndex: 4),
+      ),
+      GoRoute(
+        path: AppRoutes.aiCoach,
         builder: (context, state) => AIAssistantScreen(
           initialPrompt: state.extra is String ? state.extra as String : null,
         ),
       ),
       GoRoute(
+        path: AppRoutes.goals,
+        builder: (context, state) => const GoalsScreen(),
+      ),
+      GoRoute(
         path: AppRoutes.workoutLog,
         builder: (context, state) => const WorkoutLogScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.workouts,
+        builder: (context, state) => const AllInOneShell(initialIndex: 2),
+      ),
+      GoRoute(
+        path: AppRoutes.workoutLibrary,
+        builder: (context, state) => const ExerciseLibraryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.workoutPrograms,
+        builder: (context, state) => const WorkoutProgramListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.workoutSession,
+        builder: (context, state) => ActiveWorkoutSessionScreen(
+          seed: state.extra,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.workoutHistory,
+        builder: (context, state) => const WorkoutHistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.workoutDetail,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is WorkoutProgram) {
+            return WorkoutProgramDetailScreen(program: extra);
+          }
+          return const RouteErrorScreen(
+            title: 'Program unavailable',
+            message: 'Open workout programs and choose a plan again.',
+          );
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.exerciseDetail,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Exercise) {
+            return ExerciseDetailScreen(exercise: extra);
+          }
+          return const RouteErrorScreen(
+            title: 'Exercise unavailable',
+            message: 'Open the exercise library and choose an exercise again.',
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.profile,
@@ -182,7 +306,7 @@ class RouteErrorScreen extends StatelessWidget {
               Text(message, textAlign: TextAlign.center),
               const SizedBox(height: 16),
               FilledButton(
-                onPressed: () => context.go(AppRoutes.home),
+                onPressed: () => context.go(AppRoutes.dashboard),
                 child: const Text('Go home'),
               ),
             ],

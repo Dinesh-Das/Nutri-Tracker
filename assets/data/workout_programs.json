@@ -1,0 +1,141 @@
+[
+  {
+    "id": "beginner_no_equipment_7_day",
+    "title": "7-Day Beginner No Equipment",
+    "description": "A gentle home plan for building consistency with simple bodyweight movements.",
+    "goal": "improve_fitness",
+    "level": "beginner",
+    "durationWeeks": 1,
+    "daysPerWeek": 5,
+    "estimatedMinutesPerDay": 20,
+    "equipment": "none",
+    "workoutDays": [
+      {"day": 1, "title": "Full Body Start", "exerciseIds": ["jumping_jacks", "squats", "knee_push_ups", "plank"]},
+      {"day": 2, "title": "Mobility Reset", "exerciseIds": ["cat_cow_stretch", "cobra_stretch", "yoga_child_pose"]},
+      {"day": 3, "title": "Legs and Core", "exerciseIds": ["squats", "glute_bridge", "crunches", "plank"]},
+      {"day": 5, "title": "Cardio Builder", "exerciseIds": ["jumping_jacks", "high_knees", "mountain_climbers"]},
+      {"day": 7, "title": "Confidence Circuit", "exerciseIds": ["squats", "lunges", "knee_push_ups", "side_plank"]}
+    ]
+  },
+  {
+    "id": "fat_loss_home_14_day",
+    "title": "14-Day Fat Loss Home Workout",
+    "description": "Short cardio and strength circuits designed for calorie burn at home.",
+    "goal": "lose_weight",
+    "level": "intermediate",
+    "durationWeeks": 2,
+    "daysPerWeek": 5,
+    "estimatedMinutesPerDay": 25,
+    "equipment": "none",
+    "workoutDays": [
+      {"day": 1, "title": "Cardio Kickoff", "exerciseIds": ["jumping_jacks", "high_knees", "mountain_climbers", "plank"]},
+      {"day": 2, "title": "Lower Body Burn", "exerciseIds": ["squats", "lunges", "wall_sit", "glute_bridge"]},
+      {"day": 4, "title": "HIIT Basics", "exerciseIds": ["burpees", "mountain_climbers", "jumping_jacks", "crunches"]},
+      {"day": 6, "title": "Core Sweat", "exerciseIds": ["plank", "side_plank", "leg_raises", "high_knees"]},
+      {"day": 7, "title": "Yoga Recovery", "exerciseIds": ["surya_namaskar", "cobra_stretch", "yoga_child_pose"]}
+    ]
+  },
+  {
+    "id": "strength_builder_21_day",
+    "title": "21-Day Strength Builder",
+    "description": "Progressive bodyweight strength for upper body, legs, and core.",
+    "goal": "gain_muscle",
+    "level": "intermediate",
+    "durationWeeks": 3,
+    "daysPerWeek": 4,
+    "estimatedMinutesPerDay": 30,
+    "equipment": "none",
+    "workoutDays": [
+      {"day": 1, "title": "Push Strength", "exerciseIds": ["push_ups", "chair_dips", "plank"]},
+      {"day": 2, "title": "Leg Strength", "exerciseIds": ["squats", "lunges", "glute_bridge", "wall_sit"]},
+      {"day": 4, "title": "Core Control", "exerciseIds": ["plank", "side_plank", "leg_raises", "superman"]},
+      {"day": 6, "title": "Full Body", "exerciseIds": ["push_ups", "squats", "mountain_climbers", "glute_bridge"]}
+    ]
+  },
+  {
+    "id": "core_abs_beginner",
+    "title": "Core & Abs Beginner",
+    "description": "A simple core plan with beginner-friendly holds and floor exercises.",
+    "goal": "improve_fitness",
+    "level": "beginner",
+    "durationWeeks": 2,
+    "daysPerWeek": 4,
+    "estimatedMinutesPerDay": 15,
+    "equipment": "none",
+    "workoutDays": [
+      {"day": 1, "title": "Core Basics", "exerciseIds": ["crunches", "plank", "glute_bridge"]},
+      {"day": 2, "title": "Lower Abs", "exerciseIds": ["leg_raises", "plank", "cat_cow_stretch"]},
+      {"day": 4, "title": "Obliques", "exerciseIds": ["side_plank", "crunches", "superman"]},
+      {"day": 6, "title": "Core Circuit", "exerciseIds": ["mountain_climbers", "plank", "leg_raises"]}
+    ]
+  },
+  {
+    "id": "mobility_flexibility",
+    "title": "Mobility and Flexibility",
+    "description": "Low-impact mobility sessions for desk workers and active recovery days.",
+    "goal": "improve_fitness",
+    "level": "beginner",
+    "durationWeeks": 2,
+    "daysPerWeek": 5,
+    "estimatedMinutesPerDay": 18,
+    "equipment": "none",
+    "workoutDays": [
+      {"day": 1, "title": "Spine Care", "exerciseIds": ["cat_cow_stretch", "cobra_stretch", "yoga_child_pose"]},
+      {"day": 2, "title": "Gentle Flow", "exerciseIds": ["surya_namaskar", "cat_cow_stretch"]},
+      {"day": 4, "title": "Back Relief", "exerciseIds": ["yoga_child_pose", "cobra_stretch", "superman"]},
+      {"day": 5, "title": "Full Body Mobility", "exerciseIds": ["surya_namaskar", "cat_cow_stretch", "glute_bridge"]},
+      {"day": 7, "title": "Recovery", "exerciseIds": ["yoga_child_pose", "cobra_stretch"]}
+    ]
+  },
+  {
+    "id": "yoga_starter",
+    "title": "Yoga Starter",
+    "description": "Simple yoga movements centered on breath, mobility, and basic strength.",
+    "goal": "improve_fitness",
+    "level": "beginner",
+    "durationWeeks": 2,
+    "daysPerWeek": 4,
+    "estimatedMinutesPerDay": 20,
+    "equipment": "none",
+    "workoutDays": [
+      {"day": 1, "title": "Sun Flow", "exerciseIds": ["surya_namaskar", "yoga_child_pose"]},
+      {"day": 3, "title": "Back and Breath", "exerciseIds": ["cat_cow_stretch", "cobra_stretch", "yoga_child_pose"]},
+      {"day": 5, "title": "Core Yoga", "exerciseIds": ["surya_namaskar", "plank", "cobra_stretch"]},
+      {"day": 7, "title": "Recovery Flow", "exerciseIds": ["cat_cow_stretch", "yoga_child_pose", "cobra_stretch"]}
+    ]
+  },
+  {
+    "id": "hiit_express_15",
+    "title": "HIIT Express 15 Minutes",
+    "description": "Fast no-equipment conditioning for busy days.",
+    "goal": "lose_weight",
+    "level": "intermediate",
+    "durationWeeks": 1,
+    "daysPerWeek": 4,
+    "estimatedMinutesPerDay": 15,
+    "equipment": "none",
+    "workoutDays": [
+      {"day": 1, "title": "Express Sweat", "exerciseIds": ["jumping_jacks", "mountain_climbers", "burpees"]},
+      {"day": 2, "title": "Leg HIIT", "exerciseIds": ["high_knees", "squats", "lunges", "wall_sit"]},
+      {"day": 4, "title": "Core HIIT", "exerciseIds": ["mountain_climbers", "plank", "leg_raises"]},
+      {"day": 6, "title": "Full Body HIIT", "exerciseIds": ["burpees", "push_ups", "squats", "high_knees"]}
+    ]
+  },
+  {
+    "id": "full_body_dumbbell_plan",
+    "title": "Full Body Dumbbell Plan",
+    "description": "A dumbbell-friendly plan using bodyweight alternatives when equipment is limited.",
+    "goal": "gain_muscle",
+    "level": "intermediate",
+    "durationWeeks": 3,
+    "daysPerWeek": 4,
+    "estimatedMinutesPerDay": 30,
+    "equipment": "dumbbells",
+    "workoutDays": [
+      {"day": 1, "title": "Push and Legs", "exerciseIds": ["push_ups", "squats", "chair_dips", "plank"]},
+      {"day": 2, "title": "Posterior Chain", "exerciseIds": ["glute_bridge", "superman", "lunges"]},
+      {"day": 4, "title": "Conditioning", "exerciseIds": ["jumping_jacks", "mountain_climbers", "wall_sit"]},
+      {"day": 6, "title": "Full Body Strength", "exerciseIds": ["push_ups", "squats", "chair_dips", "leg_raises"]}
+    ]
+  }
+]

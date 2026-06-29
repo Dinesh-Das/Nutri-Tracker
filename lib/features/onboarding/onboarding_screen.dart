@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/homepage/bottom_navigation.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -17,10 +18,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _age = 25;
   double _height = 165;
   double _weight = 65;
+  double _targetWeight = 65;
   String _gender = 'Female';
   String _goal = 'maintain';
   String _diet = 'vegetarian';
   String _activity = 'sedentary';
+  String _fitnessLevel = 'beginner';
+  String _equipment = 'none';
+  int _workoutDuration = 30;
+  final Set<String> _workoutDays = {'Mon', 'Wed', 'Fri'};
+  final _injuriesController = TextEditingController();
+  final _allergiesController = TextEditingController();
 
   int get _calorieGoal {
     final bmr = calculateBmr(
@@ -40,6 +48,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void dispose() {
     _page.dispose();
+    _injuriesController.dispose();
+    _allergiesController.dispose();
     super.dispose();
   }
 
@@ -157,6 +167,95 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ],
                     ),
                   ),
+                  _Step(
+                    title: 'Plan your home workouts',
+                    child: Column(
+                      children: [
+                        _SliderRow(
+                          label: 'Target weight kg',
+                          value: _targetWeight,
+                          min: 30,
+                          max: 180,
+                          onChanged: (v) => setState(() => _targetWeight = v),
+                        ),
+                        DropdownButtonFormField<String>(
+                          value: _fitnessLevel,
+                          items: const [
+                            DropdownMenuItem(
+                                value: 'beginner', child: Text('Beginner')),
+                            DropdownMenuItem(
+                                value: 'intermediate',
+                                child: Text('Intermediate')),
+                            DropdownMenuItem(
+                                value: 'advanced', child: Text('Advanced')),
+                          ],
+                          onChanged: (v) => setState(
+                              () => _fitnessLevel = v ?? _fitnessLevel),
+                        ),
+                        DropdownButtonFormField<String>(
+                          value: _equipment,
+                          items: const [
+                            DropdownMenuItem(
+                                value: 'none', child: Text('No equipment')),
+                            DropdownMenuItem(
+                                value: 'dumbbells', child: Text('Dumbbells')),
+                            DropdownMenuItem(
+                                value: 'resistance_band',
+                                child: Text('Resistance band')),
+                            DropdownMenuItem(
+                                value: 'full_gym', child: Text('Full gym')),
+                          ],
+                          onChanged: (v) =>
+                              setState(() => _equipment = v ?? _equipment),
+                        ),
+                        _SliderRow(
+                          label: 'Workout minutes',
+                          value: _workoutDuration.toDouble(),
+                          min: 10,
+                          max: 90,
+                          onChanged: (v) =>
+                              setState(() => _workoutDuration = v.round()),
+                        ),
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            for (final day in const [
+                              'Mon',
+                              'Tue',
+                              'Wed',
+                              'Thu',
+                              'Fri',
+                              'Sat',
+                              'Sun',
+                            ])
+                              FilterChip(
+                                selected: _workoutDays.contains(day),
+                                label: Text(day),
+                                onSelected: (selected) {
+                                  setState(() {
+                                    selected
+                                        ? _workoutDays.add(day)
+                                        : _workoutDays.remove(day);
+                                  });
+                                },
+                              ),
+                          ],
+                        ),
+                        TextField(
+                          controller: _injuriesController,
+                          decoration: const InputDecoration(
+                            labelText: 'Injuries or limitations',
+                          ),
+                        ),
+                        TextField(
+                          controller: _allergiesController,
+                          decoration: const InputDecoration(
+                            labelText: 'Allergies',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -164,11 +263,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  Text('${_index + 1}/4'),
+                  Text('${_index + 1}/5'),
                   const Spacer(),
                   FilledButton(
-                    onPressed: _index == 3 ? _finish : _next,
-                    child: Text(_index == 3 ? 'Finish' : 'Next'),
+                    onPressed: _index == 4 ? _finish : _next,
+                    child: Text(_index == 4 ? 'Finish' : 'Next'),
                   ),
                 ],
               ),
@@ -192,6 +291,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'uid': uid,
       'height': _height.toStringAsFixed(0),
       'weight': _weight.toStringAsFixed(1),
+      'targetWeight': _targetWeight,
       'gender': _gender,
       'bmi': bmi.toStringAsFixed(1),
       'bmr': calculateBmr(
@@ -201,15 +301,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'dietaryPreference': _diet,
       'activityLevel': _activity,
       'dailyCalorieGoal': _calorieGoal,
+      'fitnessLevel': _fitnessLevel,
+      'equipment': _equipment,
+      'preferredWorkoutDays': _workoutDays.toList(),
+      'workoutDurationMinutes': _workoutDuration,
+      'injuriesOrLimitations': _injuriesController.text.trim(),
+      'allergies': _allergiesController.text
+          .split(',')
+          .map((item) => item.trim())
+          .where((item) => item.isNotEmpty)
+          .toList(),
       'isOnboardingDone': true,
       'lastBmiDate': Timestamp.now(),
     }, SetOptions(merge: true));
     if (!mounted) return;
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const BottomNavigation()),
-      (route) => false,
-    );
+    context.go(AppRoutes.dashboard);
   }
 }
 

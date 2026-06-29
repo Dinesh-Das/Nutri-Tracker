@@ -20,6 +20,12 @@ class UserModel {
   String? dietaryPreference;
   List<String>? allergies;
   int? dailyCalorieGoal;
+  String? fitnessLevel;
+  String? equipment;
+  List<String>? preferredWorkoutDays;
+  int? workoutsPerWeek;
+  int? workoutDurationMinutes;
+  String? injuriesOrLimitations;
   bool? isAdmin;
   DateTime? lastBmiDate;
   String? weightGoal;
@@ -46,6 +52,12 @@ class UserModel {
     this.dietaryPreference,
     this.allergies,
     this.dailyCalorieGoal,
+    this.fitnessLevel,
+    this.equipment,
+    this.preferredWorkoutDays,
+    this.workoutsPerWeek,
+    this.workoutDurationMinutes,
+    this.injuriesOrLimitations,
     this.isAdmin,
     this.lastBmiDate,
     this.weightGoal,
@@ -77,6 +89,13 @@ class UserModel {
       dietaryPreference: map['dietaryPreference'],
       allergies: List<String>.from(map['allergies'] ?? const []),
       dailyCalorieGoal: (map['dailyCalorieGoal'] as num?)?.toInt(),
+      fitnessLevel: map['fitnessLevel'],
+      equipment: map['equipment'],
+      preferredWorkoutDays:
+          List<String>.from(map['preferredWorkoutDays'] ?? const []),
+      workoutsPerWeek: (map['workoutsPerWeek'] as num?)?.toInt(),
+      workoutDurationMinutes: (map['workoutDurationMinutes'] as num?)?.toInt(),
+      injuriesOrLimitations: map['injuriesOrLimitations'],
       isAdmin: map['isAdmin'] == true,
       lastBmiDate: lastBmiValue is Timestamp
           ? lastBmiValue.toDate()
@@ -112,6 +131,12 @@ class UserModel {
       'dietaryPreference': dietaryPreference,
       'allergies': allergies,
       'dailyCalorieGoal': dailyCalorieGoal,
+      'fitnessLevel': fitnessLevel,
+      'equipment': equipment,
+      'preferredWorkoutDays': preferredWorkoutDays,
+      'workoutsPerWeek': workoutsPerWeek,
+      'workoutDurationMinutes': workoutDurationMinutes,
+      'injuriesOrLimitations': injuriesOrLimitations,
       'lastBmiDate':
           lastBmiDate == null ? null : Timestamp.fromDate(lastBmiDate!),
       'weightGoal': weightGoal,

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nutri_tracker/models/achievement.dart';
 import 'package:nutri_tracker/models/workout_entry.dart';
+import 'package:nutri_tracker/models/workout_session.dart';
+import 'package:nutri_tracker/repositories/workout_repository.dart';
 import 'package:nutri_tracker/services/achievement_service.dart';
 
 class WorkoutService {
@@ -17,6 +19,35 @@ class WorkoutService {
       ...entry.toMap(),
       'uid': uid,
     }, SetOptions(merge: true));
+    final workoutRepository = WorkoutRepository(firestore: _firestore);
+    await workoutRepository.saveSession(
+      WorkoutSession(
+        id: ref.id,
+        uid: uid,
+        title: entry.name,
+        date: entry.timestamp,
+        dateKey: workoutRepository.dateKey(entry.timestamp),
+        startedAt: entry.timestamp,
+        completedAt: entry.timestamp,
+        status: 'completed',
+        totalDurationMinutes: entry.durationMinutes,
+        caloriesBurned: entry.caloriesBurned,
+        exercises: [
+          WorkoutExerciseLog(
+            exerciseId: entry.name.toLowerCase().replaceAll(' ', '_'),
+            name: entry.name,
+            sets: entry.sets,
+            reps: entry.reps,
+            durationSeconds: entry.durationMinutes * 60,
+            completed: true,
+            caloriesBurned: entry.caloriesBurned,
+            notes: entry.notes ?? '',
+          ),
+        ],
+        notes: entry.notes ?? '',
+        source: 'manual',
+      ),
+    );
     try {
       await AchievementService().checkAndAward(
         uid,

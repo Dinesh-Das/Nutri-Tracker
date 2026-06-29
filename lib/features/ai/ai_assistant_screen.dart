@@ -5,9 +5,14 @@ import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/widgets/ai_message_bubble.dart';
 
 class AIAssistantScreen extends StatefulWidget {
-  const AIAssistantScreen({super.key, this.initialPrompt});
+  const AIAssistantScreen({
+    super.key,
+    this.initialPrompt,
+    this.showAppBar = true,
+  });
 
   final String? initialPrompt;
+  final bool showAppBar;
 
   @override
   State<AIAssistantScreen> createState() => _AIAssistantScreenState();
@@ -40,16 +45,18 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
       return const Scaffold(body: Center(child: Text('Please sign in.')));
     }
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('NutriBot'),
-        actions: [
-          IconButton(
-            tooltip: 'New chat',
-            icon: const Icon(Icons.add_comment_outlined),
-            onPressed: () => _ai.clearChat(uid),
-          ),
-        ],
-      ),
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: const Text('NutriBot'),
+              actions: [
+                IconButton(
+                  tooltip: 'New chat',
+                  icon: const Icon(Icons.add_comment_outlined),
+                  onPressed: () => _ai.clearChat(uid),
+                ),
+              ],
+            )
+          : null,
       body: Column(
         children: [
           Expanded(
@@ -66,11 +73,12 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                         runSpacing: 8,
                         children: [
                           'What should I eat today?',
-                          'Analyse my BMI',
                           'Give me a 7-day Indian meal plan',
-                          'What are high-protein Indian foods?',
-                          'Help me lose weight',
-                          'Best foods for diabetes',
+                          "How is today's progress?",
+                          'Healthier Indian alternatives',
+                          'No-equipment home workout',
+                          'Estimate calories for my meal',
+                          'High-protein Indian foods',
                         ].map((prompt) {
                           return ActionChip(
                             label: Text(prompt),

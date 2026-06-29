@@ -1,7 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/models/daily_health_summary.dart';
+import 'package:nutri_tracker/models/exercise.dart';
+import 'package:nutri_tracker/models/food_item.dart';
 import 'package:nutri_tracker/models/indian_recipe.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
+import 'package:nutri_tracker/models/user_goal.dart';
+import 'package:nutri_tracker/models/workout_program.dart';
+import 'package:nutri_tracker/models/workout_session.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
 
 void main() {
@@ -35,6 +41,27 @@ void main() {
         closeTo(360, 20),
       );
     });
+
+    test('calculates calorie goal and macro targets', () {
+      final calories = calculateCalorieGoal(
+        gender: 'Female',
+        weightKg: 65,
+        heightCm: 165,
+        age: 28,
+        activityLevel: 'moderately_active',
+        goalType: 'lose_weight',
+      );
+      final macros = calculateMacroTargets(
+        calorieGoal: calories,
+        goalType: 'lose_weight',
+        weightKg: 65,
+      );
+
+      expect(calories, greaterThan(1200));
+      expect(macros.proteinGoalG, greaterThanOrEqualTo(78));
+      expect(macros.carbsGoalG, greaterThan(0));
+      expect(macros.fatGoalG, greaterThan(0));
+    });
   });
 
   group('models', () {
@@ -67,6 +94,10 @@ void main() {
 
     test('MealEntry serializes and parses Firestore maps', () {
       final entry = MealEntry(
+        id: 'meal-1',
+        uid: 'uid-1',
+        dateKey: '2026-06-29',
+        source: 'search',
         mealType: 'lunch',
         foodName: 'Rajma Chawal',
         calories: 450,
@@ -83,6 +114,145 @@ void main() {
       expect(parsed.foodName, 'Rajma Chawal');
       expect(parsed.calories, 450);
       expect(parsed.quantity, 250);
+      expect(parsed.source, 'search');
+      expect(parsed.dateKey, '2026-06-29');
+      expect(parsed.fiber, 0);
+    });
+
+    test('FoodItem serializes and parses Firestore maps', () {
+      final item = FoodItem(
+        id: 'food-1',
+        uid: 'uid-1',
+        name: 'Paneer Bhurji',
+        caloriesPer100g: 220,
+        proteinPer100g: 16,
+        carbsPer100g: 8,
+        fatPer100g: 14,
+        dietType: 'vegetarian',
+      );
+
+      final parsed = FoodItem.fromMap(item.id, item.toMap());
+
+      expect(parsed.name, 'Paneer Bhurji');
+      expect(parsed.caloriesPer100g, 220);
+      expect(parsed.isCustom, isFalse);
+    });
+
+    test('Exercise parses local seed shape', () {
+      final exercise = Exercise.fromMap({
+        'id': 'squats',
+        'name': 'Squats',
+        'category': 'strength',
+        'primaryMuscles': ['quadriceps', 'glutes'],
+        'equipment': 'none',
+        'level': 'beginner',
+        'instructions': ['Stand', 'Squat'],
+        'defaultSets': 3,
+        'defaultReps': 15,
+        'metValue': 5.0,
+      });
+
+      expect(exercise.id, 'squats');
+      expect(exercise.primaryMuscles, contains('glutes'));
+      expect(exercise.toMap()['metValue'], 5.0);
+    });
+
+    test('WorkoutProgram serializes and parses days', () {
+      const program = WorkoutProgram(
+        id: 'p1',
+        title: 'Starter',
+        description: 'Home plan',
+        goal: 'improve_fitness',
+        level: 'beginner',
+        durationWeeks: 1,
+        daysPerWeek: 3,
+        estimatedMinutesPerDay: 20,
+        equipment: 'none',
+        workoutDays: [
+          WorkoutProgramDay(
+            day: 1,
+            title: 'Day 1',
+            exerciseIds: ['squats', 'plank'],
+          ),
+        ],
+      );
+
+      final parsed = WorkoutProgram.fromMap(program.toMap());
+
+      expect(parsed.title, 'Starter');
+      expect(parsed.workoutDays.single.exerciseIds, contains('plank'));
+    });
+
+    test('WorkoutSession serializes and parses exercise logs', () {
+      final session = WorkoutSession(
+        id: 's1',
+        uid: 'uid-1',
+        title: 'Full Body',
+        date: DateTime(2026, 6, 29),
+        dateKey: '2026-06-29',
+        status: 'completed',
+        totalDurationMinutes: 25,
+        caloriesBurned: 160,
+        exercises: [
+          WorkoutExerciseLog(
+            exerciseId: 'plank',
+            name: 'Plank',
+            durationSeconds: 30,
+            completed: true,
+          ),
+        ],
+      );
+
+      final parsed = WorkoutSession.fromMap(session.id, session.toMap());
+
+      expect(parsed.uid, 'uid-1');
+      expect(parsed.exercises.single.name, 'Plank');
+      expect(parsed.status, 'completed');
+    });
+
+    test('UserGoal serializes and parses Firestore maps', () {
+      final goal = UserGoal(
+        id: 'g1',
+        uid: 'uid-1',
+        goalType: 'gain_muscle',
+        dailyCalorieGoal: 2400,
+        proteinGoalG: 140,
+        carbsGoalG: 280,
+        fatGoalG: 75,
+        waterGoalMl: 3000,
+        stepGoal: 9000,
+        workoutsPerWeek: 5,
+        preferredWorkoutDays: const ['Mon', 'Wed'],
+        workoutDurationMinutes: 45,
+        fitnessLevel: 'intermediate',
+        equipment: 'dumbbells',
+      );
+
+      final parsed = UserGoal.fromMap(goal.id, goal.toMap());
+
+      expect(parsed.goalType, 'gain_muscle');
+      expect(parsed.preferredWorkoutDays, contains('Wed'));
+      expect(parsed.isActive, isTrue);
+    });
+
+    test('DailyHealthSummary serializes and parses aggregate data', () {
+      const summary = DailyHealthSummary(
+        uid: 'uid-1',
+        dateKey: '2026-06-29',
+        caloriesConsumed: 1800,
+        caloriesBurned: 300,
+        netCalories: 1500,
+        protein: 95,
+        waterIntakeMl: 2500,
+        workoutMinutes: 35,
+        workoutsCompleted: 1,
+      );
+
+      final parsed =
+          DailyHealthSummary.fromMap(summary.dateKey, summary.toMap());
+
+      expect(parsed.netCalories, 1500);
+      expect(parsed.workoutsCompleted, 1);
     });
 
     test('IndianRecipe parses TheMealDB ingredients', () {

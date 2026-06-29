@@ -3,14 +3,18 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
+import 'package:nutri_tracker/models/workout_session.dart';
 import 'package:nutri_tracker/models/weight_entry.dart';
 import 'package:nutri_tracker/routes/app_routes.dart';
+import 'package:nutri_tracker/repositories/workout_repository.dart';
 import 'package:nutri_tracker/services/calorie_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/widgets/macro_chart_widget.dart';
 
 class ProgressScreen extends StatelessWidget {
-  const ProgressScreen({super.key});
+  const ProgressScreen({super.key, this.showAppBar = true});
+
+  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +23,7 @@ class ProgressScreen extends StatelessWidget {
       return const Scaffold(body: Center(child: Text('Please sign in.')));
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Progress')),
+      appBar: showAppBar ? AppBar(title: const Text('Progress')) : null,
       body: FutureBuilder<List<WeightEntry>>(
         future: FirestoreService().getWeightHistory(uid),
         builder: (context, snapshot) {
@@ -45,6 +49,7 @@ class ProgressScreen extends StatelessWidget {
                     : BarChart(_weightChart(entries.take(7).toList())),
               ),
               _WeeklyCalories(uid: uid),
+              _WeeklyWorkouts(uid: uid),
               _TodayMacros(uid: uid),
               Card(
                 child: ListTile(
@@ -110,6 +115,86 @@ class ProgressScreen extends StatelessWidget {
             barRods: [BarChartRodData(toY: entries[i].weight, width: 14)],
           ),
       ],
+    );
+  }
+}
+
+class _WeeklyWorkouts extends StatelessWidget {
+  const _WeeklyWorkouts({required this.uid});
+
+  final String uid;
+
+  @override
+  Widget build(BuildContext context) {
+    final today = DateTime.now();
+    final start = today.subtract(const Duration(days: 6));
+    return FutureBuilder<List<WorkoutSession>>(
+      future: WorkoutRepository().getSessionsInRange(
+        uid,
+        start: start,
+        end: today,
+      ),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const _ChartCard(
+            title: 'Workout Analytics',
+            child: Center(child: Text('Unable to load workouts.')),
+          );
+        }
+        final sessions = snapshot.data ?? [];
+        final completed =
+            sessions.where((session) => session.status == 'completed').toList();
+        final minutes = completed.fold<int>(
+          0,
+          (total, session) => total + session.totalDurationMinutes,
+        );
+        final burned = completed.fold<int>(
+          0,
+          (total, session) => total + session.caloriesBurned,
+        );
+        final completionRate =
+            sessions.isEmpty ? 0 : (completed.length / sessions.length * 100);
+        return _ChartCard(
+          title: 'Workout Analytics',
+          child: Center(
+            child: Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              alignment: WrapAlignment.center,
+              children: [
+                _InlineStat(label: 'Minutes/week', value: '$minutes'),
+                _InlineStat(label: 'Completed', value: '${completed.length}'),
+                _InlineStat(label: 'Burned', value: '$burned kcal'),
+                _InlineStat(
+                  label: 'Completion',
+                  value: '${completionRate.toStringAsFixed(0)}%',
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _InlineStat extends StatelessWidget {
+  const _InlineStat({required this.label, required this.value});
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 116,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(value, style: Theme.of(context).textTheme.titleMedium),
+          Text(label, textAlign: TextAlign.center),
+        ],
+      ),
     );
   }
 }

@@ -137,7 +137,7 @@ class _CalorieLogScreenState extends State<CalorieLogScreen> {
                   const SizedBox(height: 12),
                   FilledButton.icon(
                     onPressed: () => context.push(
-                      AppRoutes.aiChat,
+                      AppRoutes.aiCoach,
                       extra:
                           "I've eaten ${log.totalCalories} calories today. Is that on track?",
                     ),

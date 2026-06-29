@@ -2,38 +2,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:nutri_tracker/models/achievement.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
+import 'package:nutri_tracker/repositories/nutrition_repository.dart';
 import 'package:nutri_tracker/services/achievement_service.dart';
 import 'package:nutri_tracker/services/health_service.dart';
 import 'package:nutri_tracker/services/widget_sync_service.dart';
 
 class CalorieService {
   CalorieService({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+      : _firestore = firestore ?? FirebaseFirestore.instance,
+        _nutritionRepository = NutritionRepository(
+            firestore: firestore ?? FirebaseFirestore.instance);
 
   final FirebaseFirestore _firestore;
+  final NutritionRepository _nutritionRepository;
 
   String dateKey(DateTime date) => DateFormat('yyyy-MM-dd').format(date);
 
   Stream<DailyCalorieLog> watchDailyLog(String uid, DateTime date) {
-    final key = dateKey(date);
-    return _firestore
-        .collection('calorie_logs')
-        .doc(uid)
-        .collection('daily')
-        .doc(key)
-        .snapshots()
-        .map((doc) => DailyCalorieLog.fromMap(key, doc.data()));
+    return _nutritionRepository.watchDailyLog(uid, date);
   }
 
   Future<DailyCalorieLog> getDailyLog(String uid, DateTime date) async {
-    final key = dateKey(date);
-    final doc = await _firestore
-        .collection('calorie_logs')
-        .doc(uid)
-        .collection('daily')
-        .doc(key)
-        .get();
-    return DailyCalorieLog.fromMap(key, doc.data());
+    return _nutritionRepository.getDailyLog(uid, date);
   }
 
   Future<List<DailyCalorieLog>> getDailyLogsInRange(
@@ -41,20 +31,11 @@ class CalorieService {
     required DateTime start,
     required DateTime end,
   }) async {
-    final startKey = dateKey(start);
-    final endKey = dateKey(end);
-    final snapshot = await _firestore
-        .collection('calorie_logs')
-        .doc(uid)
-        .collection('daily')
-        .where('date', isGreaterThanOrEqualTo: startKey)
-        .where('date', isLessThanOrEqualTo: endKey)
-        .orderBy('date')
-        .get();
-
-    return snapshot.docs
-        .map((doc) => DailyCalorieLog.fromMap(doc.id, doc.data()))
-        .toList();
+    return _nutritionRepository.getDailyLogsInRange(
+      uid,
+      start: start,
+      end: end,
+    );
   }
 
   Future<int> getLogStreak(String uid) async {
@@ -84,21 +65,7 @@ class CalorieService {
   }
 
   Future<void> addMealEntry(String uid, DateTime date, MealEntry entry) async {
-    final key = dateKey(date);
-    final ref = _firestore
-        .collection('calorie_logs')
-        .doc(uid)
-        .collection('daily')
-        .doc(key);
-    await ref.set({
-      'totalCalories': FieldValue.increment(entry.calories),
-      'totalProtein': FieldValue.increment(entry.protein),
-      'totalCarbs': FieldValue.increment(entry.carbs),
-      'totalFat': FieldValue.increment(entry.fat),
-      'meals': FieldValue.arrayUnion([entry.toMap()]),
-      'date': key,
-      'uid': uid,
-    }, SetOptions(merge: true));
+    await _nutritionRepository.addMealEntry(uid, date, entry);
     try {
       final log = await getDailyLog(uid, date);
       final user = await _firestore.collection('user_details').doc(uid).get();
@@ -126,17 +93,7 @@ class CalorieService {
   }
 
   Future<void> updateWaterIntake(String uid, DateTime date, int cups) async {
-    final key = dateKey(date);
-    await _firestore
-        .collection('calorie_logs')
-        .doc(uid)
-        .collection('daily')
-        .doc(key)
-        .set({
-      'waterIntakeMl': cups * 250,
-      'date': key,
-      'uid': uid,
-    }, SetOptions(merge: true));
+    await _nutritionRepository.updateWaterIntake(uid, date, cups * 250);
     try {
       await HealthService().writeWaterIntake(cups * 250, date);
     } catch (_) {}

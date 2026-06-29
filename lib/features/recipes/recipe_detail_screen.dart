@@ -113,7 +113,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 const SizedBox(height: 16),
                 FilledButton.icon(
                   onPressed: () => context.push(
-                    AppRoutes.aiChat,
+                    AppRoutes.aiCoach,
                     extra:
                         'What are the nutritional benefits of ${recipe.name}?',
                   ),

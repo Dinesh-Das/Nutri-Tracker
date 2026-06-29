@@ -50,6 +50,52 @@ double calculateBmr({
   return 447.593 + (9.247 * weightKg) + (3.098 * heightCm) - (4.330 * age);
 }
 
+int calculateCalorieGoal({
+  required String gender,
+  required double weightKg,
+  required double heightCm,
+  required int age,
+  required String activityLevel,
+  required String goalType,
+}) {
+  final bmr = calculateBmr(
+    gender: gender,
+    weightKg: weightKg,
+    heightCm: heightCm,
+    age: age,
+  );
+  final goal = goalType.toLowerCase();
+  final adjustment = switch (goal) {
+    'lose' || 'lose_weight' => -350,
+    'gain' || 'gain_muscle' => 300,
+    'improve_fitness' => 100,
+    _ => 0,
+  };
+  return (bmr * activityMultiplier(activityLevel) + adjustment)
+      .clamp(1200, 4500)
+      .round();
+}
+
+MacroTargets calculateMacroTargets({
+  required int calorieGoal,
+  required String goalType,
+  double? weightKg,
+}) {
+  final goal = goalType.toLowerCase();
+  final proteinCaloriesRatio =
+      goal == 'gain_muscle' || goal == 'improve_fitness' ? 0.28 : 0.24;
+  final fatCaloriesRatio = goal == 'lose_weight' || goal == 'lose' ? 0.26 : 0.3;
+  final carbsCaloriesRatio = 1 - proteinCaloriesRatio - fatCaloriesRatio;
+  final protein = calorieGoal * proteinCaloriesRatio / 4;
+  final minimumProtein = weightKg == null ? 0 : weightKg * 1.2;
+  return MacroTargets(
+    proteinGoalG:
+        protein < minimumProtein ? minimumProtein.round() : protein.round(),
+    carbsGoalG: (calorieGoal * carbsCaloriesRatio / 4).round(),
+    fatGoalG: (calorieGoal * fatCaloriesRatio / 9).round(),
+  );
+}
+
 const Map<String, double> metValues = {
   'running': 9.8,
   'walking': 3.5,
@@ -82,5 +128,30 @@ int estimateCaloriesBurned({
 }) {
   final normalized = exercise.toLowerCase().trim().replaceAll(' ', '_');
   final met = metValues[normalized] ?? 5.0;
-  return ((met * 3.5 * weightKg / 200) * durationMinutes).round();
+  return estimateExerciseCalories(
+    metValue: met,
+    durationMinutes: durationMinutes,
+    weightKg: weightKg,
+  );
+}
+
+int estimateExerciseCalories({
+  required double metValue,
+  required int durationMinutes,
+  required double weightKg,
+}) {
+  if (durationMinutes <= 0 || weightKg <= 0) return 0;
+  return ((metValue * 3.5 * weightKg / 200) * durationMinutes).round();
+}
+
+class MacroTargets {
+  const MacroTargets({
+    required this.proteinGoalG,
+    required this.carbsGoalG,
+    required this.fatGoalG,
+  });
+
+  final int proteinGoalG;
+  final int carbsGoalG;
+  final int fatGoalG;
 }
