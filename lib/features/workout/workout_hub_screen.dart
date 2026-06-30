@@ -28,7 +28,8 @@ class WorkoutHubScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Home Workouts', style: Theme.of(context).textTheme.titleLarge),
+            Text('Home Workouts',
+                style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             SizedBox(
               height: 200,

@@ -119,9 +119,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
   }
 
   void _prepareCurrentExercise() {
-    _remainingSeconds = _current.durationSeconds > 0
-        ? _current.durationSeconds
-        : 0;
+    _remainingSeconds =
+        _current.durationSeconds > 0 ? _current.durationSeconds : 0;
   }
 
   void _startTimer([int? secondsOverride]) {
@@ -173,8 +172,8 @@ class _WorkoutSessionScreenState extends State<WorkoutSessionScreen> {
       return;
     }
 
-    final perExerciseCal = widget.plan.estimatedCalories /
-        widget.plan.exercises.length;
+    final perExerciseCal =
+        widget.plan.estimatedCalories / widget.plan.exercises.length;
     final nextCalories =
         _totalCalories + (perExerciseCal / _current.sets).round();
     _totalCalories = nextCalories > widget.plan.estimatedCalories

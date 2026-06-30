@@ -180,8 +180,7 @@ class NotificationService {
     int minute,
     String title,
     String body,
-    tz.Location location,
-    {
+    tz.Location location, {
     String channelId = 'meal_reminders',
     String channelName = 'Meal Reminders',
     String channelDescription = 'Daily NutriTrack India meal reminders',
