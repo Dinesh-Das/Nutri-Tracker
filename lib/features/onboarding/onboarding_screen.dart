@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nutri_tracker/models/user_goal.dart';
+import 'package:nutri_tracker/repositories/goal_repository.dart';
 import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
 
@@ -43,6 +45,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ? 300
             : 0;
     return (bmr * activityMultiplier(_activity) + adjustment).round();
+  }
+
+  String get _goalType {
+    return switch (_goal) {
+      'lose' => 'lose_weight',
+      'gain' => 'gain_muscle',
+      _ => 'maintain',
+    };
   }
 
   @override
@@ -287,6 +297,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
     final bmi = calculateBmi(_weight, _height);
+    final calorieGoal = _calorieGoal;
+    final macros = calculateMacroTargets(
+      calorieGoal: calorieGoal,
+      goalType: _goalType,
+      weightKg: _weight,
+    );
+    final allergies = _allergiesController.text
+        .split(',')
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toList();
+    final injuries = _injuriesController.text.trim();
     await FirebaseFirestore.instance.collection('user_details').doc(uid).set({
       'uid': uid,
       'height': _height.toStringAsFixed(0),
@@ -297,23 +319,47 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'bmr': calculateBmr(
               gender: _gender, weightKg: _weight, heightCm: _height, age: _age)
           .toStringAsFixed(0),
-      'weightGoal': _goal,
+      'weightGoal': _goalType,
       'dietaryPreference': _diet,
       'activityLevel': _activity,
-      'dailyCalorieGoal': _calorieGoal,
+      'dailyCalorieGoal': calorieGoal,
+      'proteinGoalG': macros.proteinGoalG,
+      'carbsGoalG': macros.carbsGoalG,
+      'fatGoalG': macros.fatGoalG,
+      'waterGoalMl': 2500,
+      'stepGoal': 8000,
+      'workoutsPerWeek': _workoutDays.length,
       'fitnessLevel': _fitnessLevel,
       'equipment': _equipment,
       'preferredWorkoutDays': _workoutDays.toList(),
       'workoutDurationMinutes': _workoutDuration,
-      'injuriesOrLimitations': _injuriesController.text.trim(),
-      'allergies': _allergiesController.text
-          .split(',')
-          .map((item) => item.trim())
-          .where((item) => item.isNotEmpty)
-          .toList(),
+      'injuriesOrLimitations': injuries,
+      'allergies': allergies,
       'isOnboardingDone': true,
       'lastBmiDate': Timestamp.now(),
     }, SetOptions(merge: true));
+    await GoalRepository().saveGoal(
+      UserGoal(
+        id: '',
+        uid: uid,
+        goalType: _goalType,
+        targetWeightKg: _targetWeight,
+        dailyCalorieGoal: calorieGoal,
+        proteinGoalG: macros.proteinGoalG,
+        carbsGoalG: macros.carbsGoalG,
+        fatGoalG: macros.fatGoalG,
+        waterGoalMl: 2500,
+        stepGoal: 8000,
+        workoutsPerWeek: _workoutDays.length,
+        preferredWorkoutDays: _workoutDays.toList(),
+        workoutDurationMinutes: _workoutDuration,
+        fitnessLevel: _fitnessLevel,
+        equipment: _equipment,
+        injuriesOrLimitations: injuries,
+        dietPreference: _diet,
+        allergies: allergies,
+      ),
+    );
     if (!mounted) return;
     context.go(AppRoutes.dashboard);
   }

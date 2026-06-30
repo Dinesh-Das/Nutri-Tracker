@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages_model/meal%20model/weight_gain_meal.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages_model/meal_model/weight_gain_meal.dart';
 import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class underweightmeals extends StatefulWidget {

@@ -6,6 +6,7 @@ import 'package:nutri_tracker/dark_theme/custom_theme.dart';
 import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/settings/change_password.dart';
 import 'package:nutri_tracker/drawer/settings/delete_user.dart';
+import 'package:nutri_tracker/models/notification_settings.dart';
 import 'package:nutri_tracker/services/notification_service.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -18,17 +19,17 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool setDarkTheme = currentTheme.isDarkTheme();
-  bool setNotification = false;
-  bool setRemainder = false;
   String? _timezone;
+  UserNotificationSettings _notificationSettings =
+      const UserNotificationSettings();
 
   @override
   void initState() {
     super.initState();
-    _loadTimezone();
+    _loadSettings();
   }
 
-  Future<void> _loadTimezone() async {
+  Future<void> _loadSettings() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
     final doc = await FirebaseFirestore.instance
@@ -36,33 +37,15 @@ class _SettingsPageState extends State<SettingsPage> {
         .doc(uid)
         .get();
     if (!mounted) return;
+    final data = doc.data();
     setState(() {
-      _timezone = doc.data()?['timezone'] as String?;
+      _timezone = data?['timezone'] as String?;
+      _notificationSettings = UserNotificationSettings.fromMap(
+        data?['notificationSettings'] is Map
+            ? Map<String, dynamic>.from(data!['notificationSettings'])
+            : null,
+      );
     });
-  }
-
-  onNotificationChange(bool value) async {
-    setState(() {
-      setNotification = value;
-    });
-    if (value) {
-      await NotificationService.instance
-          .scheduleMealReminders(timezone: _timezone);
-    } else {
-      await NotificationService.instance.cancelMealReminders();
-    }
-  }
-
-  onRemainderChange(bool value) async {
-    setState(() {
-      setRemainder = value;
-    });
-    if (value) {
-      await NotificationService.instance
-          .scheduleMealReminders(timezone: _timezone);
-    } else {
-      await NotificationService.instance.cancelMealReminders();
-    }
   }
 
   @override
@@ -220,10 +203,47 @@ class _SettingsPageState extends State<SettingsPage> {
               height: 10,
             ),
             buildNotificationOption("Dark Theme", setDarkTheme, onThemeChange),
-            buildNotificationOption(
-                "Notifications", setNotification, onNotificationChange),
-            buildNotificationOption(
-                "Reminders", setRemainder, onRemainderChange),
+            _ReminderTile(
+              title: 'Meal reminders',
+              icon: Icons.restaurant_menu,
+              preference: _notificationSettings.meal,
+              onChanged: (preference) => _saveReminder(
+                _notificationSettings.copyWith(meal: preference),
+              ),
+            ),
+            _ReminderTile(
+              title: 'Water reminders',
+              icon: Icons.water_drop_outlined,
+              preference: _notificationSettings.water,
+              onChanged: (preference) => _saveReminder(
+                _notificationSettings.copyWith(water: preference),
+              ),
+            ),
+            _ReminderTile(
+              title: 'Workout reminders',
+              icon: Icons.fitness_center,
+              preference: _notificationSettings.workout,
+              showDays: true,
+              onChanged: (preference) => _saveReminder(
+                _notificationSettings.copyWith(workout: preference),
+              ),
+            ),
+            _ReminderTile(
+              title: 'Weigh-in reminder',
+              icon: Icons.monitor_weight_outlined,
+              preference: _notificationSettings.weighIn,
+              onChanged: (preference) => _saveReminder(
+                _notificationSettings.copyWith(weighIn: preference),
+              ),
+            ),
+            _ReminderTile(
+              title: 'Streak reminder',
+              icon: Icons.local_fire_department_outlined,
+              preference: _notificationSettings.streak,
+              onChanged: (preference) => _saveReminder(
+                _notificationSettings.copyWith(streak: preference),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
               child: DropdownButtonFormField<String>(
@@ -262,10 +282,24 @@ class _SettingsPageState extends State<SettingsPage> {
       'uid': uid,
       'timezone': timezone,
     }, SetOptions(merge: true));
-    if (setNotification || setRemainder) {
-      await NotificationService.instance
-          .scheduleMealReminders(timezone: timezone);
-    }
+    await NotificationService.instance.applySettings(
+      _notificationSettings,
+      timezone: timezone,
+    );
+  }
+
+  Future<void> _saveReminder(UserNotificationSettings settings) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    setState(() => _notificationSettings = settings);
+    if (uid == null) return;
+    await FirebaseFirestore.instance.collection('user_details').doc(uid).set({
+      'uid': uid,
+      'notificationSettings': settings.toMap(),
+    }, SetOptions(merge: true));
+    await NotificationService.instance.applySettings(
+      settings,
+      timezone: _timezone,
+    );
   }
 
   Padding buildNotificationOption(
@@ -293,6 +327,92 @@ class _SettingsPageState extends State<SettingsPage> {
                 }),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ReminderTile extends StatelessWidget {
+  const _ReminderTile({
+    required this.title,
+    required this.icon,
+    required this.preference,
+    required this.onChanged,
+    this.showDays = false,
+  });
+
+  final String title;
+  final IconData icon;
+  final ReminderPreference preference;
+  final ValueChanged<ReminderPreference> onChanged;
+  final bool showDays;
+
+  @override
+  Widget build(BuildContext context) {
+    final timeLabel = preference.time.format(context);
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              secondary: Icon(icon),
+              title: Text(title),
+              subtitle: Text(timeLabel),
+              value: preference.enabled,
+              onChanged: (enabled) =>
+                  onChanged(preference.copyWith(enabled: enabled)),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: () async {
+                  final picked = await showTimePicker(
+                    context: context,
+                    initialTime: preference.time,
+                  );
+                  if (picked == null) return;
+                  onChanged(preference.copyWith(
+                    hour: picked.hour,
+                    minute: picked.minute,
+                  ));
+                },
+                icon: const Icon(Icons.schedule),
+                label: const Text('Change time'),
+              ),
+            ),
+            if (showDays)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Wrap(
+                  spacing: 8,
+                  children: [
+                    for (final day in const [
+                      (1, 'Mon'),
+                      (2, 'Tue'),
+                      (3, 'Wed'),
+                      (4, 'Thu'),
+                      (5, 'Fri'),
+                      (6, 'Sat'),
+                      (7, 'Sun'),
+                    ])
+                      FilterChip(
+                        selected: preference.days.contains(day.$1),
+                        label: Text(day.$2),
+                        onSelected: (selected) {
+                          final days = [...preference.days];
+                          selected ? days.add(day.$1) : days.remove(day.$1);
+                          days.sort();
+                          onChanged(preference.copyWith(days: days));
+                        },
+                      ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

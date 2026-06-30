@@ -4,6 +4,7 @@ import 'package:nutri_tracker/models/workout_entry.dart';
 import 'package:nutri_tracker/models/workout_session.dart';
 import 'package:nutri_tracker/repositories/workout_repository.dart';
 import 'package:nutri_tracker/services/achievement_service.dart';
+import 'package:nutri_tracker/services/daily_summary_service.dart';
 
 class WorkoutService {
   WorkoutService({FirebaseFirestore? firestore})
@@ -48,6 +49,8 @@ class WorkoutService {
         source: 'manual',
       ),
     );
+    await DailySummaryService(firestore: _firestore)
+        .rebuildSummary(uid, entry.timestamp);
     try {
       await AchievementService().checkAndAward(
         uid,

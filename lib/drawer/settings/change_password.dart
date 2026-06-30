@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/login_screens/login_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -17,8 +18,7 @@ class _ChangePasswordState extends State<ChangePassword> {
 
     user.reauthenticateWithCredential(cred).then((value) {
       user.updatePassword(newPassword).then((_) {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (contex) => const LoginScreen()));
+        context.go(AppRoutes.login);
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Error Occured :${error.toString()}'),

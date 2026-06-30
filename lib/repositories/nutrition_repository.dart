@@ -1,7 +1,44 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:nutri_tracker/models/food_item.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
+import 'package:nutri_tracker/models/meal_template.dart';
+
+FoodItem foodItemFromMealEntry(MealEntry meal, String uid) {
+  final factor = max(meal.quantity, 1) / 100;
+  return FoodItem(
+    id: '',
+    uid: uid,
+    name: meal.foodName,
+    caloriesPer100g: meal.calories / factor,
+    proteinPer100g: meal.protein / factor,
+    carbsPer100g: meal.carbs / factor,
+    fatPer100g: meal.fat / factor,
+    fiberPer100g: meal.fiber / factor,
+    sugarPer100g: meal.sugar / factor,
+    sodiumPer100g: meal.sodium / factor,
+    defaultServingQuantity: meal.quantity,
+    defaultServingUnit: meal.unit,
+    servingOptions: [
+      ServingOption(
+        label: meal.servingDescription ?? '${meal.quantity} ${meal.unit}',
+        quantity: meal.quantity,
+        unit: meal.unit,
+        gramEquivalent: _gramEquivalentForMeal(meal),
+      ),
+    ],
+  );
+}
+
+double? _gramEquivalentForMeal(MealEntry meal) {
+  final unit = meal.unit.toLowerCase();
+  if (unit == 'grams' || unit == 'g' || unit == 'ml') {
+    return meal.quantity;
+  }
+  return null;
+}
 
 class NutritionRepository {
   NutritionRepository({FirebaseFirestore? firestore})
@@ -84,19 +121,22 @@ class NutritionRepository {
       updatedAt: now,
     );
     await _firestore.runTransaction((transaction) async {
+      final dailyRef = _dailyRef(uid, key);
+      final dailyDoc = await transaction.get(dailyRef);
       transaction.set(ref, saved.toMap());
       transaction.set(
-        _dailyRef(uid, key),
-        {
-          'uid': uid,
-          'date': key,
-          'updatedAt': Timestamp.fromDate(now),
-          ..._mealDelta(saved),
-        },
+        dailyRef,
+        _dailyTotalsAfter(
+          dailyDoc.data(),
+          _mealDeltaValues(saved),
+          uid: uid,
+          key: key,
+          updatedAt: now,
+        ),
         SetOptions(merge: true),
       );
     });
-    await _saveRecentFood(uid, FoodItem.fromMap('', saved.toMap()));
+    await _saveRecentFood(uid, foodItemFromMealEntry(saved, uid));
     return saved;
   }
 
@@ -119,6 +159,8 @@ class NutritionRepository {
         ...oldDoc.data()!,
         'id': oldDoc.id,
       });
+      final dailyRef = _dailyRef(uid, key);
+      final dailyDoc = await transaction.get(dailyRef);
       final now = DateTime.now();
       final saved = entry.copyWith(
         uid: uid,
@@ -127,13 +169,14 @@ class NutritionRepository {
       );
       transaction.set(ref, saved.toMap(), SetOptions(merge: true));
       transaction.set(
-        _dailyRef(uid, key),
-        {
-          'uid': uid,
-          'date': key,
-          'updatedAt': Timestamp.fromDate(now),
-          ..._mealDelta(saved, oldEntry: oldEntry),
-        },
+        dailyRef,
+        _dailyTotalsAfter(
+          dailyDoc.data(),
+          _mealDeltaValues(saved, oldEntry: oldEntry),
+          uid: uid,
+          key: key,
+          updatedAt: now,
+        ),
         SetOptions(merge: true),
       );
     });
@@ -156,30 +199,35 @@ class NutritionRepository {
         ...oldDoc.data()!,
         'id': oldDoc.id,
       });
+      final dailyRef = _dailyRef(uid, key);
+      final dailyDoc = await transaction.get(dailyRef);
+      final now = DateTime.now();
       transaction.delete(ref);
       transaction.set(
-        _dailyRef(uid, key),
-        {
-          'uid': uid,
-          'date': key,
-          'updatedAt': Timestamp.now(),
-          ..._mealDelta(
-              MealEntry(
-                id: oldEntry.id,
-                uid: uid,
-                dateKey: key,
-                source: oldEntry.source,
-                mealType: oldEntry.mealType,
-                foodName: oldEntry.foodName,
-                calories: 0,
-                protein: 0,
-                carbs: 0,
-                fat: 0,
-                quantity: oldEntry.quantity,
-                unit: oldEntry.unit,
-              ),
-              oldEntry: oldEntry),
-        },
+        dailyRef,
+        _dailyTotalsAfter(
+          dailyDoc.data(),
+          _mealDeltaValues(
+            MealEntry(
+              id: oldEntry.id,
+              uid: uid,
+              dateKey: key,
+              source: oldEntry.source,
+              mealType: oldEntry.mealType,
+              foodName: oldEntry.foodName,
+              calories: 0,
+              protein: 0,
+              carbs: 0,
+              fat: 0,
+              quantity: oldEntry.quantity,
+              unit: oldEntry.unit,
+            ),
+            oldEntry: oldEntry,
+          ),
+          uid: uid,
+          key: key,
+          updatedAt: now,
+        ),
         SetOptions(merge: true),
       );
     });
@@ -197,6 +245,76 @@ class NutritionRepository {
       'waterIntakeMl': waterIntakeMl,
       'updatedAt': Timestamp.now(),
     }, SetOptions(merge: true));
+  }
+
+  Stream<List<MealTemplate>> watchMealTemplates(String uid) {
+    return _mealTemplates(uid)
+        .orderBy('updatedAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => MealTemplate.fromMap(doc.id, doc.data()))
+            .toList());
+  }
+
+  Future<MealTemplate> saveMealTemplate(
+    String uid,
+    MealTemplate template,
+  ) async {
+    final ref = template.id.isEmpty
+        ? _mealTemplates(uid).doc()
+        : _mealTemplates(uid).doc(template.id);
+    final saved = template.copyWith(
+      id: ref.id,
+      uid: uid,
+      updatedAt: DateTime.now(),
+    );
+    await ref.set(saved.toMap(), SetOptions(merge: true));
+    return saved;
+  }
+
+  Future<MealTemplate> saveMealsAsTemplate({
+    required String uid,
+    required String name,
+    required String mealType,
+    required List<MealEntry> meals,
+  }) {
+    final template = MealTemplate.fromMeals(
+      id: '',
+      uid: uid,
+      name: name,
+      mealType: mealType,
+      foods: meals,
+    );
+    return saveMealTemplate(uid, template);
+  }
+
+  Future<List<MealEntry>> logMealTemplate({
+    required String uid,
+    required DateTime date,
+    required MealTemplate template,
+    String? mealType,
+  }) async {
+    final saved = <MealEntry>[];
+    for (final food in template.foods) {
+      saved.add(
+        await addMealEntry(
+          uid,
+          date,
+          food.copyWith(
+            id: '',
+            uid: uid,
+            dateKey: dateKey(date),
+            mealType: mealType ?? template.mealType,
+            source: 'template',
+          ),
+        ),
+      );
+    }
+    return saved;
+  }
+
+  Future<void> deleteMealTemplate(String uid, String templateId) {
+    return _mealTemplates(uid).doc(templateId).delete();
   }
 
   Stream<List<FoodItem>> watchCustomFoods(String uid) {
@@ -270,10 +388,12 @@ class NutritionRepository {
     final base = DailyCalorieLog.fromMap(key, data);
     final mealsSnapshot = await _mealsRef(uid, key).orderBy('createdAt').get();
     if (mealsSnapshot.docs.isEmpty) return base;
-    final legacyMeals = {
-      for (final meal in base.meals)
-        if (meal.id.isNotEmpty) meal.id: meal,
-    };
+    final mergedMeals = <MealEntry>[];
+    final seenIds = <String>{};
+    for (final meal in base.meals) {
+      mergedMeals.add(meal);
+      if (meal.id.isNotEmpty) seenIds.add(meal.id);
+    }
     final documentMeals = mealsSnapshot.docs.map((doc) {
       return MealEntry.fromMap({
         ...doc.data(),
@@ -283,28 +403,64 @@ class NutritionRepository {
       });
     });
     for (final meal in documentMeals) {
-      legacyMeals[meal.id] = meal;
+      if (seenIds.add(meal.id)) {
+        mergedMeals.add(meal);
+      } else {
+        final index = mergedMeals.indexWhere((item) => item.id == meal.id);
+        if (index >= 0) mergedMeals[index] = meal;
+      }
     }
-    return base.copyWith(meals: legacyMeals.values.toList());
+    return base.copyWith(meals: mergedMeals);
   }
 
-  Map<String, dynamic> _mealDelta(
+  Map<String, num> _mealDeltaValues(
     MealEntry newEntry, {
     MealEntry? oldEntry,
   }) {
     final old = oldEntry;
     return {
-      'totalCalories':
-          FieldValue.increment(newEntry.calories - (old?.calories ?? 0)),
-      'totalProtein':
-          FieldValue.increment(newEntry.protein - (old?.protein ?? 0)),
-      'totalCarbs': FieldValue.increment(newEntry.carbs - (old?.carbs ?? 0)),
-      'totalFat': FieldValue.increment(newEntry.fat - (old?.fat ?? 0)),
-      'totalFiber': FieldValue.increment(newEntry.fiber - (old?.fiber ?? 0)),
-      'totalSugar': FieldValue.increment(newEntry.sugar - (old?.sugar ?? 0)),
-      'totalSodium': FieldValue.increment(newEntry.sodium - (old?.sodium ?? 0)),
-      'netCalories':
-          FieldValue.increment(newEntry.calories - (old?.calories ?? 0)),
+      'totalCalories': newEntry.calories - (old?.calories ?? 0),
+      'totalProtein': newEntry.protein - (old?.protein ?? 0),
+      'totalCarbs': newEntry.carbs - (old?.carbs ?? 0),
+      'totalFat': newEntry.fat - (old?.fat ?? 0),
+      'totalFiber': newEntry.fiber - (old?.fiber ?? 0),
+      'totalSugar': newEntry.sugar - (old?.sugar ?? 0),
+      'totalSodium': newEntry.sodium - (old?.sodium ?? 0),
+      'netCalories': newEntry.calories - (old?.calories ?? 0),
+    };
+  }
+
+  Map<String, dynamic> _dailyTotalsAfter(
+    Map<String, dynamic>? current,
+    Map<String, num> delta, {
+    required String uid,
+    required String key,
+    required DateTime updatedAt,
+  }) {
+    int nextInt(String field, {bool clampToZero = true}) {
+      final value =
+          ((current?[field] as num?)?.toInt() ?? 0) + delta[field]!.toInt();
+      return clampToZero ? max(0, value) : value;
+    }
+
+    double nextDouble(String field) {
+      final value =
+          ((current?[field] as num?)?.toDouble() ?? 0) + delta[field]!;
+      return max(0, value);
+    }
+
+    return {
+      'uid': uid,
+      'date': key,
+      'updatedAt': Timestamp.fromDate(updatedAt),
+      'totalCalories': nextInt('totalCalories'),
+      'totalProtein': nextDouble('totalProtein'),
+      'totalCarbs': nextDouble('totalCarbs'),
+      'totalFat': nextDouble('totalFat'),
+      'totalFiber': nextDouble('totalFiber'),
+      'totalSugar': nextDouble('totalSugar'),
+      'totalSodium': nextDouble('totalSodium'),
+      'netCalories': nextInt('netCalories', clampToZero: false),
     };
   }
 
@@ -313,6 +469,13 @@ class NutritionRepository {
     String uid,
   ) {
     return _firestore.collection(collection).doc(uid).collection('items');
+  }
+
+  CollectionReference<Map<String, dynamic>> _mealTemplates(String uid) {
+    return _firestore
+        .collection('meal_templates')
+        .doc(uid)
+        .collection('templates');
   }
 
   List<FoodItem> _foodsFromSnapshot(

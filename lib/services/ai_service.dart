@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/models/meal_plan.dart';
+import 'package:nutri_tracker/models/workout_program.dart';
 import 'package:nutri_tracker/services/config_service.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
 import 'package:uuid/uuid.dart';
@@ -225,6 +226,51 @@ Use practical Indian meals, regional variety, and clear portion descriptions.
     return MealPlan.fromJson(_extractJsonMap(response)).days;
   }
 
+  Future<WorkoutProgram> generateWorkoutProgram(
+    UserModel user, {
+    String goal = 'fitness',
+    String level = 'beginner',
+    String equipment = 'none',
+  }) async {
+    final response = await sendMessage(
+      userMessage: '''
+Generate a safe Indian home-workout program as JSON.
+
+User:
+- BMI: ${user.bmi?.toStringAsFixed(1) ?? 'not calculated'}
+- Weight: ${user.weight ?? 'not set'} kg
+- Goal: $goal
+- Fitness level: $level
+- Equipment: $equipment
+- Injuries/limitations: ${user.injuriesOrLimitations ?? 'none'}
+
+Use only these exercise ids when possible:
+jumping_jacks, push_ups, knee_push_ups, squats, lunges, glute_bridge, plank,
+side_plank, mountain_climbers, burpees, high_knees, crunches, leg_raises,
+superman, wall_sit, chair_dips, surya_namaskar, yoga_child_pose,
+cobra_stretch, cat_cow_stretch.
+
+Return ONLY this JSON shape:
+{
+  "title": "No-equipment beginner strength",
+  "description": "Short safety-focused description. No diagnosis.",
+  "goal": "fitness",
+  "level": "beginner",
+  "durationWeeks": 4,
+  "daysPerWeek": 3,
+  "estimatedMinutesPerDay": 25,
+  "equipment": "none",
+  "workoutDays": [
+    {"day": 1, "title": "Full body basics", "exerciseIds": ["squats", "knee_push_ups", "plank"]}
+  ]
+}
+''',
+      conversationHistory: const [],
+      userContext: user,
+    );
+    return validateWorkoutProgramJson(_extractJsonMap(response));
+  }
+
   Future<void> saveChatMessage({
     required String uid,
     required String role,
@@ -283,6 +329,35 @@ Use practical Indian meals, regional variety, and clear portion descriptions.
     return jsonDecode(response.substring(start, end + 1))
         as Map<String, dynamic>;
   }
+}
+
+WorkoutProgram validateWorkoutProgramJson(Map<String, dynamic> map) {
+  final title = map['title']?.toString().trim();
+  final days = (map['workoutDays'] as List?) ?? const [];
+  if (title == null || title.isEmpty || days.isEmpty) {
+    throw const FormatException('Workout plan is missing title or days.');
+  }
+  final program = WorkoutProgram.fromMap({
+    'id': map['id']?.toString() ?? '',
+    'title': title,
+    'description': map['description']?.toString() ?? '',
+    'goal': map['goal']?.toString() ?? 'fitness',
+    'level': map['level']?.toString() ?? 'beginner',
+    'durationWeeks': (map['durationWeeks'] as num?)?.toInt() ?? 4,
+    'daysPerWeek': (map['daysPerWeek'] as num?)?.toInt() ?? days.length,
+    'estimatedMinutesPerDay':
+        (map['estimatedMinutesPerDay'] as num?)?.toInt() ?? 25,
+    'equipment': map['equipment']?.toString() ?? 'none',
+    'workoutDays': days,
+  });
+  if (program.durationWeeks < 1 ||
+      program.durationWeeks > 16 ||
+      program.daysPerWeek < 1 ||
+      program.daysPerWeek > 7 ||
+      program.workoutDays.any((day) => day.exerciseIds.isEmpty)) {
+    throw const FormatException('Workout plan values are out of range.');
+  }
+  return program;
 }
 
 extension _FirstOrNull<T> on List<T> {

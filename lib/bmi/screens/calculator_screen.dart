@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/bmi/calculate_bmi.dart';
 import 'package:nutri_tracker/bmi/constants.dart';
 import 'package:nutri_tracker/bmi/utils/icon_content.dart';
 import 'package:nutri_tracker/bmi/utils/reusable_card.dart';
 import 'package:nutri_tracker/bmi/utils/round_icon_button.dart';
 import 'package:nutri_tracker/database/update_data.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/themes.dart';
-
-import 'result_screen.dart';
 
 enum Gender {
   Male,
@@ -236,18 +236,15 @@ class CalculatorScreenState extends State<CalculatorScreen> {
                   bmr: 0,
                   gender: gender);
               var bmrResult = bmr.calculateBMR();
-              print("bmr result $bmrResult");
               updateBMIData(height.toString(), weight.toString(),
                   result.toString(), gender, bmrResult.toString());
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ResultsPage(
-                    bmiResult: calc.calculateBMI(),
-                    resultText: calc.getResult(),
-                    interpretation: calc.getInterpretation(),
-                  ),
-                ),
+              context.push(
+                AppRoutes.bmiResult,
+                extra: {
+                  'bmiResult': calc.calculateBMI(),
+                  'resultText': calc.getResult(),
+                  'interpretation': calc.getInterpretation(),
+                },
               );
             },
             child: Container(

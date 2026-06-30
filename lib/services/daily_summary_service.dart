@@ -11,9 +11,12 @@ class DailySummaryService {
     WorkoutRepository? workoutRepository,
     FirestoreService? firestoreService,
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _nutritionRepository = nutritionRepository ?? NutritionRepository(),
-        _workoutRepository = workoutRepository ?? WorkoutRepository(),
-        _firestoreService = firestoreService ?? FirestoreService();
+        _nutritionRepository =
+            nutritionRepository ?? NutritionRepository(firestore: firestore),
+        _workoutRepository =
+            workoutRepository ?? WorkoutRepository(firestore: firestore),
+        _firestoreService =
+            firestoreService ?? FirestoreService(firestore: firestore);
 
   final FirebaseFirestore _firestore;
   final NutritionRepository _nutritionRepository;
@@ -42,11 +45,10 @@ class DailySummaryService {
     final completed =
         workouts.where((session) => session.status == 'completed').toList();
     final user = await _firestoreService.getUser(uid);
-    final burned = nutrition.caloriesBurned +
-        completed.fold<int>(
-          0,
-          (total, session) => total + session.caloriesBurned,
-        );
+    // caloriesBurned uses calorie_logs as the single source of truth. Workout
+    // completion and health sync both update that aggregate idempotently, so
+    // rebuilds must not add completed session calories again.
+    final burned = nutrition.caloriesBurned;
     final summary = DailyHealthSummary(
       uid: uid,
       dateKey: key,
@@ -58,6 +60,7 @@ class DailySummaryService {
       fat: nutrition.totalFat,
       fiber: nutrition.totalFiber,
       waterIntakeMl: nutrition.waterIntakeMl,
+      steps: nutrition.steps,
       workoutMinutes: completed.fold<int>(
         0,
         (total, session) => total + session.totalDurationMinutes,

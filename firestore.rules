@@ -51,6 +51,21 @@ service cloud.firestore {
           request.resource.data[field].size() <= max);
     }
 
+    function optionalMap(field) {
+      return !request.resource.data.keys().hasAny([field]) ||
+        request.resource.data[field] is map;
+    }
+
+    function optionalBool(field) {
+      return !request.resource.data.keys().hasAny([field]) ||
+        request.resource.data[field] is bool;
+    }
+
+    function validUserDetails(userId) {
+      return request.resource.data.uid == userId &&
+        optionalMap('notificationSettings');
+    }
+
     function validCalorieLog() {
       return request.resource.data.uid == request.auth.uid &&
         optionalNumber('totalCalories', 0, 20000) &&
@@ -77,7 +92,7 @@ service cloud.firestore {
         request.resource.data.foodName is string &&
         request.resource.data.foodName.size() <= 120 &&
         request.resource.data.mealType in ['breakfast', 'lunch', 'dinner', 'snack'] &&
-        request.resource.data.source in ['manual', 'search', 'barcode', 'photo', 'label', 'ai', 'custom', 'recent', 'favourite'] &&
+        request.resource.data.source in ['manual', 'search', 'barcode', 'photo', 'label', 'ai', 'custom', 'recent', 'favourite', 'template'] &&
         optionalString('servingDescription', 80) &&
         optionalNumber('calories', 0, 5000) &&
         optionalNumber('protein', 0, 300) &&
@@ -103,7 +118,8 @@ service cloud.firestore {
         optionalNumber('fiberPer100g', 0, 100) &&
         optionalNumber('sugarPer100g', 0, 200) &&
         optionalNumber('sodiumPer100g', 0, 50000) &&
-        optionalNumber('defaultServingQuantity', 0, 5000);
+        optionalNumber('defaultServingQuantity', 0, 5000) &&
+        optionalList('servingOptions', 20);
     }
 
     function validGoal(userId) {
@@ -138,6 +154,73 @@ service cloud.firestore {
         optionalList('exercises', 80);
     }
 
+    function validLegacyWorkoutEntry(userId) {
+      return request.resource.data.uid == userId &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() <= 120 &&
+        optionalString('category', 60) &&
+        optionalString('notes', 1000) &&
+        optionalNumber('durationMinutes', 0, 1440) &&
+        optionalNumber('caloriesBurned', 0, 10000) &&
+        optionalNumber('sets', 0, 100) &&
+        optionalNumber('reps', 0, 1000) &&
+        optionalNumber('weightKg', 0, 500);
+    }
+
+    function validUserWorkoutProgram(userId) {
+      return request.resource.data.uid == userId &&
+        request.resource.data.programId is string &&
+        request.resource.data.programId.size() <= 120 &&
+        request.resource.data.title is string &&
+        request.resource.data.title.size() <= 120 &&
+        request.resource.data.status in ['active', 'completed', 'paused', 'cancelled'] &&
+        optionalNumber('currentWeek', 1, 52) &&
+        optionalNumber('currentDay', 1, 31) &&
+        optionalList('completedSessionIds', 500) &&
+        optionalList('skippedDays', 500);
+    }
+
+    function validMealTemplate(userId) {
+      return request.resource.data.uid == userId &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() <= 120 &&
+        request.resource.data.mealType in ['breakfast', 'lunch', 'dinner', 'snack'] &&
+        optionalList('foods', 50) &&
+        optionalNumber('totalCalories', 0, 20000) &&
+        optionalNumber('totalProtein', 0, 1000) &&
+        optionalNumber('totalCarbs', 0, 2000) &&
+        optionalNumber('totalFat', 0, 1000);
+    }
+
+    function validAchievement(userId) {
+      return request.resource.data.uid == userId &&
+        request.resource.data.type in [
+          'logStreak7', 'logStreak30', 'logStreak100', 'firstWorkout',
+          'workouts10', 'workouts50', 'goalReached', 'bmiNormal',
+          'recipeTried10', 'waterGoalWeek'
+        ];
+    }
+
+    function validWeightLog(userId) {
+      return optionalNumber('weight', 20, 250) &&
+        optionalNumber('bmi', 5, 80) &&
+        optionalString('note', 500);
+    }
+
+    function validCustomWorkoutProgram(userId) {
+      return request.resource.data.uid == userId &&
+        request.resource.data.title is string &&
+        request.resource.data.title.size() <= 120 &&
+        optionalString('description', 1000) &&
+        optionalString('goal', 80) &&
+        request.resource.data.level in ['beginner', 'intermediate', 'advanced'] &&
+        optionalNumber('durationWeeks', 1, 52) &&
+        optionalNumber('daysPerWeek', 1, 7) &&
+        optionalNumber('estimatedMinutesPerDay', 1, 240) &&
+        optionalString('equipment', 80) &&
+        optionalList('workoutDays', 31);
+    }
+
     function validDailySummary(userId) {
       return request.resource.data.uid == userId &&
         optionalNumber('caloriesConsumed', 0, 20000) &&
@@ -157,8 +240,12 @@ service cloud.firestore {
 
     match /user_details/{userId} {
       allow read: if isOwner(userId);
-      allow create: if isOwner(userId) && createsNoProtectedUserFields(userId);
-      allow update: if isOwner(userId) && keepsProtectedUserFieldsUnchanged();
+      allow create: if isOwner(userId) &&
+        createsNoProtectedUserFields(userId) &&
+        validUserDetails(userId);
+      allow update: if isOwner(userId) &&
+        keepsProtectedUserFieldsUnchanged() &&
+        validUserDetails(userId);
       allow delete: if isOwner(userId);
 
       match /favourites/{itemId} {
@@ -191,7 +278,7 @@ service cloud.firestore {
 
       match /entries/{entryId} {
         allow read: if isOwner(userId);
-        allow create, update: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validLegacyWorkoutEntry(userId);
         allow delete: if isOwner(userId);
       }
 
@@ -216,6 +303,28 @@ service cloud.firestore {
         allow create, update: if isOwner(userId) && validGoal(userId);
         allow delete: if isOwner(userId);
       }
+    }
+
+    match /user_workout_programs/{userId} {
+      allow delete: if isOwner(userId);
+
+      match /programs/{programId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validUserWorkoutProgram(userId);
+        allow delete: if isOwner(userId);
+      }
+    }
+
+    match /meal_templates/{userId}/templates/{templateId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && validMealTemplate(userId);
+      allow delete: if isOwner(userId);
+    }
+
+    match /custom_workout_programs/{userId}/programs/{programId} {
+      allow read: if isOwner(userId);
+      allow create, update: if isOwner(userId) && validCustomWorkoutProgram(userId);
+      allow delete: if isOwner(userId);
     }
 
     match /custom_foods/{userId}/items/{itemId} {
@@ -245,16 +354,20 @@ service cloud.firestore {
     match /achievements/{userId} {
       allow delete: if isOwner(userId);
 
-      match /{document=**} {
-        allow read, write: if isOwner(userId);
+      match /items/{achievementId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validAchievement(userId);
+        allow delete: if isOwner(userId);
       }
     }
 
     match /weight_logs/{userId} {
       allow delete: if isOwner(userId);
 
-      match /{document=**} {
-        allow read, write: if isOwner(userId);
+      match /entries/{entryId} {
+        allow read: if isOwner(userId);
+        allow create, update: if isOwner(userId) && validWeightLog(userId);
+        allow delete: if isOwner(userId);
       }
     }
 

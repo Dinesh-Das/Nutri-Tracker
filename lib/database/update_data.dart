@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
-import '../homepage/bottom_navigation.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
+import 'package:nutri_tracker/services/daily_summary_service.dart';
 
 Future<void> updateDetailsToFirestore(
     String? photoURL,
@@ -61,10 +63,7 @@ Future<void> updateDetailsToFirestore(
     ),
   );
 
-  Navigator.pushAndRemoveUntil(
-      (context),
-      MaterialPageRoute(builder: (context) => const BottomNavigation()),
-      (route) => false);
+  context.go(AppRoutes.dashboard);
 }
 
 Future<void> updateProfilePicToFirestore(String? photoURL) async {
@@ -112,4 +111,5 @@ Future<void> updateBMIData(
     'date': Timestamp.now(),
     'note': '',
   });
+  await DailySummaryService().rebuildSummary(user.uid, DateTime.now());
 }

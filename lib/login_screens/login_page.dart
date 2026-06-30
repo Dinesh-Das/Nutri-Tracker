@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/admin/admin_home.dart';
-import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
-import 'package:nutri_tracker/homepage/bottom_navigation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/login_screens/forgot_password.dart';
 import 'package:nutri_tracker/login_screens/register_page.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -247,18 +246,11 @@ class _LoginScreenState extends State<LoginScreen> {
         final data = doc.data() ?? {};
         if (!mounted) return;
         if (data['isAdmin'] == true) {
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const AdminPage()));
+          context.go(AppRoutes.admin);
         } else if (data['isOnboardingDone'] != true) {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const OnboardingScreen()));
+          context.go(AppRoutes.onboarding);
         } else {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const BottomNavigation()));
+          context.go(AppRoutes.dashboard);
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {

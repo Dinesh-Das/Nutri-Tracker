@@ -5,6 +5,7 @@ import 'package:nutri_tracker/models/achievement.dart';
 import 'package:nutri_tracker/models/favourite_item.dart';
 import 'package:nutri_tracker/models/weight_entry.dart';
 import 'package:nutri_tracker/services/achievement_service.dart';
+import 'package:nutri_tracker/services/daily_summary_service.dart';
 import 'package:nutri_tracker/services/health_service.dart';
 
 class FirestoreService {
@@ -67,6 +68,8 @@ class FirestoreService {
       'date': Timestamp.now(),
       'note': '',
     });
+    await DailySummaryService(firestore: _firestore)
+        .rebuildSummary(uid, DateTime.now());
     try {
       await HealthService().writeWeightEntry(weight, DateTime.now());
     } catch (_) {}

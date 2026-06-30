@@ -1,6 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nutri_tracker/repositories/goal_repository.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/services/ai_service.dart';
+import 'package:nutri_tracker/services/daily_summary_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/widgets/ai_message_bubble.dart';
 
@@ -72,22 +76,29 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                         spacing: 8,
                         runSpacing: 8,
                         children: [
-                          'What should I eat today?',
-                          'Give me a 7-day Indian meal plan',
-                          "How is today's progress?",
-                          'Healthier Indian alternatives',
-                          'No-equipment home workout',
-                          'Estimate calories for my meal',
-                          'High-protein Indian foods',
-                        ].map((prompt) {
-                          return ActionChip(
-                            label: Text(prompt),
-                            onPressed: () {
-                              _controller.text = prompt;
-                              _send(uid, messages);
-                            },
-                          );
-                        }).toList(),
+                          for (final prompt in const [
+                            'What should I eat today?',
+                            'Give me a 7-day Indian meal plan',
+                            "How is today's progress?",
+                            'Healthier Indian alternatives',
+                            'No-equipment home workout',
+                            'Estimate calories for my meal',
+                            'High-protein Indian foods',
+                          ])
+                            ActionChip(
+                              label: Text(prompt),
+                              onPressed: () {
+                                _controller.text = prompt;
+                                _send(uid, messages);
+                              },
+                            ),
+                          ActionChip(
+                            avatar: const Icon(Icons.fitness_center, size: 18),
+                            label: const Text('AI workout plan'),
+                            onPressed: () =>
+                                context.push(AppRoutes.aiWorkoutPlan),
+                          ),
+                        ],
                       ),
                     ],
                   );
@@ -152,10 +163,11 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     try {
       await _ai.saveChatMessage(uid: uid, role: 'user', content: text);
       final user = await _firestore.getUser(uid);
+      final enrichedText = await _enrichPrompt(uid, text);
       final recentHistory =
           history.length <= 12 ? history : history.sublist(history.length - 12);
       final reply = await _ai.sendMessage(
-        userMessage: text,
+        userMessage: enrichedText,
         conversationHistory: recentHistory,
         userContext: user,
       );
@@ -170,5 +182,43 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
     } finally {
       if (mounted) setState(() => _sending = false);
     }
+  }
+
+  Future<String> _enrichPrompt(String uid, String text) async {
+    final normalized = text.toLowerCase();
+    if (normalized.contains('today') && normalized.contains('progress')) {
+      final summary =
+          await DailySummaryService().rebuildSummary(uid, DateTime.now());
+      final goal = await GoalRepository().getActiveGoal(uid);
+      return '''
+$text
+
+Use this actual app data for today:
+- Calories consumed: ${summary.caloriesConsumed}
+- Calories burned: ${summary.caloriesBurned}
+- Net calories: ${summary.netCalories}
+- Protein: ${summary.protein.toStringAsFixed(0)}g
+- Carbs: ${summary.carbs.toStringAsFixed(0)}g
+- Fat: ${summary.fat.toStringAsFixed(0)}g
+- Water: ${summary.waterIntakeMl}ml
+- Steps: ${summary.steps}
+- Workout minutes: ${summary.workoutMinutes}
+- Active calorie goal: ${goal?.dailyCalorieGoal ?? 'not set'}
+- Protein goal: ${goal?.proteinGoalG ?? 'not set'}g
+- Water goal: ${goal?.waterGoalMl ?? 'not set'}ml
+- Step goal: ${goal?.stepGoal ?? 'not set'}
+
+Give coaching, not diagnosis.
+''';
+    }
+    if (normalized.contains('healthier') &&
+        normalized.contains('alternatives')) {
+      return '$text\nSuggest practical healthier Indian swaps with portion sizes and calories.';
+    }
+    if (normalized.contains('no-equipment') ||
+        normalized.contains('no equipment')) {
+      return '$text\nSuggest safe no-equipment workouts and modifications. Do not diagnose injuries.';
+    }
+    return text;
   }
 }

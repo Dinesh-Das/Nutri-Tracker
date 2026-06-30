@@ -1,5 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+class ServingOption {
+  const ServingOption({
+    required this.label,
+    required this.quantity,
+    required this.unit,
+    this.gramEquivalent,
+  });
+
+  final String label;
+  final double quantity;
+  final String unit;
+  final double? gramEquivalent;
+
+  factory ServingOption.fromMap(Map<String, dynamic> map) {
+    return ServingOption(
+      label: map['label']?.toString() ?? 'Serving',
+      quantity: (map['quantity'] as num?)?.toDouble() ?? 1,
+      unit: map['unit']?.toString() ?? 'serving',
+      gramEquivalent: (map['gramEquivalent'] as num?)?.toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'label': label,
+      'quantity': quantity,
+      'unit': unit,
+      'gramEquivalent': gramEquivalent,
+    }..removeWhere((key, value) => value == null);
+  }
+}
+
 class FoodItem {
   FoodItem({
     required this.id,
@@ -15,6 +47,7 @@ class FoodItem {
     this.sodiumPer100g = 0,
     this.defaultServingQuantity = 100,
     this.defaultServingUnit = 'grams',
+    this.servingOptions = const [],
     this.dietType = 'mixed',
     this.cuisine = 'Indian',
     this.isCustom = false,
@@ -37,6 +70,7 @@ class FoodItem {
   final double sodiumPer100g;
   final double defaultServingQuantity;
   final String defaultServingUnit;
+  final List<ServingOption> servingOptions;
   final String dietType;
   final String cuisine;
   final bool isCustom;
@@ -78,6 +112,10 @@ class FoodItem {
       defaultServingUnit: map['defaultServingUnit']?.toString() ??
           map['unit']?.toString() ??
           'grams',
+      servingOptions: ((map['servingOptions'] as List?) ?? const [])
+          .whereType<Map>()
+          .map((item) => ServingOption.fromMap(Map<String, dynamic>.from(item)))
+          .toList(),
       dietType: map['dietType']?.toString() ?? 'mixed',
       cuisine: map['cuisine']?.toString() ?? 'Indian',
       isCustom: map['isCustom'] == true,
@@ -101,6 +139,7 @@ class FoodItem {
       'sodiumPer100g': sodiumPer100g,
       'defaultServingQuantity': defaultServingQuantity,
       'defaultServingUnit': defaultServingUnit,
+      'servingOptions': servingOptions.map((option) => option.toMap()).toList(),
       'dietType': dietType,
       'cuisine': cuisine,
       'isCustom': isCustom,
@@ -125,6 +164,7 @@ class FoodItem {
     double? sodiumPer100g,
     double? defaultServingQuantity,
     String? defaultServingUnit,
+    List<ServingOption>? servingOptions,
     String? dietType,
     String? cuisine,
     bool? isCustom,
@@ -147,6 +187,7 @@ class FoodItem {
       defaultServingQuantity:
           defaultServingQuantity ?? this.defaultServingQuantity,
       defaultServingUnit: defaultServingUnit ?? this.defaultServingUnit,
+      servingOptions: servingOptions ?? this.servingOptions,
       dietType: dietType ?? this.dietType,
       cuisine: cuisine ?? this.cuisine,
       isCustom: isCustom ?? this.isCustom,

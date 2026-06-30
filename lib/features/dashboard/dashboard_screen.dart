@@ -1,10 +1,9 @@
-import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/models/daily_health_summary.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/models/user_goal.dart';
 import 'package:nutri_tracker/models/workout_session.dart';
@@ -12,6 +11,7 @@ import 'package:nutri_tracker/repositories/goal_repository.dart';
 import 'package:nutri_tracker/repositories/workout_repository.dart';
 import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/services/calorie_service.dart';
+import 'package:nutri_tracker/services/daily_summary_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 import 'package:nutri_tracker/services/health_sync_service.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
@@ -45,12 +45,19 @@ class DashboardScreen extends StatelessWidget {
                   builder: (context, workoutSnapshot) {
                     final workouts =
                         workoutSnapshot.data ?? const <WorkoutSession>[];
-                    return _DashboardBody(
-                      uid: uid,
-                      user: user,
-                      goal: goal,
-                      log: log,
-                      workouts: workouts,
+                    return StreamBuilder<DailyHealthSummary>(
+                      stream: DailySummaryService()
+                          .watchSummary(uid, DateTime.now()),
+                      builder: (context, summarySnapshot) {
+                        return _DashboardBody(
+                          uid: uid,
+                          user: user,
+                          goal: goal,
+                          log: log,
+                          summary: summarySnapshot.data,
+                          workouts: workouts,
+                        );
+                      },
                     );
                   },
                 );
@@ -69,6 +76,7 @@ class _DashboardBody extends StatelessWidget {
     required this.user,
     required this.goal,
     required this.log,
+    required this.summary,
     required this.workouts,
   });
 
@@ -76,16 +84,13 @@ class _DashboardBody extends StatelessWidget {
   final UserModel user;
   final UserGoal? goal;
   final DailyCalorieLog log;
+  final DailyHealthSummary? summary;
   final List<WorkoutSession> workouts;
 
   @override
   Widget build(BuildContext context) {
     final calorieGoal = goal?.dailyCalorieGoal ?? user.dailyCalorieGoal ?? 2000;
-    final burnedFromSessions = workouts.fold<int>(
-      0,
-      (total, session) => total + session.caloriesBurned,
-    );
-    final burned = max(log.caloriesBurned, burnedFromSessions);
+    final burned = log.caloriesBurned;
     final net = log.totalCalories - burned;
     final remaining = calorieGoal - net;
     final proteinGoal = goal?.proteinGoalG ?? 100;
@@ -120,7 +125,7 @@ class _DashboardBody extends StatelessWidget {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {},
+        onRefresh: () => HealthSyncService().syncToday(uid),
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
@@ -146,6 +151,7 @@ class _DashboardBody extends StatelessWidget {
               water: log.waterIntakeMl,
               waterGoal: waterGoal,
               stepsGoal: goal?.stepGoal ?? 8000,
+              steps: summary?.steps ?? log.steps,
             ),
             const SizedBox(height: 12),
             _WorkoutTodayCard(
@@ -156,7 +162,7 @@ class _DashboardBody extends StatelessWidget {
             const SizedBox(height: 12),
             _QuickActions(uid: uid, log: log),
             const SizedBox(height: 12),
-            _HealthSyncCard(),
+            _HealthSyncCard(uid: uid),
             const SizedBox(height: 12),
             _WeightStatus(user: user),
           ],
@@ -287,6 +293,7 @@ class _ProgressGrid extends StatelessWidget {
     required this.water,
     required this.waterGoal,
     required this.stepsGoal,
+    required this.steps,
   });
 
   final double protein;
@@ -294,6 +301,7 @@ class _ProgressGrid extends StatelessWidget {
   final int water;
   final int waterGoal;
   final int stepsGoal;
+  final int steps;
 
   @override
   Widget build(BuildContext context) {
@@ -323,8 +331,8 @@ class _ProgressGrid extends StatelessWidget {
             _SmallProgressCard(
               icon: Icons.directions_walk_outlined,
               label: 'Steps',
-              value: 'Manual',
-              progress: 0,
+              value: '$steps',
+              progress: steps / stepsGoal,
               footer: '$stepsGoal goal',
             ),
             _SmallProgressCard(
@@ -431,11 +439,28 @@ class _QuickActions extends StatelessWidget {
   }
 }
 
-class _HealthSyncCard extends StatelessWidget {
+class _HealthSyncCard extends StatefulWidget {
+  const _HealthSyncCard({required this.uid});
+
+  final String uid;
+
+  @override
+  State<_HealthSyncCard> createState() => _HealthSyncCardState();
+}
+
+class _HealthSyncCardState extends State<_HealthSyncCard> {
+  late Future<HealthSyncSnapshot> _syncFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _syncFuture = HealthSyncService().syncToday(widget.uid);
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<HealthSyncSnapshot>(
-      future: HealthSyncService().syncToday(),
+      future: _syncFuture,
       builder: (context, snapshot) {
         final data = snapshot.data;
         return Card(
@@ -449,11 +474,85 @@ class _HealthSyncCard extends StatelessWidget {
             ),
             title: const Text('Health sync'),
             subtitle: Text(data?.message ?? 'Checking Health permissions...'),
-            trailing: Text('${data?.steps ?? 0} steps'),
+            trailing: Wrap(
+              spacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text('${data?.steps ?? 0} steps'),
+                IconButton(
+                  tooltip: 'Sync now',
+                  onPressed: _sync,
+                  icon: const Icon(Icons.sync),
+                ),
+                IconButton(
+                  tooltip: 'Manual fallback',
+                  onPressed: _manualFallback,
+                  icon: const Icon(Icons.edit_outlined),
+                ),
+              ],
+            ),
           ),
         );
       },
     );
+  }
+
+  void _sync() {
+    setState(() {
+      _syncFuture = HealthSyncService().syncToday(widget.uid);
+    });
+  }
+
+  Future<void> _manualFallback() async {
+    final steps = TextEditingController();
+    final calories = TextEditingController();
+    final result = await showDialog<(int, int)>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Manual health data'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: steps,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Steps'),
+            ),
+            TextField(
+              controller: calories,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: 'Active calories'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(
+              context,
+              (
+                int.tryParse(steps.text.trim()) ?? 0,
+                int.tryParse(calories.text.trim()) ?? 0,
+              ),
+            ),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+    steps.dispose();
+    calories.dispose();
+    if (result == null) return;
+    setState(() {
+      _syncFuture = HealthSyncService().saveToday(
+        uid: widget.uid,
+        steps: result.$1,
+        activeCalories: result.$2,
+      );
+    });
   }
 }
 

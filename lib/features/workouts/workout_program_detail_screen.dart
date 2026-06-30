@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nutri_tracker/models/user_workout_program.dart';
 import 'package:nutri_tracker/models/workout_program.dart';
+import 'package:nutri_tracker/repositories/workout_repository.dart';
 import 'package:nutri_tracker/routes/app_routes.dart';
 
 class WorkoutProgramDetailScreen extends StatelessWidget {
@@ -50,14 +53,46 @@ class WorkoutProgramDetailScreen extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 16),
-          FilledButton.icon(
-            onPressed: () =>
-                context.push(AppRoutes.workoutSession, extra: program),
-            icon: const Icon(Icons.play_arrow),
-            label: const Text('Start program workout'),
-          ),
+          _ProgramEnrollmentButton(program: program),
         ],
       ),
+    );
+  }
+}
+
+class _ProgramEnrollmentButton extends StatelessWidget {
+  const _ProgramEnrollmentButton({required this.program});
+
+  final WorkoutProgram program;
+
+  @override
+  Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const SizedBox.shrink();
+    final repository = WorkoutRepository();
+    return StreamBuilder<UserWorkoutProgram?>(
+      stream: repository.watchProgramEnrollment(uid, program.id),
+      builder: (context, snapshot) {
+        final enrollment = snapshot.data;
+        final active = enrollment?.status == 'active';
+        return FilledButton.icon(
+          onPressed: () async {
+            final saved = active
+                ? enrollment!
+                : await repository.startProgram(uid, program);
+            if (!context.mounted) return;
+            context.push(
+              AppRoutes.workoutSession,
+              extra: WorkoutProgramSessionSeed(
+                program: program,
+                enrollment: saved,
+              ),
+            );
+          },
+          icon: Icon(active ? Icons.play_circle_outline : Icons.flag_outlined),
+          label: Text(active ? 'Continue Program' : 'Start program'),
+        );
+      },
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/database/update_data.dart';
@@ -11,7 +12,7 @@ import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/custom_dialog.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:intl/intl.dart';
-import 'package:nutri_tracker/homepage/bottom_navigation.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class EditProfile extends StatefulWidget {
@@ -191,10 +192,7 @@ class _EditProfileState extends State<EditProfile> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const BottomNavigation()));
+            context.go(AppRoutes.dashboard);
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),

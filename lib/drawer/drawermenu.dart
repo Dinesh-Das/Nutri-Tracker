@@ -1,14 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/constants.dart';
 import 'package:nutri_tracker/drawer/AboutUs/aboutus01.dart';
 import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/features/favourites/favourites_screen.dart';
-import 'package:nutri_tracker/login_screens/login_page.dart';
 import 'package:nutri_tracker/database/user_model.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/widgets/cached_app_image.dart';
 // import 'package:nutri_tracker/bottom_navigation.dart';
 import 'package:nutri_tracker/sharedPreferences/local_data.dart';
@@ -16,8 +17,6 @@ import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../homepage/bottom_navigation.dart';
 
 class NavigationDrawer extends StatefulWidget {
   const NavigationDrawer({super.key});
@@ -192,8 +191,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     }
     UserLocalData.saveLoginData(false);
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+    if (context.mounted) context.go(AppRoutes.login);
   }
 }
 
@@ -274,8 +272,7 @@ void selectedItem(BuildContext context, int index) {
           MaterialPageRoute(builder: (context) => const EditProfile()));
       break;
     case 1:
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const BottomNavigation()));
+      context.go(AppRoutes.aiChat);
       break;
     case 2:
       Navigator.push(context,
@@ -286,8 +283,14 @@ void selectedItem(BuildContext context, int index) {
           'https://drive.google.com/file/d/18XAjRC9_k825xVOZMFBFTpMPzi4xBvOm/view?usp=sharing');
       break;
     case 4:
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const BottomNavigation()));
+      showAboutDialog(
+        context: context,
+        applicationName: 'NutriTrack India',
+        applicationVersion: '1.0.0',
+        children: const [
+          Text('Indian nutrition, workouts, goals, and AI coaching.'),
+        ],
+      );
       break;
     case 5:
       Navigator.push(context,

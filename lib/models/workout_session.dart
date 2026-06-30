@@ -8,10 +8,12 @@ class WorkoutExerciseLog {
     this.reps,
     this.durationSeconds,
     this.restSeconds = 45,
+    List<bool>? completedSets,
     this.completed = false,
     this.caloriesBurned = 0,
     this.notes = '',
-  });
+  }) : completedSets = completedSets ??
+            List<bool>.filled((sets ?? 0).clamp(0, 50).toInt(), false);
 
   final String exerciseId;
   final String name;
@@ -19,11 +21,15 @@ class WorkoutExerciseLog {
   final int? reps;
   final int? durationSeconds;
   final int restSeconds;
+  final List<bool> completedSets;
   final bool completed;
   final int caloriesBurned;
   final String notes;
 
   factory WorkoutExerciseLog.fromMap(Map<String, dynamic> map) {
+    final parsedCompletedSets = ((map['completedSets'] as List?) ?? const [])
+        .map((item) => item == true)
+        .toList();
     return WorkoutExerciseLog(
       exerciseId: map['exerciseId']?.toString() ?? '',
       name: map['name']?.toString() ?? '',
@@ -31,6 +37,7 @@ class WorkoutExerciseLog {
       reps: (map['reps'] as num?)?.toInt(),
       durationSeconds: (map['durationSeconds'] as num?)?.toInt(),
       restSeconds: (map['restSeconds'] as num?)?.toInt() ?? 45,
+      completedSets: parsedCompletedSets.isEmpty ? null : parsedCompletedSets,
       completed: map['completed'] == true,
       caloriesBurned: (map['caloriesBurned'] as num?)?.toInt() ?? 0,
       notes: map['notes']?.toString() ?? '',
@@ -45,6 +52,7 @@ class WorkoutExerciseLog {
       'reps': reps,
       'durationSeconds': durationSeconds,
       'restSeconds': restSeconds,
+      'completedSets': completedSets,
       'completed': completed,
       'caloriesBurned': caloriesBurned,
       'notes': notes,
@@ -56,6 +64,7 @@ class WorkoutExerciseLog {
     int? reps,
     int? durationSeconds,
     int? restSeconds,
+    List<bool>? completedSets,
     bool? completed,
     int? caloriesBurned,
     String? notes,
@@ -67,6 +76,7 @@ class WorkoutExerciseLog {
       reps: reps ?? this.reps,
       durationSeconds: durationSeconds ?? this.durationSeconds,
       restSeconds: restSeconds ?? this.restSeconds,
+      completedSets: completedSets ?? this.completedSets,
       completed: completed ?? this.completed,
       caloriesBurned: caloriesBurned ?? this.caloriesBurned,
       notes: notes ?? this.notes,

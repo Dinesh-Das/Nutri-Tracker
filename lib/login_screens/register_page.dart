@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/database/user_model.dart';
-import 'package:nutri_tracker/login_screens/login_page.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -537,10 +538,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       ),
     ));
 
-    Navigator.pushAndRemoveUntil(
-        (context),
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-        (route) => false);
+    context.go(AppRoutes.login);
   }
 
   void _togglePasswordView() {

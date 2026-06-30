@@ -1,7 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/login_screens/login_page.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/onbparding_components/content_model.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -33,8 +34,7 @@ class _OnboardingState extends State<Onboarding> {
   }
 
   continueToLogin() {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+    context.go(AppRoutes.login);
   }
 
   Widget _buildDot(int index) {

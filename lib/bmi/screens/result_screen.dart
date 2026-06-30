@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/bmi/constants.dart';
 import 'package:nutri_tracker/bmi/utils/reusable_card.dart';
-import 'package:nutri_tracker/homepage/bottom_navigation.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 
 class ResultsPage extends StatelessWidget {
   const ResultsPage(
@@ -88,10 +89,7 @@ class ResultsPage extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const BottomNavigation()));
+                  context.go(AppRoutes.dashboard);
                 },
                 child: Container(
                   color: kBottomContainerColour,

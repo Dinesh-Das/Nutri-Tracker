@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:nutri_tracker/login_screens/login_page.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> showAlertDialog(BuildContext context) {
@@ -190,9 +191,5 @@ Future<void> _tryDeleteProfileImage(String uid) async {
 }
 
 void _goToLogin(BuildContext context) {
-  Navigator.pushAndRemoveUntil(
-    context,
-    MaterialPageRoute(builder: (_) => const LoginScreen()),
-    (route) => false,
-  );
+  context.go(AppRoutes.login);
 }

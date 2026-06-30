@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/login_screens/login_page.dart';
-import 'package:nutri_tracker/login_screens/register_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -31,8 +31,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         ),
       );
 
-      Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const LoginScreen()));
+      if (mounted) context.go(AppRoutes.login);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -153,11 +152,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             width: 130,
                             child: FloatingActionButton(
                               onPressed: () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LoginScreen()));
+                                context.go(AppRoutes.login);
                               },
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
@@ -184,11 +179,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           const Text("Dont't have an account? "),
                           GestureDetector(
                             onTap: () {
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const RegistrationScreen()));
+                              context.go(AppRoutes.register);
                             },
                             child: const Text(
                               "SignUp",

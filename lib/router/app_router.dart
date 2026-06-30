@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/admin/admin_home.dart';
 import 'package:nutri_tracker/bmi/screens/calculator_screen.dart';
+import 'package:nutri_tracker/bmi/screens/result_screen.dart';
 import 'package:nutri_tracker/drawer/profile/edit_profile.dart';
 import 'package:nutri_tracker/drawer/profile/view_profile.dart';
 import 'package:nutri_tracker/drawer/settings/settings.dart';
 import 'package:nutri_tracker/features/ai/ai_assistant_screen.dart';
 import 'package:nutri_tracker/features/ai/meal_plan_screen.dart';
 import 'package:nutri_tracker/features/ai/nutrition_estimator.dart';
+import 'package:nutri_tracker/features/ai/workout_plan_screen.dart';
 import 'package:nutri_tracker/features/calories/barcode_scanner_screen.dart';
 import 'package:nutri_tracker/features/calories/nutrition_label_scanner.dart';
 import 'package:nutri_tracker/features/calories/photo_meal_screen.dart';
@@ -50,7 +52,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         AppRoutes.splash,
         AppRoutes.login,
         AppRoutes.register,
-        AppRoutes.onboarding,
       };
       if (user == null && !publicRoutes.contains(state.matchedLocation)) {
         return AppRoutes.login;
@@ -85,6 +86,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.bmiCalculator,
         builder: (context, state) => const CalculatorScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.bmiResult,
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Map<String, String>) {
+            return ResultsPage(
+              interpretation: extra['interpretation'] ?? '',
+              bmiResult: extra['bmiResult'] ?? '',
+              resultText: extra['resultText'] ?? '',
+            );
+          }
+          return const RouteErrorScreen(
+            title: 'BMI result unavailable',
+            message: 'Calculate BMI again to see your result.',
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.calorieLog,
@@ -198,6 +216,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => AIAssistantScreen(
           initialPrompt: state.extra is String ? state.extra as String : null,
         ),
+      ),
+      GoRoute(
+        path: AppRoutes.aiWorkoutPlan,
+        builder: (context, state) => const AIWorkoutPlanScreen(),
       ),
       GoRoute(
         path: AppRoutes.goals,

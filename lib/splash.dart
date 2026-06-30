@@ -2,13 +2,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/admin/admin_home.dart';
-import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
-import 'package:nutri_tracker/onbparding_components/onboard.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/sharedPreferences/local_data.dart';
 import 'package:nutri_tracker/sharedPreferences/shared_preferences.dart';
-
-import 'homepage/bottom_navigation.dart';
 
 class Splash extends StatefulWidget {
   const Splash({super.key});
@@ -40,31 +37,19 @@ class _SplashState extends State<Splash> {
           .doc(user.uid)
           .get();
       final data = doc.data() ?? {};
+      await Future<void>.delayed(const Duration(milliseconds: 6000));
+      if (!mounted) return;
       if (data['isAdmin'] == true) {
-        Timer(
-            const Duration(milliseconds: 6000),
-            () => Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const AdminPage())));
+        context.go(AppRoutes.admin);
       } else if (data['isOnboardingDone'] != true) {
-        Timer(
-            const Duration(milliseconds: 6000),
-            () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const OnboardingScreen())));
+        context.go(AppRoutes.onboarding);
       } else {
-        Timer(
-            const Duration(milliseconds: 6000),
-            () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const BottomNavigation())));
+        context.go(AppRoutes.dashboard);
       }
     } else {
-      Timer(
-          const Duration(milliseconds: 6000),
-          () => Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const Onboarding())));
+      Timer(const Duration(milliseconds: 6000), () {
+        if (mounted) context.go(AppRoutes.login);
+      });
     }
   }
 

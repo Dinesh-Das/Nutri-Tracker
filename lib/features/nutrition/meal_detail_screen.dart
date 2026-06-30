@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nutri_tracker/features/nutrition/add_meal_screen.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/repositories/nutrition_repository.dart';
+import 'package:nutri_tracker/services/daily_summary_service.dart';
 
 class MealDetailScreen extends StatefulWidget {
   const MealDetailScreen({
@@ -188,6 +188,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
           servingDescription: '${_quantity.text.trim()} ${widget.meal.unit}',
         ),
       );
+      await DailySummaryService().rebuildSummary(uid, widget.date);
       if (mounted) context.pop();
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -196,20 +197,24 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
 
   Future<void> _delete(String uid) async {
     await _repository.deleteMealEntry(uid, widget.date, widget.meal);
+    await DailySummaryService().rebuildSummary(uid, widget.date);
     if (mounted) context.pop();
   }
 
   Future<void> _favourite(String uid) async {
     await _repository.setFavouriteFood(
       uid,
-      foodItemFromMeal(widget.meal, uid),
+      foodItemFromMealEntry(widget.meal, uid),
       isFavourite: true,
     );
     _message('Added to favourites.');
   }
 
   Future<void> _saveCustom(String uid) async {
-    await _repository.saveCustomFood(uid, foodItemFromMeal(widget.meal, uid));
+    await _repository.saveCustomFood(
+      uid,
+      foodItemFromMealEntry(widget.meal, uid),
+    );
     _message('Saved as custom food.');
   }
 

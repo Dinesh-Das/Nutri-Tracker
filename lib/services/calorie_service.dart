@@ -4,6 +4,7 @@ import 'package:nutri_tracker/models/achievement.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/repositories/nutrition_repository.dart';
 import 'package:nutri_tracker/services/achievement_service.dart';
+import 'package:nutri_tracker/services/daily_summary_service.dart';
 import 'package:nutri_tracker/services/health_service.dart';
 import 'package:nutri_tracker/services/widget_sync_service.dart';
 
@@ -66,6 +67,7 @@ class CalorieService {
 
   Future<void> addMealEntry(String uid, DateTime date, MealEntry entry) async {
     await _nutritionRepository.addMealEntry(uid, date, entry);
+    await DailySummaryService(firestore: _firestore).rebuildSummary(uid, date);
     try {
       final log = await getDailyLog(uid, date);
       final user = await _firestore.collection('user_details').doc(uid).get();
@@ -94,6 +96,7 @@ class CalorieService {
 
   Future<void> updateWaterIntake(String uid, DateTime date, int cups) async {
     await _nutritionRepository.updateWaterIntake(uid, date, cups * 250);
+    await DailySummaryService(firestore: _firestore).rebuildSummary(uid, date);
     try {
       await HealthService().writeWaterIntake(cups * 250, date);
     } catch (_) {}

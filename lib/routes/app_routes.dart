@@ -23,6 +23,7 @@ class AppRoutes {
   static const String achievements = '/progress/achievements';
   static const String aiChat = '/ai';
   static const String aiCoach = '/ai/chat';
+  static const String aiWorkoutPlan = '/ai/workout-plan';
   static const String workoutLog = '/workout';
   static const String workouts = '/workouts';
   static const String workoutLibrary = '/workouts/library';

@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/admin/add_data.dart';
 import 'package:nutri_tracker/admin/indian_foods_admin.dart';
 import 'package:nutri_tracker/admin/viewdata.dart';
 import 'package:nutri_tracker/dark_theme/custom_theme.dart';
-import 'package:nutri_tracker/login_screens/login_page.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
 
 class AdminPage extends StatefulWidget {
@@ -51,10 +52,7 @@ class _AdminPageState extends State<AdminPage> {
               IconButton(
                   onPressed: () async {
                     await FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginScreen()));
+                    if (context.mounted) context.go(AppRoutes.login);
                   },
                   icon: const Icon(Icons.logout)),
             ],
@@ -89,20 +87,18 @@ class _AdminPageState extends State<AdminPage> {
                           child: const Text("Add Data"),
                         ),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const IndianFoodsAdminScreen()));
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor: Theme.of(context)
                                   .appBarTheme
                                   .foregroundColor),
                           child: const Text("Update Data"),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context)
-                                  .appBarTheme
-                                  .foregroundColor),
-                          child: const Text("Delete Data"),
                         ),
                         ElevatedButton(
                           onPressed: () {

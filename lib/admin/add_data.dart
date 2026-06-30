@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:nutri_tracker/admin/admin_home.dart';
-import 'package:nutri_tracker/login_screens/login_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AddData extends StatefulWidget {
@@ -39,10 +39,7 @@ class _AddDataState extends State<AddData> {
                     await SharedPreferences.getInstance();
                 sharedPreferences.clear();
                 await FirebaseAuth.instance.signOut();
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
+                if (context.mounted) context.go(AppRoutes.login);
               },
               icon: const Icon(Icons.logout)),
         ],
@@ -231,11 +228,7 @@ class _AddDataState extends State<AddData> {
                           width: 100,
                           child: ElevatedButton(
                               onPressed: () {
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const AdminPage()));
+                                context.go(AppRoutes.admin);
                               },
                               child: const Text("Cancel")),
                         ),

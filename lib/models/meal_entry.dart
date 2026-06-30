@@ -170,6 +170,8 @@ class DailyCalorieLog {
     this.totalSodium = 0,
     this.waterIntakeMl = 0,
     this.caloriesBurned = 0,
+    this.steps = 0,
+    this.healthActiveCalories = 0,
     this.netCalories = 0,
     this.meals = const [],
   });
@@ -185,6 +187,8 @@ class DailyCalorieLog {
   final double totalSodium;
   final int waterIntakeMl;
   final int caloriesBurned;
+  final int steps;
+  final int healthActiveCalories;
   final int netCalories;
   final List<MealEntry> meals;
 
@@ -220,6 +224,8 @@ class DailyCalorieLog {
           0,
       waterIntakeMl: (map['waterIntakeMl'] as num?)?.toInt() ?? 0,
       caloriesBurned: burned,
+      steps: (map['steps'] as num?)?.toInt() ?? 0,
+      healthActiveCalories: (map['healthActiveCalories'] as num?)?.toInt() ?? 0,
       netCalories: (map['netCalories'] as num?)?.toInt() ?? calories - burned,
       meals: ((map['meals'] as List?) ?? const [])
           .whereType<Map>()
@@ -241,6 +247,8 @@ class DailyCalorieLog {
       'totalSodium': totalSodium,
       'waterIntakeMl': waterIntakeMl,
       'caloriesBurned': caloriesBurned,
+      'steps': steps,
+      'healthActiveCalories': healthActiveCalories,
       'netCalories': netCalories,
       'meals': meals.map((meal) => meal.toMap()).toList(),
     }..removeWhere((key, value) => value == null);
@@ -258,6 +266,8 @@ class DailyCalorieLog {
     double? totalSodium,
     int? waterIntakeMl,
     int? caloriesBurned,
+    int? steps,
+    int? healthActiveCalories,
     int? netCalories,
     List<MealEntry>? meals,
   }) {
@@ -273,6 +283,8 @@ class DailyCalorieLog {
       totalSodium: totalSodium ?? this.totalSodium,
       waterIntakeMl: waterIntakeMl ?? this.waterIntakeMl,
       caloriesBurned: caloriesBurned ?? this.caloriesBurned,
+      steps: steps ?? this.steps,
+      healthActiveCalories: healthActiveCalories ?? this.healthActiveCalories,
       netCalories: netCalories ?? this.netCalories,
       meals: meals ?? this.meals,
     );

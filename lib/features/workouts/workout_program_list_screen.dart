@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/models/workout_program.dart';
@@ -9,10 +10,14 @@ class WorkoutProgramListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) {
+      return const Scaffold(body: Center(child: Text('Please sign in.')));
+    }
     return Scaffold(
       appBar: AppBar(title: const Text('Workout programs')),
       body: FutureBuilder<List<WorkoutProgram>>(
-        future: WorkoutRepository().loadPrograms(),
+        future: WorkoutRepository().loadAvailablePrograms(uid),
         builder: (context, snapshot) {
           final programs = snapshot.data ?? const <WorkoutProgram>[];
           if (snapshot.connectionState == ConnectionState.waiting) {

@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:nutri_tracker/homepage/home/weight_pages/overweight_category/overweight_meals_details/overweight_meals_details.dart';
-import 'package:nutri_tracker/homepage/home/weight_pages_model/meal%20model/weight_loss_meal.dart';
+import 'package:nutri_tracker/homepage/home/weight_pages_model/meal_model/weight_loss_meal.dart';
 import 'package:nutri_tracker/widgets/cached_app_image.dart';
 
 class overweightmeals extends StatefulWidget {

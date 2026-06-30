@@ -1,5 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nutri_tracker/models/notification_settings.dart';
 import 'package:nutri_tracker/router/app_router.dart';
 import 'package:nutri_tracker/routes/app_routes.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -37,7 +38,7 @@ class NotificationService {
   Future<void> scheduleMealReminders({String? timezone}) async {
     final location = _locationFor(timezone);
     await _scheduleDaily(
-      0,
+      _mealReminderIds[0],
       8,
       0,
       'NutriTrack India',
@@ -45,7 +46,7 @@ class NotificationService {
       location,
     );
     await _scheduleDaily(
-      1,
+      _mealReminderIds[1],
       13,
       0,
       'NutriTrack India',
@@ -53,7 +54,7 @@ class NotificationService {
       location,
     );
     await _scheduleDaily(
-      2,
+      _mealReminderIds[2],
       19,
       30,
       'NutriTrack India',
@@ -62,7 +63,74 @@ class NotificationService {
     );
   }
 
-  Future<void> cancelMealReminders() => _plugin.cancelAll();
+  Future<void> cancelMealReminders() {
+    return Future.wait(_mealReminderIds.map(_plugin.cancel));
+  }
+
+  Future<void> applySettings(
+    UserNotificationSettings settings, {
+    String? timezone,
+  }) async {
+    final location = _locationFor(timezone);
+    await Future.wait([
+      _applySingleDaily(
+        id: _singleMealReminderId,
+        preference: settings.meal,
+        title: 'NutriTrack India',
+        body: 'Time to log your meal.',
+        channelId: 'meal_reminders',
+        channelName: 'Meal Reminders',
+        route: AppRoutes.nutrition,
+        location: location,
+      ),
+      _applySingleDaily(
+        id: _waterReminderId,
+        preference: settings.water,
+        title: 'NutriTrack India',
+        body: 'Drink water and update your hydration.',
+        channelId: 'water_reminders',
+        channelName: 'Water Reminders',
+        route: AppRoutes.dashboard,
+        location: location,
+      ),
+      _applyWeeklyWorkout(
+        preference: settings.workout,
+        location: location,
+      ),
+      _applySingleDaily(
+        id: _weighInReminderId,
+        preference: settings.weighIn,
+        title: 'NutriTrack India',
+        body: 'Quick weigh-in helps keep your goal current.',
+        channelId: 'weigh_in_reminders',
+        channelName: 'Weigh-in Reminders',
+        route: AppRoutes.bmiCalculator,
+        location: location,
+      ),
+      _applySingleDaily(
+        id: _streakReminderId,
+        preference: settings.streak,
+        title: 'NutriTrack India',
+        body: 'Keep your healthy streak alive today.',
+        channelId: 'streak_reminders',
+        channelName: 'Streak Reminders',
+        route: AppRoutes.dashboard,
+        location: location,
+      ),
+    ]);
+  }
+
+  Future<void> cancelReminderGroup(String group) {
+    final ids = switch (group) {
+      'meal' => [_singleMealReminderId, ..._mealReminderIds],
+      'water' => [_waterReminderId],
+      'workout' => _workoutReminderIds,
+      'weighIn' => [_weighInReminderId],
+      'streak' => [_streakReminderId],
+      _ => const <int>[],
+    };
+    return Future.wait(ids.map(_plugin.cancel));
+  }
 
   Future<void> showAchievement(String title, String body) {
     return _plugin.show(
@@ -113,6 +181,78 @@ class NotificationService {
     );
   }
 
+  Future<void> _applySingleDaily({
+    required int id,
+    required ReminderPreference preference,
+    required String title,
+    required String body,
+    required String channelId,
+    required String channelName,
+    required String route,
+    required tz.Location location,
+  }) async {
+    await _plugin.cancel(id);
+    if (!preference.enabled) return;
+    await _plugin.zonedSchedule(
+      id,
+      title,
+      body,
+      _nextInstanceOfTime(preference.hour, preference.minute, location),
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channelId,
+          channelName,
+          channelDescription: channelName,
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+        iOS: const DarwinNotificationDetails(),
+      ),
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+      payload: route,
+    );
+  }
+
+  Future<void> _applyWeeklyWorkout({
+    required ReminderPreference preference,
+    required tz.Location location,
+  }) async {
+    await Future.wait(_workoutReminderIds.map(_plugin.cancel));
+    if (!preference.enabled) return;
+    final days = preference.days.isEmpty ? const [1, 3, 5] : preference.days;
+    await Future.wait(days.map((day) {
+      return _plugin.zonedSchedule(
+        _workoutReminderBaseId + day,
+        'NutriTrack India',
+        'Your planned workout is waiting.',
+        _nextInstanceOfWeekday(
+          day,
+          preference.hour,
+          preference.minute,
+          location,
+        ),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'workout_reminders',
+            'Workout Reminders',
+            channelDescription: 'Workout reminder notifications',
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(),
+        ),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+        payload: AppRoutes.workouts,
+      );
+    }));
+  }
+
   tz.TZDateTime _nextInstanceOfTime(
     int hour,
     int minute,
@@ -127,6 +267,19 @@ class NotificationService {
     return scheduled;
   }
 
+  tz.TZDateTime _nextInstanceOfWeekday(
+    int weekday,
+    int hour,
+    int minute,
+    tz.Location location,
+  ) {
+    var scheduled = _nextInstanceOfTime(hour, minute, location);
+    while (scheduled.weekday != weekday) {
+      scheduled = scheduled.add(const Duration(days: 1));
+    }
+    return scheduled;
+  }
+
   tz.Location _locationFor(String? timezone) {
     if (timezone == null || timezone.trim().isEmpty) return tz.local;
     try {
@@ -135,4 +288,12 @@ class NotificationService {
       return tz.local;
     }
   }
+
+  static const _mealReminderIds = [100, 101, 102];
+  static const _singleMealReminderId = 110;
+  static const _waterReminderId = 200;
+  static const _workoutReminderBaseId = 300;
+  static const _workoutReminderIds = [301, 302, 303, 304, 305, 306, 307];
+  static const _weighInReminderId = 400;
+  static const _streakReminderId = 500;
 }
