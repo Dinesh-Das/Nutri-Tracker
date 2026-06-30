@@ -8,6 +8,7 @@ import 'package:nutri_tracker/drawer/settings/change_password.dart';
 import 'package:nutri_tracker/drawer/settings/delete_user.dart';
 import 'package:nutri_tracker/models/notification_settings.dart';
 import 'package:nutri_tracker/services/notification_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class SettingsPage extends StatefulWidget {
@@ -20,6 +21,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool setDarkTheme = currentTheme.isDarkTheme();
   String? _timezone;
+  bool _workoutReminderEnabled = false;
   UserNotificationSettings _notificationSettings =
       const UserNotificationSettings();
 
@@ -36,10 +38,13 @@ class _SettingsPageState extends State<SettingsPage> {
         .collection('user_details')
         .doc(uid)
         .get();
+    final prefs = await SharedPreferences.getInstance();
+    final workoutReminderEnabled = prefs.getBool('workout_reminder') ?? false;
     if (!mounted) return;
     final data = doc.data();
     setState(() {
       _timezone = data?['timezone'] as String?;
+      _workoutReminderEnabled = workoutReminderEnabled;
       _notificationSettings = UserNotificationSettings.fromMap(
         data?['notificationSettings'] is Map
             ? Map<String, dynamic>.from(data!['notificationSettings'])
@@ -203,6 +208,26 @@ class _SettingsPageState extends State<SettingsPage> {
               height: 10,
             ),
             buildNotificationOption("Dark Theme", setDarkTheme, onThemeChange),
+            ListTile(
+              leading: const Icon(Icons.fitness_center),
+              title: const Text('Workout Reminder'),
+              subtitle: const Text('Daily reminder to exercise'),
+              trailing: Switch(
+                value: _workoutReminderEnabled,
+                onChanged: (value) async {
+                  setState(() => _workoutReminderEnabled = value);
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('workout_reminder', value);
+                  if (value) {
+                    await NotificationService.instance.scheduleWorkoutReminder(
+                      timezone: _timezone,
+                    );
+                  } else {
+                    await NotificationService.instance.cancelWorkoutReminder();
+                  }
+                },
+              ),
+            ),
             _ReminderTile(
               title: 'Meal reminders',
               icon: Icons.restaurant_menu,

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nutri_tracker/data/workout_library.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/models/daily_health_summary.dart';
 import 'package:nutri_tracker/models/exercise.dart';
@@ -6,6 +7,7 @@ import 'package:nutri_tracker/models/food_item.dart';
 import 'package:nutri_tracker/models/indian_recipe.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/models/user_goal.dart';
+import 'package:nutri_tracker/models/workout_entry.dart';
 import 'package:nutri_tracker/models/workout_program.dart';
 import 'package:nutri_tracker/models/workout_session.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
@@ -208,6 +210,41 @@ void main() {
       expect(parsed.uid, 'uid-1');
       expect(parsed.exercises.single.name, 'Plank');
       expect(parsed.status, 'completed');
+    });
+
+    test('WorkoutPlan library entries have positive calorie estimates', () {
+      for (final plan in kWorkoutLibrary) {
+        expect(plan.estimatedCalories, greaterThan(0), reason: plan.id);
+      }
+    });
+
+    test('ExerciseEntry serializes and parses sets and reps', () {
+      final timestamp = DateTime(2026, 6, 29, 18, 30);
+      final entry = ExerciseEntry(
+        id: 'exercise-1',
+        name: 'Push-ups',
+        category: 'strength',
+        durationMinutes: 20,
+        caloriesBurned: 150,
+        timestamp: timestamp,
+        notes: 'Felt strong',
+        sets: 4,
+        reps: 12,
+        weightKg: 5,
+      );
+
+      final parsed = ExerciseEntry.fromMap(entry.id, entry.toMap());
+
+      expect(parsed.id, 'exercise-1');
+      expect(parsed.name, 'Push-ups');
+      expect(parsed.category, 'strength');
+      expect(parsed.durationMinutes, 20);
+      expect(parsed.caloriesBurned, 150);
+      expect(parsed.timestamp, timestamp);
+      expect(parsed.notes, 'Felt strong');
+      expect(parsed.sets, 4);
+      expect(parsed.reps, 12);
+      expect(parsed.weightKg, 5);
     });
 
     test('UserGoal serializes and parses Firestore maps', () {
