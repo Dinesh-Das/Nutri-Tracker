@@ -3,12 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
-import 'package:nutri_tracker/models/workout_session.dart';
+import 'package:nutri_tracker/models/workout_entry.dart';
 import 'package:nutri_tracker/models/weight_entry.dart';
-import 'package:nutri_tracker/routes/app_routes.dart';
-import 'package:nutri_tracker/repositories/workout_repository.dart';
 import 'package:nutri_tracker/services/calorie_service.dart';
 import 'package:nutri_tracker/services/firestore_service.dart';
+import 'package:nutri_tracker/routes/app_routes.dart';
+import 'package:nutri_tracker/services/workout_service.dart';
 import 'package:nutri_tracker/widgets/macro_chart_widget.dart';
 
 class ProgressScreen extends StatelessWidget {
@@ -127,73 +127,54 @@ class _WeeklyWorkouts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now();
-    final start = today.subtract(const Duration(days: 6));
-    return FutureBuilder<List<WorkoutSession>>(
-      future: WorkoutRepository().getSessionsInRange(
-        uid,
-        start: start,
-        end: today,
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const _ChartCard(
-            title: 'Workout Analytics',
-            child: Center(child: Text('Unable to load workouts.')),
-          );
-        }
-        final sessions = snapshot.data ?? [];
-        final completed =
-            sessions.where((session) => session.status == 'completed').toList();
-        final minutes = completed.fold<int>(
-          0,
-          (total, session) => total + session.totalDurationMinutes,
-        );
-        final burned = completed.fold<int>(
-          0,
-          (total, session) => total + session.caloriesBurned,
-        );
-        final completionRate =
-            sessions.isEmpty ? 0 : (completed.length / sessions.length * 100);
-        return _ChartCard(
-          title: 'Workout Analytics',
-          child: Center(
-            child: Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              alignment: WrapAlignment.center,
-              children: [
-                _InlineStat(label: 'Minutes/week', value: '$minutes'),
-                _InlineStat(label: 'Completed', value: '${completed.length}'),
-                _InlineStat(label: 'Burned', value: '$burned kcal'),
-                _InlineStat(
-                  label: 'Completion',
-                  value: '${completionRate.toStringAsFixed(0)}%',
-                ),
+    final start = DateTime(today.year, today.month, today.day)
+        .subtract(const Duration(days: 6));
+    final end = start.add(const Duration(days: 7));
+    return _ChartCard(
+      title: 'Weekly Workouts',
+      child: StreamBuilder<List<ExerciseEntry>>(
+        stream: WorkoutService().watchWorkoutsInRange(
+          uid,
+          start: start,
+          end: end,
+        ),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const _EmptyState(text: 'Unable to load workouts.');
+          }
+          final entries = snapshot.data ?? const <ExerciseEntry>[];
+          if (entries.isEmpty) {
+            return const _EmptyState(text: 'No workouts this week.');
+          }
+          final buckets = List.filled(7, 0);
+          for (final entry in entries) {
+            final dayOffset =
+                entry.timestamp.difference(start).inDays.clamp(0, 6).toInt();
+            buckets[dayOffset] += entry.caloriesBurned;
+          }
+          return BarChart(
+            BarChartData(
+              titlesData: const FlTitlesData(
+                rightTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              ),
+              barGroups: [
+                for (var i = 0; i < 7; i++)
+                  BarChartGroupData(
+                    x: i,
+                    barRods: [
+                      BarChartRodData(
+                        toY: buckets[i].toDouble(),
+                        width: 12,
+                      ),
+                    ],
+                  ),
               ],
             ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _InlineStat extends StatelessWidget {
-  const _InlineStat({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 116,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(value, style: Theme.of(context).textTheme.titleMedium),
-          Text(label, textAlign: TextAlign.center),
-        ],
+          );
+        },
       ),
     );
   }

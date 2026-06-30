@@ -68,6 +68,19 @@ class WorkoutService {
           AchievementType.workouts10,
         );
       }
+      if (entry.caloriesBurned >= 500) {
+        await AchievementService().checkAndAward(
+          uid,
+          AchievementType.caloriesBurned500,
+        );
+      }
+      final weeklyWorkoutDays = await getWeeklyWorkoutCount(uid);
+      if (weeklyWorkoutDays >= 3) {
+        await AchievementService().checkAndAward(
+          uid,
+          AchievementType.workoutStreak3,
+        );
+      }
     } catch (_) {}
   }
 
@@ -86,6 +99,37 @@ class WorkoutService {
         .map((snapshot) => snapshot.docs
             .map((doc) => ExerciseEntry.fromMap(doc.id, doc.data()))
             .toList());
+  }
+
+  /// Returns workouts from [start] to now, ordered by timestamp descending.
+  Stream<List<ExerciseEntry>> watchWorkoutsInRange(
+    String uid, {
+    required DateTime start,
+    DateTime? end,
+  }) {
+    final endDate = end ?? DateTime.now().add(const Duration(days: 1));
+    return _firestore
+        .collection('workout_logs')
+        .doc(uid)
+        .collection('entries')
+        .where('timestamp', isGreaterThanOrEqualTo: Timestamp.fromDate(start))
+        .where('timestamp', isLessThan: Timestamp.fromDate(endDate))
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => ExerciseEntry.fromMap(doc.id, doc.data()))
+            .toList());
+  }
+
+  /// Returns the count of unique days with at least one workout in the last 7 days.
+  Future<int> getWeeklyWorkoutCount(String uid) async {
+    final start = DateTime.now().subtract(const Duration(days: 7));
+    final workouts = await watchWorkoutsInRange(uid, start: start).first;
+    final days = workouts
+        .map((entry) =>
+            '${entry.timestamp.year}-${entry.timestamp.month}-${entry.timestamp.day}')
+        .toSet();
+    return days.length;
   }
 
   Future<int> getTodayCaloriesBurned(String uid) async {

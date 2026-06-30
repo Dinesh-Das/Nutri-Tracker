@@ -24,6 +24,7 @@ import 'package:nutri_tracker/features/onboarding/onboarding_screen.dart';
 import 'package:nutri_tracker/features/progress/achievements_screen.dart';
 import 'package:nutri_tracker/features/recipes/recipe_detail_screen.dart';
 import 'package:nutri_tracker/features/recipes/recipe_screen.dart';
+import 'package:nutri_tracker/features/workout/home_workout_screen.dart';
 import 'package:nutri_tracker/features/workout/workout_log_screen.dart';
 import 'package:nutri_tracker/features/workouts/active_workout_session_screen.dart';
 import 'package:nutri_tracker/features/workouts/exercise_detail_screen.dart';
@@ -226,12 +227,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const GoalsScreen(),
       ),
       GoRoute(
+        path: AppRoutes.workoutHub,
+        builder: (context, state) => const AllInOneShell(initialIndex: 2),
+      ),
+      GoRoute(
         path: AppRoutes.workoutLog,
         builder: (context, state) => const WorkoutLogScreen(),
       ),
       GoRoute(
         path: AppRoutes.workouts,
         builder: (context, state) => const AllInOneShell(initialIndex: 2),
+      ),
+      GoRoute(
+        path: AppRoutes.homeWorkout,
+        builder: (context, state) => const HomeWorkoutScreen(),
       ),
       GoRoute(
         path: AppRoutes.workoutLibrary,
@@ -242,7 +251,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const WorkoutProgramListScreen(),
       ),
       GoRoute(
-        path: AppRoutes.workoutSession,
+        path: AppRoutes.activeWorkoutSession,
         builder: (context, state) => ActiveWorkoutSessionScreen(
           seed: state.extra,
         ),

@@ -7,6 +7,8 @@ enum AchievementType {
   firstWorkout,
   workouts10,
   workouts50,
+  workoutStreak3,
+  caloriesBurned500,
   goalReached,
   bmiNormal,
   recipeTried10,
@@ -38,6 +40,10 @@ class Achievement {
         return '10 workouts';
       case AchievementType.workouts50:
         return '50 workouts';
+      case AchievementType.workoutStreak3:
+        return '3-day workout week';
+      case AchievementType.caloriesBurned500:
+        return '500 kcal workout';
       case AchievementType.goalReached:
         return 'Goal reached';
       case AchievementType.bmiNormal:

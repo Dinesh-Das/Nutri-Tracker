@@ -63,6 +63,30 @@ class NotificationService {
     );
   }
 
+  Future<void> scheduleWorkoutReminder({
+    int hour = 18,
+    int minute = 0,
+    String? timezone,
+  }) async {
+    final location = _locationFor(timezone);
+    await _scheduleDaily(
+      _dailyWorkoutReminderId,
+      hour,
+      minute,
+      'Time to Move! \u{1F4AA}',
+      'Your daily workout reminder. Open NutriTrack to start.',
+      location,
+      channelId: 'workout_reminders',
+      channelName: 'Workout Reminders',
+      channelDescription: 'Daily workout reminder notifications',
+      payload: AppRoutes.workoutHub,
+    );
+  }
+
+  Future<void> cancelWorkoutReminder() async {
+    await _plugin.cancel(_dailyWorkoutReminderId);
+  }
+
   Future<void> cancelMealReminders() {
     return Future.wait(_mealReminderIds.map(_plugin.cancel));
   }
@@ -157,27 +181,32 @@ class NotificationService {
     String title,
     String body,
     tz.Location location,
-  ) {
+    {
+    String channelId = 'meal_reminders',
+    String channelName = 'Meal Reminders',
+    String channelDescription = 'Daily NutriTrack India meal reminders',
+    String payload = AppRoutes.calorieLog,
+  }) {
     return _plugin.zonedSchedule(
       id,
       title,
       body,
       _nextInstanceOfTime(hour, minute, location),
-      const NotificationDetails(
+      NotificationDetails(
         android: AndroidNotificationDetails(
-          'meal_reminders',
-          'Meal Reminders',
-          channelDescription: 'Daily NutriTrack India meal reminders',
+          channelId,
+          channelName,
+          channelDescription: channelDescription,
           importance: Importance.high,
           priority: Priority.high,
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: const DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
-      payload: AppRoutes.calorieLog,
+      payload: payload,
     );
   }
 
@@ -290,6 +319,7 @@ class NotificationService {
   }
 
   static const _mealReminderIds = [100, 101, 102];
+  static const _dailyWorkoutReminderId = 3;
   static const _singleMealReminderId = 110;
   static const _waterReminderId = 200;
   static const _workoutReminderBaseId = 300;

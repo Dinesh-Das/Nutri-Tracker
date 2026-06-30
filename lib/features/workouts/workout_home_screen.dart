@@ -34,7 +34,7 @@ class WorkoutHomeScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push(AppRoutes.workoutSession),
+        onPressed: () => context.push(AppRoutes.activeWorkoutSession),
         icon: const Icon(Icons.play_arrow),
         label: const Text('Start'),
       ),
@@ -182,7 +182,7 @@ class _TodayWorkoutCard extends StatelessWidget {
             ),
             FilledButton.icon(
               onPressed: () => context.push(
-                AppRoutes.workoutSession,
+                AppRoutes.activeWorkoutSession,
                 extra: program == null || enrollment == null
                     ? null
                     : WorkoutProgramSessionSeed(

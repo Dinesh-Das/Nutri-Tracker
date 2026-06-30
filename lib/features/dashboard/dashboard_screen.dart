@@ -369,7 +369,7 @@ class _WorkoutTodayCard extends StatelessWidget {
         title: Text(latest?.title ?? "Today's workout"),
         subtitle: Text('$minutes min trained - $caloriesBurned kcal burned'),
         trailing: FilledButton(
-          onPressed: () => context.push(AppRoutes.workoutSession),
+          onPressed: () => context.push(AppRoutes.activeWorkoutSession),
           child: const Text('Start'),
         ),
       ),
@@ -405,7 +405,7 @@ class _QuickActions extends StatelessWidget {
             _ActionButton(
               icon: Icons.fitness_center,
               label: 'Start workout',
-              onTap: () => context.push(AppRoutes.workoutSession),
+              onTap: () => context.push(AppRoutes.activeWorkoutSession),
             ),
             _ActionButton(
               icon: Icons.water_drop,

@@ -24,6 +24,7 @@ class UserModel {
   String? equipment;
   List<String>? preferredWorkoutDays;
   int? workoutsPerWeek;
+  int? weeklyWorkoutGoal;
   int? workoutDurationMinutes;
   String? injuriesOrLimitations;
   bool? isAdmin;
@@ -56,6 +57,7 @@ class UserModel {
     this.equipment,
     this.preferredWorkoutDays,
     this.workoutsPerWeek,
+    this.weeklyWorkoutGoal,
     this.workoutDurationMinutes,
     this.injuriesOrLimitations,
     this.isAdmin,
@@ -94,6 +96,8 @@ class UserModel {
       preferredWorkoutDays:
           List<String>.from(map['preferredWorkoutDays'] ?? const []),
       workoutsPerWeek: (map['workoutsPerWeek'] as num?)?.toInt(),
+      weeklyWorkoutGoal: (map['weeklyWorkoutGoal'] as num?)?.toInt() ??
+          (map['workoutsPerWeek'] as num?)?.toInt(),
       workoutDurationMinutes: (map['workoutDurationMinutes'] as num?)?.toInt(),
       injuriesOrLimitations: map['injuriesOrLimitations'],
       isAdmin: map['isAdmin'] == true,
@@ -135,6 +139,7 @@ class UserModel {
       'equipment': equipment,
       'preferredWorkoutDays': preferredWorkoutDays,
       'workoutsPerWeek': workoutsPerWeek,
+      'weeklyWorkoutGoal': weeklyWorkoutGoal,
       'workoutDurationMinutes': workoutDurationMinutes,
       'injuriesOrLimitations': injuriesOrLimitations,
       'lastBmiDate':

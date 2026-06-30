@@ -4,7 +4,7 @@ import 'package:nutri_tracker/features/ai/ai_assistant_screen.dart';
 import 'package:nutri_tracker/features/dashboard/dashboard_screen.dart';
 import 'package:nutri_tracker/features/nutrition/nutrition_home_screen.dart';
 import 'package:nutri_tracker/features/progress/progress_screen.dart';
-import 'package:nutri_tracker/features/workouts/workout_home_screen.dart';
+import 'package:nutri_tracker/features/workout/workout_hub_screen.dart';
 import 'package:nutri_tracker/routes/app_routes.dart';
 
 class AllInOneShell extends StatefulWidget {
@@ -22,7 +22,7 @@ class _AllInOneShellState extends State<AllInOneShell> {
   static const _routes = [
     AppRoutes.dashboard,
     AppRoutes.nutrition,
-    AppRoutes.workouts,
+    AppRoutes.workoutHub,
     AppRoutes.progress,
     AppRoutes.aiChat,
   ];
@@ -30,7 +30,7 @@ class _AllInOneShellState extends State<AllInOneShell> {
   final _screens = const [
     DashboardScreen(),
     NutritionHomeScreen(),
-    WorkoutHomeScreen(),
+    WorkoutHubScreen(),
     ProgressScreen(showAppBar: false),
     AIAssistantScreen(showAppBar: false),
   ];

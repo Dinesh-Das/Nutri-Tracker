@@ -81,6 +81,8 @@ class _AIAssistantScreenState extends State<AIAssistantScreen> {
                             'Give me a 7-day Indian meal plan',
                             "How is today's progress?",
                             'Healthier Indian alternatives',
+                            'Create a home workout plan for me',
+                            'What exercises can I do without equipment?',
                             'No-equipment home workout',
                             'Estimate calories for my meal',
                             'High-protein Indian foods',

@@ -82,7 +82,7 @@ class _ProgramEnrollmentButton extends StatelessWidget {
                 : await repository.startProgram(uid, program);
             if (!context.mounted) return;
             context.push(
-              AppRoutes.workoutSession,
+              AppRoutes.activeWorkoutSession,
               extra: WorkoutProgramSessionSeed(
                 program: program,
                 enrollment: saved,

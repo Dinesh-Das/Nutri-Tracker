@@ -5,5 +5,13 @@ abstract interface class IWorkoutRepository {
 
   Stream<List<ExerciseEntry>> watchTodayWorkouts(String uid);
 
+  Stream<List<ExerciseEntry>> watchWorkoutsInRange(
+    String uid, {
+    required DateTime start,
+    DateTime? end,
+  });
+
   Future<int> getTodayCaloriesBurned(String uid);
+
+  Future<int> getWeeklyWorkoutCount(String uid);
 }

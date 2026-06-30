@@ -24,11 +24,14 @@ class AppRoutes {
   static const String aiChat = '/ai';
   static const String aiCoach = '/ai/chat';
   static const String aiWorkoutPlan = '/ai/workout-plan';
+  static const String workoutHub = '/workout-hub';
+  static const String homeWorkout = '/workout/home';
+  static const String workoutSession = '/workout/session';
   static const String workoutLog = '/workout';
   static const String workouts = '/workouts';
   static const String workoutLibrary = '/workouts/library';
   static const String workoutPrograms = '/workouts/programs';
-  static const String workoutSession = '/workouts/session';
+  static const String activeWorkoutSession = '/workouts/session';
   static const String workoutHistory = '/workouts/history';
   static const String workoutDetail = '/workouts/detail';
   static const String exerciseDetail = '/workouts/exercise';

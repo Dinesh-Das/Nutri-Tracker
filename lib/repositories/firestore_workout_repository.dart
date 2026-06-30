@@ -25,7 +25,21 @@ class FirestoreWorkoutRepository implements IWorkoutRepository {
   }
 
   @override
+  Stream<List<ExerciseEntry>> watchWorkoutsInRange(
+    String uid, {
+    required DateTime start,
+    DateTime? end,
+  }) {
+    return _service.watchWorkoutsInRange(uid, start: start, end: end);
+  }
+
+  @override
   Future<int> getTodayCaloriesBurned(String uid) {
     return _service.getTodayCaloriesBurned(uid);
+  }
+
+  @override
+  Future<int> getWeeklyWorkoutCount(String uid) {
+    return _service.getWeeklyWorkoutCount(uid);
   }
 }
