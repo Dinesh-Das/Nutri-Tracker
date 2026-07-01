@@ -75,6 +75,42 @@ class WorkoutHubScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
+            Text('Explore', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Card(
+              child: ListTile(
+                leading: const CircleAvatar(
+                    child: Icon(Icons.calendar_today_outlined)),
+                title: const Text('Workout Programs'),
+                subtitle: const Text(
+                    '8 structured plans from beginner to advanced'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(AppRoutes.workoutPrograms),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: const CircleAvatar(
+                    child: Icon(Icons.menu_book_outlined)),
+                title: const Text('Exercise Library'),
+                subtitle:
+                    const Text('20+ exercises with instructions & tips'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(AppRoutes.workoutLibrary),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                leading: const CircleAvatar(
+                    child: Icon(Icons.history_outlined)),
+                title: const Text('Workout History'),
+                subtitle:
+                    const Text('Past sessions, streaks, and calories'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push(AppRoutes.workoutHistory),
+              ),
+            ),
+            const SizedBox(height: 20),
             Text(
               "Today's Activity",
               style: Theme.of(context).textTheme.titleLarge,

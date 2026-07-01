@@ -113,6 +113,11 @@ class _DashboardBody extends StatelessWidget {
         title: const Text('NutriTrack India'),
         actions: [
           IconButton(
+            tooltip: 'Profile',
+            onPressed: () => context.push(AppRoutes.profile),
+            icon: const Icon(Icons.person_outline),
+          ),
+          IconButton(
             tooltip: 'Goals',
             onPressed: () => context.push(AppRoutes.goals),
             icon: const Icon(Icons.flag_outlined),

@@ -197,7 +197,8 @@ service cloud.firestore {
         request.resource.data.type in [
           'logStreak7', 'logStreak30', 'logStreak100', 'firstWorkout',
           'workouts10', 'workouts50', 'goalReached', 'bmiNormal',
-          'recipeTried10', 'waterGoalWeek'
+          'recipeTried10', 'waterGoalWeek',
+          'workoutStreak3', 'caloriesBurned500'
         ];
     }
 
