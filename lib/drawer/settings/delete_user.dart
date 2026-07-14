@@ -184,7 +184,7 @@ Future<void> _tryDeleteDoc(DocumentReference<Map<String, dynamic>> ref) async {
 
 Future<void> _tryDeleteProfileImage(String uid) async {
   try {
-    await FirebaseStorage.instance.ref().child('images/$uid').delete();
+    await FirebaseStorage.instance.ref().child('images/$uid/profile').delete();
   } on FirebaseException {
     // Missing images should not block account deletion.
   }

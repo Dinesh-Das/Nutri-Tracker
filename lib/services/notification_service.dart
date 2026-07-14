@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutri_tracker/models/notification_settings.dart';
 import 'package:nutri_tracker/router/app_router.dart';
@@ -14,6 +15,7 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
+    if (kIsWeb) return;
     tz.initializeTimeZones();
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const ios = DarwinInitializationSettings(
@@ -36,6 +38,7 @@ class NotificationService {
   }
 
   Future<void> scheduleMealReminders({String? timezone}) async {
+    if (kIsWeb) return;
     final location = _locationFor(timezone);
     await _scheduleDaily(
       _mealReminderIds[0],
@@ -68,6 +71,7 @@ class NotificationService {
     int minute = 0,
     String? timezone,
   }) async {
+    if (kIsWeb) return;
     final location = _locationFor(timezone);
     await _scheduleDaily(
       _dailyWorkoutReminderId,
@@ -84,10 +88,12 @@ class NotificationService {
   }
 
   Future<void> cancelWorkoutReminder() async {
+    if (kIsWeb) return;
     await _plugin.cancel(_dailyWorkoutReminderId);
   }
 
   Future<void> cancelMealReminders() {
+    if (kIsWeb) return Future.value();
     return Future.wait(_mealReminderIds.map(_plugin.cancel));
   }
 
@@ -95,6 +101,7 @@ class NotificationService {
     UserNotificationSettings settings, {
     String? timezone,
   }) async {
+    if (kIsWeb) return;
     final location = _locationFor(timezone);
     await Future.wait([
       _applySingleDaily(
@@ -145,6 +152,7 @@ class NotificationService {
   }
 
   Future<void> cancelReminderGroup(String group) {
+    if (kIsWeb) return Future.value();
     final ids = switch (group) {
       'meal' => [_singleMealReminderId, ..._mealReminderIds],
       'water' => [_waterReminderId],
@@ -157,6 +165,7 @@ class NotificationService {
   }
 
   Future<void> showAchievement(String title, String body) {
+    if (kIsWeb) return Future.value();
     return _plugin.show(
       1000 + DateTime.now().millisecondsSinceEpoch.remainder(100000),
       title,
@@ -201,7 +210,7 @@ class NotificationService {
         ),
         iOS: const DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
@@ -236,7 +245,7 @@ class NotificationService {
         ),
         iOS: const DarwinNotificationDetails(),
       ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
@@ -272,7 +281,7 @@ class NotificationService {
           ),
           iOS: DarwinNotificationDetails(),
         ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,

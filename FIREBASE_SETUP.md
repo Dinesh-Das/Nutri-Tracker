@@ -14,12 +14,13 @@ Official references:
 
 ## Current repo status
 
-The app is a Flutter Android app using these Firebase products:
+The app is a Flutter Android and web/PWA app using these Firebase products:
 
 - Firebase Core
 - Firebase Authentication
 - Cloud Firestore
 - Firebase Storage
+- Firebase Remote Config
 - Google Sign-In
 - Firebase Phone Auth for SMS OTP during registration
 
@@ -29,10 +30,11 @@ The Android package name is:
 com.example.nutri_tracker
 ```
 
-The checked-in `lib/firebase_options.dart` currently contains Android-only
-Firebase options. If you build for iOS, web, macOS, Windows, or Linux, run
-`flutterfire configure` and select those platforms so the file contains real
-platform options.
+The checked-in `lib/firebase_options.dart` contains Android options and reads
+web options from compile-time `FIREBASE_WEB_*` values. Use the ignored
+`config/firebase.web.json` file described in `README.md` for web builds. Before
+building iOS, run `flutterfire configure`, select the Apple app, and complete
+the Xcode/CocoaPods setup described in `CODEBASE_AUDIT.md`.
 
 The app currently supports:
 

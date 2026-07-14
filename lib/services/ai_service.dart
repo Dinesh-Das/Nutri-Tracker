@@ -1,16 +1,14 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:nutri_tracker/database/user_model.dart';
 import 'package:nutri_tracker/models/meal_plan.dart';
 import 'package:nutri_tracker/models/workout_program.dart';
 import 'package:nutri_tracker/services/config_service.dart';
 import 'package:nutri_tracker/utils/health_utils.dart';
-import 'package:uuid/uuid.dart';
 
 class AIService {
   static const String _model = 'claude-sonnet-4-20250514';
@@ -113,77 +111,68 @@ Current user context:
   }
 
   Future<Map<String, dynamic>> estimateNutritionFromPhoto(
-      File imageFile) async {
+    Uint8List imageBytes, {
+    String mediaType = 'image/jpeg',
+  }) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) throw Exception('Sign in before analysing meal photos.');
-
-    final id = const Uuid().v4();
-    final ref =
-        FirebaseStorage.instance.ref().child('food_photos/${user.uid}/$id.jpg');
-    await ref.putFile(
-      imageFile,
-      SettableMetadata(contentType: 'image/jpeg'),
-    );
-
-    try {
-      await ref.getDownloadURL();
-      final proxyUrl = await _configService.getNutriBotProxyUrl();
-      if (proxyUrl.trim().isEmpty) {
-        throw Exception(
-          'NutriBot is not configured. Set nutribot_proxy_url in Firebase Remote Config.',
-        );
-      }
-      final idToken = await user.getIdToken();
-      final base64Image = base64Encode(await imageFile.readAsBytes());
-      final response = await _dio.post<dynamic>(
-        proxyUrl,
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            if (idToken != null) 'Authorization': 'Bearer $idToken',
-          },
-        ),
-        data: {
-          'model': _model,
-          'max_tokens': 1024,
-          'system': nutriBotSystemPrompt,
-          'messages': [
-            {
-              'role': 'user',
-              'content': [
-                {
-                  'type': 'image',
-                  'source': {
-                    'type': 'base64',
-                    'media_type': 'image/jpeg',
-                    'data': base64Image,
-                  },
-                },
-                {
-                  'type': 'text',
-                  'text': buildNutritionPrompt('this meal in the photo'),
-                },
-              ],
-            },
-          ],
-        },
-      );
-      if (response.statusCode != 200) {
-        throw Exception('AI request failed: ${response.statusCode}');
-      }
-      final data = response.data is String
-          ? jsonDecode(response.data as String) as Map<String, dynamic>
-          : Map<String, dynamic>.from(response.data as Map);
-      final text = data['text']?.toString() ??
-          ((data['content'] as List?)?.firstOrNull as Map?)?['text']
-              ?.toString();
-      if (text == null || text.isEmpty) {
-        throw Exception('AI proxy returned an unexpected response format.');
-      }
-      return _extractJsonMap(text);
-    } finally {
-      await ref.delete().catchError((_) {});
+    if (imageBytes.isEmpty) throw Exception('The selected photo is empty.');
+    if (imageBytes.lengthInBytes > 5 * 1024 * 1024) {
+      throw Exception('Choose a photo smaller than 5 MB.');
     }
+
+    final proxyUrl = await _configService.getNutriBotProxyUrl();
+    if (proxyUrl.trim().isEmpty) {
+      throw Exception(
+        'NutriBot is not configured. Set nutribot_proxy_url in Firebase Remote Config.',
+      );
+    }
+    final idToken = await user.getIdToken();
+    final response = await _dio.post<dynamic>(
+      proxyUrl,
+      options: Options(
+        headers: {
+          'Content-Type': 'application/json',
+          if (idToken != null) 'Authorization': 'Bearer $idToken',
+        },
+      ),
+      data: {
+        'model': _model,
+        'max_tokens': 1024,
+        'system': nutriBotSystemPrompt,
+        'messages': [
+          {
+            'role': 'user',
+            'content': [
+              {
+                'type': 'image',
+                'source': {
+                  'type': 'base64',
+                  'media_type': mediaType,
+                  'data': base64Encode(imageBytes),
+                },
+              },
+              {
+                'type': 'text',
+                'text': buildNutritionPrompt('this meal in the photo'),
+              },
+            ],
+          },
+        ],
+      },
+    );
+    if (response.statusCode != 200) {
+      throw Exception('AI request failed: ${response.statusCode}');
+    }
+    final data = response.data is String
+        ? jsonDecode(response.data as String) as Map<String, dynamic>
+        : Map<String, dynamic>.from(response.data as Map);
+    final text = data['text']?.toString() ??
+        ((data['content'] as List?)?.firstOrNull as Map?)?['text']?.toString();
+    if (text == null || text.isEmpty) {
+      throw Exception('AI proxy returned an unexpected response format.');
+    }
+    return _extractJsonMap(text);
   }
 
   Future<List<MealPlanDay>> generateMealPlan(

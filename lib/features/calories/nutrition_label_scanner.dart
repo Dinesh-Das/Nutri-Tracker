@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
@@ -27,6 +26,7 @@ class _NutritionLabelScannerState extends State<NutritionLabelScanner> {
   final _carbsController = TextEditingController();
   final _fatController = TextEditingController();
   XFile? _image;
+  Uint8List? _imageBytes;
   bool _loading = false;
 
   @override
@@ -75,8 +75,8 @@ class _NutritionLabelScannerState extends State<NutritionLabelScanner> {
           else ...[
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: Image.file(
-                File(_image!.path),
+              child: Image.memory(
+                _imageBytes!,
                 height: 240,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -148,22 +148,34 @@ class _NutritionLabelScannerState extends State<NutritionLabelScanner> {
   Future<void> _pick(ImageSource source) async {
     final image = await _picker.pickImage(source: source, imageQuality: 90);
     if (image == null || !mounted) return;
-    setState(() => _image = image);
+    final bytes = await image.readAsBytes();
+    if (!mounted) return;
+    setState(() {
+      _image = image;
+      _imageBytes = bytes;
+    });
   }
 
   Future<void> _scan() async {
     final image = _image;
-    if (image == null) return;
+    final bytes = _imageBytes;
+    if (image == null || bytes == null) return;
     setState(() => _loading = true);
-    final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
+    final recognizer =
+        kIsWeb ? null : TextRecognizer(script: TextRecognitionScript.latin);
     try {
-      final text = await recognizer.processImage(
-        InputImage.fromFilePath(image.path),
-      );
-      final parsed = _parseNutrition(text.text);
+      final parsed = <String, double>{};
+      if (recognizer != null) {
+        final text = await recognizer.processImage(
+          InputImage.fromFilePath(image.path),
+        );
+        parsed.addAll(_parseNutrition(text.text));
+      }
       if (parsed.values.where((value) => value > 0).length < 2) {
-        final ai =
-            await AIService().estimateNutritionFromPhoto(File(image.path));
+        final ai = await AIService().estimateNutritionFromPhoto(
+          bytes,
+          mediaType: _mediaType(image),
+        );
         parsed
           ..['calories'] = (ai['calories'] as num?)?.toDouble() ?? 0
           ..['protein'] = (ai['protein'] as num?)?.toDouble() ?? 0
@@ -186,9 +198,19 @@ class _NutritionLabelScannerState extends State<NutritionLabelScanner> {
         SnackBar(content: Text('Unable to scan label: $error')),
       );
     } finally {
-      await recognizer.close();
+      await recognizer?.close();
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  String _mediaType(XFile image) {
+    final explicitType = image.mimeType;
+    if (explicitType != null && explicitType.startsWith('image/')) {
+      return explicitType;
+    }
+    return image.name.toLowerCase().endsWith('.png')
+        ? 'image/png'
+        : 'image/jpeg';
   }
 
   Map<String, double> _parseNutrition(String text) {

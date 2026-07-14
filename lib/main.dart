@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nutri_tracker/dark_theme/custom_theme.dart';
@@ -10,13 +11,62 @@ import 'package:dynamic_color/dynamic_color.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  await Hive.initFlutter();
-  await NotificationService.instance.init();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    await Hive.initFlutter();
+    if (!kIsWeb) {
+      await NotificationService.instance.init();
+    }
+    runApp(const ProviderScope(child: MyApp()));
+  } catch (error, stackTrace) {
+    debugPrint('NutriTrack initialization failed: $error');
+    debugPrintStack(stackTrace: stackTrace);
+    runApp(BootstrapErrorApp(error: error));
+  }
+}
 
-  runApp(const ProviderScope(child: MyApp()));
+class BootstrapErrorApp extends StatelessWidget {
+  const BootstrapErrorApp({super.key, required this.error});
+
+  final Object error;
+
+  @override
+  Widget build(BuildContext context) {
+    final setupMessage = error is UnsupportedError
+        ? error.toString().replaceFirst('Unsupported operation: ', '')
+        : 'NutriTrack could not start. Check the platform configuration and '
+            'try again.';
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'NutriTrack setup required',
+      home: Scaffold(
+        body: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.settings_suggest_outlined, size: 56),
+                  const SizedBox(height: 16),
+                  Text(
+                    'NutriTrack setup required',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 12),
+                  SelectableText(setupMessage, textAlign: TextAlign.center),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -30,9 +80,15 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
-    currentTheme.addListener(() {
-      setState(() {});
-    });
+    currentTheme.addListener(_themeChanged);
+  }
+
+  void _themeChanged() => setState(() {});
+
+  @override
+  void dispose() {
+    currentTheme.removeListener(_themeChanged);
+    super.dispose();
   }
 
   @override

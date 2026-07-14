@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +33,7 @@ class _PhotoMealScreenState extends State<PhotoMealScreen> {
   final _fatController = TextEditingController();
   final _servingController = TextEditingController();
   XFile? _image;
+  Uint8List? _imageBytes;
   bool _loading = false;
   String _confidence = 'low';
   late String _mealType;
@@ -76,8 +77,8 @@ class _PhotoMealScreenState extends State<PhotoMealScreen> {
               else ...[
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    File(_image!.path),
+                  child: Image.memory(
+                    _imageBytes!,
                     height: 260,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -209,15 +210,24 @@ class _PhotoMealScreenState extends State<PhotoMealScreen> {
   Future<void> _pick(ImageSource source) async {
     final image = await _picker.pickImage(source: source, imageQuality: 85);
     if (image == null || !mounted) return;
-    setState(() => _image = image);
+    final bytes = await image.readAsBytes();
+    if (!mounted) return;
+    setState(() {
+      _image = image;
+      _imageBytes = bytes;
+    });
   }
 
   Future<void> _analyse() async {
     final image = _image;
-    if (image == null) return;
+    final bytes = _imageBytes;
+    if (image == null || bytes == null) return;
     setState(() => _loading = true);
     try {
-      final result = await _ai.estimateNutritionFromPhoto(File(image.path));
+      final result = await _ai.estimateNutritionFromPhoto(
+        bytes,
+        mediaType: _mediaType(image),
+      );
       if (!mounted) return;
       setState(() {
         _nameController.text = result['mealName']?.toString() ?? 'Meal photo';
@@ -241,6 +251,16 @@ class _PhotoMealScreenState extends State<PhotoMealScreen> {
     } finally {
       if (mounted) setState(() => _loading = false);
     }
+  }
+
+  String _mediaType(XFile image) {
+    final explicitType = image.mimeType;
+    if (explicitType != null && explicitType.startsWith('image/')) {
+      return explicitType;
+    }
+    return image.name.toLowerCase().endsWith('.png')
+        ? 'image/png'
+        : 'image/jpeg';
   }
 
   Future<void> _log(String uid) async {

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +14,8 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  static const _minimumDelay = Duration(milliseconds: 600);
+
   @override
   void initState() {
     super.initState();
@@ -32,14 +33,22 @@ class _SplashState extends State<Splash> {
       DataConstant.mail = (await UserLocalData.getEmail());
       DataConstant.photo = (await UserLocalData.getImg());
 
-      final doc = await FirebaseFirestore.instance
-          .collection('user_details')
-          .doc(user.uid)
-          .get();
-      final data = doc.data() ?? {};
-      await Future<void>.delayed(const Duration(milliseconds: 6000));
+      Map<String, dynamic>? data;
+      try {
+        final doc = await FirebaseFirestore.instance
+            .collection('user_details')
+            .doc(user.uid)
+            .get();
+        data = doc.data() ?? {};
+      } on FirebaseException {
+        // The PWA shell can still open offline. Individual screens will use
+        // any data available through their streams or show empty states.
+      }
+      await Future<void>.delayed(_minimumDelay);
       if (!mounted) return;
-      if (data['isAdmin'] == true) {
+      if (data == null) {
+        context.go(AppRoutes.dashboard);
+      } else if (data['isAdmin'] == true) {
         context.go(AppRoutes.admin);
       } else if (data['isOnboardingDone'] != true) {
         context.go(AppRoutes.onboarding);
@@ -47,9 +56,8 @@ class _SplashState extends State<Splash> {
         context.go(AppRoutes.dashboard);
       }
     } else {
-      Timer(const Duration(milliseconds: 6000), () {
-        if (mounted) context.go(AppRoutes.login);
-      });
+      await Future<void>.delayed(_minimumDelay);
+      if (mounted) context.go(AppRoutes.login);
     }
   }
 

@@ -1,15 +1,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.nutri_tracker">
+   <queries>
+       <package android:name="com.google.android.apps.healthdata" />
+       <intent>
+           <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+       </intent>
+   </queries>
    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-   <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
    <uses-permission android:name="android.permission.CAMERA" />
    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
    <uses-permission android:name="android.permission.health.READ_STEPS" />
    <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED" />
    <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
-   <uses-permission android:name="android.permission.health.WRITE_NUTRITION" />
+   <uses-permission android:name="android.permission.health.READ_WEIGHT" />
+   <uses-permission android:name="android.permission.health.WRITE_WEIGHT" />
+   <uses-permission android:name="android.permission.health.READ_HEIGHT" />
+   <uses-permission android:name="android.permission.health.READ_HYDRATION" />
    <uses-permission android:name="android.permission.health.WRITE_HYDRATION" />
-   <uses-permission android:name="android.permission.health.WRITE_BODY_WEIGHT" />
    <application
         android:label="NutriTrack India"
         android:icon="@mipmap/ic_launcher"

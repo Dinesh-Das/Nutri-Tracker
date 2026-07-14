@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -154,11 +153,19 @@ class _EditProfileState extends State<EditProfile> {
       if (imageFile == null) {
         throw Exception('No image selected.');
       }
-      var file = File(imageFile!.path);
+      final bytes = await imageFile!.readAsBytes();
+      if (bytes.lengthInBytes > 5 * 1024 * 1024) {
+        throw Exception('Choose a profile photo smaller than 5 MB.');
+      }
       Reference firebaseStorage =
-          FirebaseStorage.instance.ref().child("images/${user!.uid}");
+          FirebaseStorage.instance.ref().child("images/${user!.uid}/profile");
 
-      final uploadTask = await firebaseStorage.putFile(file);
+      final uploadTask = await firebaseStorage.putData(
+        bytes,
+        SettableMetadata(
+          contentType: _imageContentType(imageFile!),
+        ),
+      );
       updateData.photoURL = await uploadTask.ref.getDownloadURL();
       await updateProfilePicToFirestore(updateData.photoURL);
 
@@ -178,6 +185,16 @@ class _EditProfileState extends State<EditProfile> {
         Navigator.pop(context);
       }
     }
+  }
+
+  String _imageContentType(XFile image) {
+    final explicitType = image.mimeType;
+    if (explicitType != null && explicitType.startsWith('image/')) {
+      return explicitType;
+    }
+    return image.name.toLowerCase().endsWith('.png')
+        ? 'image/png'
+        : 'image/jpeg';
   }
 
   @override

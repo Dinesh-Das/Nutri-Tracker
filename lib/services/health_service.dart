@@ -1,11 +1,12 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class HealthService {
   HealthService() {
-    _health.configure();
+    if (!kIsWeb) {
+      _health.configure();
+    }
   }
 
   final Health _health = Health();
@@ -29,13 +30,15 @@ class HealthService {
   ];
 
   Future<bool> requestPermissions() async {
-    if (Platform.isAndroid) {
+    if (kIsWeb) return false;
+    if (defaultTargetPlatform == TargetPlatform.android) {
       await Permission.activityRecognition.request();
     }
     return _health.requestAuthorization(_types, permissions: _permissions);
   }
 
   Future<int> getTodaySteps() async {
+    if (kIsWeb) return 0;
     final now = DateTime.now();
     final start = DateTime(now.year, now.month, now.day);
     final hasPermission =
@@ -49,6 +52,7 @@ class HealthService {
   }
 
   Future<double> getTodayActiveCalories() async {
+    if (kIsWeb) return 0;
     final now = DateTime.now();
     final start = DateTime(now.year, now.month, now.day);
     final granted = await requestPermissions();
@@ -65,6 +69,7 @@ class HealthService {
   }
 
   Future<void> writeWeightEntry(double kg, DateTime date) async {
+    if (kIsWeb) return;
     final granted = await requestPermissions();
     if (!granted) return;
     await _health.writeHealthData(
@@ -76,6 +81,7 @@ class HealthService {
   }
 
   Future<void> writeWaterIntake(double ml, DateTime date) async {
+    if (kIsWeb) return;
     final granted = await requestPermissions();
     if (!granted) return;
     await _health.writeHealthData(

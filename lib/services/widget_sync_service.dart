@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
@@ -13,7 +12,7 @@ class WidgetSyncService {
     required DailyCalorieLog log,
     required int dailyGoal,
   }) async {
-    if (!Platform.isAndroid) return;
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
 
     final lastMeal = _lastMealName(log.meals);
     final remainingCalories = dailyGoal - log.totalCalories;
