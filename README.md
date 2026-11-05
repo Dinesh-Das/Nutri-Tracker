@@ -1,5 +1,7 @@
 # NutriTrack India
 
+[Interview case study, verification and remaining evidence](INTERVIEW.md)
+
 NutriTrack India is a cross-platform Flutter nutrition and fitness application
 designed around Indian meals. It combines food, hydration, weight, goal, and
 workout tracking with Firebase-backed accounts, recipe discovery, and optional
