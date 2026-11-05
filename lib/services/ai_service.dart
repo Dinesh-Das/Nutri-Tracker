@@ -344,7 +344,9 @@ WorkoutProgram validateWorkoutProgramJson(Map<String, dynamic> map) {
       program.durationWeeks > 16 ||
       program.daysPerWeek < 1 ||
       program.daysPerWeek > 7 ||
-      program.workoutDays.any((day) => day.exerciseIds.isEmpty)) {
+      program.estimatedMinutesPerDay < 1 ||
+      program.workoutDays
+          .any((day) => day.day < 1 || day.exerciseIds.isEmpty)) {
     throw const FormatException('Workout plan values are out of range.');
   }
   return program;

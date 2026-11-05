@@ -4,10 +4,15 @@ class MealPlan {
   final List<MealPlanDay> days;
 
   factory MealPlan.fromJson(Map<String, dynamic> json) {
+    final days = json['days'];
+    if (days is! List || days.isEmpty || days.any((day) => day is! Map)) {
+      throw const FormatException(
+          'Meal plan must contain complete day objects.');
+    }
     return MealPlan(
-      days: ((json['days'] as List?) ?? const [])
-          .whereType<Map>()
-          .map((day) => MealPlanDay.fromJson(Map<String, dynamic>.from(day)))
+      days: days
+          .map((day) =>
+              MealPlanDay.fromJson(Map<String, dynamic>.from(day as Map)))
           .toList(),
     );
   }
@@ -29,10 +34,23 @@ class MealPlanDay {
   final Map<String, PlannedMeal> meals;
 
   factory MealPlanDay.fromJson(Map<String, dynamic> json) {
-    final rawMeals = Map<String, dynamic>.from(json['meals'] ?? {});
+    final rawDay = json['day'];
+    final meals = json['meals'];
+    if (rawDay is! num ||
+        !rawDay.isFinite ||
+        rawDay < 1 ||
+        rawDay != rawDay.toInt() ||
+        meals is! Map ||
+        meals.isEmpty ||
+        meals.values.any((meal) => meal is! Map)) {
+      throw const FormatException(
+          'Meal day must have a positive day number and complete meals.');
+    }
+    final rawMeals = Map<String, dynamic>.from(meals);
     return MealPlanDay(
-      day: (json['day'] as num?)?.toInt() ?? 1,
-      totalCalories: (json['totalCalories'] as num?)?.toInt() ?? 0,
+      day: rawDay.toInt(),
+      totalCalories:
+          _nutritionNumber(json['totalCalories'], 'totalCalories').toInt(),
       meals: rawMeals.map(
         (key, value) => MapEntry(
           key,
@@ -69,12 +87,12 @@ class PlannedMeal {
   factory PlannedMeal.fromJson(Map<String, dynamic> json) {
     return PlannedMeal(
       name: json['name']?.toString() ?? '',
-      calories: (json['calories'] as num?)?.toInt() ?? 0,
+      calories: _nutritionNumber(json['calories'], 'calories').toInt(),
       description:
           json['description']?.toString() ?? json['prep']?.toString() ?? '',
-      protein: (json['protein'] as num?)?.toDouble() ?? 0,
-      carbs: (json['carbs'] as num?)?.toDouble() ?? 0,
-      fat: (json['fat'] as num?)?.toDouble() ?? 0,
+      protein: _nutritionNumber(json['protein'], 'protein'),
+      carbs: _nutritionNumber(json['carbs'], 'carbs'),
+      fat: _nutritionNumber(json['fat'], 'fat'),
     );
   }
 
@@ -89,3 +107,11 @@ class PlannedMeal {
 }
 
 typedef MealPlanMeal = PlannedMeal;
+
+double _nutritionNumber(dynamic value, String field) {
+  if (value == null) return 0;
+  if (value is! num || !value.isFinite || value < 0) {
+    throw FormatException('$field must be a finite nonnegative number.');
+  }
+  return value.toDouble();
+}
