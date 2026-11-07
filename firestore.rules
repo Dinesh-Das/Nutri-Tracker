@@ -111,15 +111,23 @@ service cloud.firestore {
         optionalString('brand', 80) &&
         optionalString('dietType', 40) &&
         optionalString('cuisine', 40) &&
-        optionalNumber('caloriesPer100g', 0, 1000) &&
-        optionalNumber('proteinPer100g', 0, 200) &&
-        optionalNumber('carbsPer100g', 0, 250) &&
-        optionalNumber('fatPer100g', 0, 200) &&
-        optionalNumber('fiberPer100g', 0, 100) &&
-        optionalNumber('sugarPer100g', 0, 200) &&
+        (!request.resource.data.keys().hasAny(['nutritionBasis']) ||
+          request.resource.data.nutritionBasis in ['per100g', 'perServing']) &&
+        (!foodIsPerServing() || request.resource.data.defaultServingQuantity > 0) &&
+        optionalNumber('caloriesPer100g', 0, foodIsPerServing() ? 5000 : 1000) &&
+        optionalNumber('proteinPer100g', 0, foodIsPerServing() ? 300 : 200) &&
+        optionalNumber('carbsPer100g', 0, foodIsPerServing() ? 600 : 250) &&
+        optionalNumber('fatPer100g', 0, foodIsPerServing() ? 300 : 200) &&
+        optionalNumber('fiberPer100g', 0, foodIsPerServing() ? 200 : 100) &&
+        optionalNumber('sugarPer100g', 0, foodIsPerServing() ? 300 : 200) &&
         optionalNumber('sodiumPer100g', 0, 50000) &&
         optionalNumber('defaultServingQuantity', 0, 5000) &&
         optionalList('servingOptions', 20);
+    }
+
+    function foodIsPerServing() {
+      return request.resource.data.keys().hasAny(['nutritionBasis']) &&
+        request.resource.data.nutritionBasis == 'perServing';
     }
 
     function validGoal(userId) {

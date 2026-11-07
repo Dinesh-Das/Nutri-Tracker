@@ -7,11 +7,15 @@ import 'package:nutri_tracker/models/meal_entry.dart';
 import 'package:nutri_tracker/models/meal_template.dart';
 
 FoodItem foodItemFromMealEntry(MealEntry meal, String uid) {
-  final factor = max(meal.quantity, 1) / 100;
+  _validateMealNutrition(meal);
+  final grams = _gramEquivalentForMeal(meal);
+  final factor = grams == null ? 1.0 : grams / 100;
   return FoodItem(
     id: '',
     uid: uid,
     name: meal.foodName,
+    nutritionBasis:
+        grams == null ? NutritionBasis.perServing : NutritionBasis.per100g,
     caloriesPer100g: meal.calories / factor,
     proteinPer100g: meal.protein / factor,
     carbsPer100g: meal.carbs / factor,
@@ -34,10 +38,58 @@ FoodItem foodItemFromMealEntry(MealEntry meal, String uid) {
 
 double? _gramEquivalentForMeal(MealEntry meal) {
   final unit = meal.unit.toLowerCase();
-  if (unit == 'grams' || unit == 'g' || unit == 'ml') {
+  if (unit == 'grams' || unit == 'gram' || unit == 'g') {
     return meal.quantity;
   }
   return null;
+}
+
+void _validateMealNutrition(MealEntry meal) {
+  if (!meal.quantity.isFinite || meal.quantity <= 0 || meal.quantity > 5000) {
+    throw ArgumentError(
+        'Meal quantity must be greater than zero and at most 5000.');
+  }
+  final values = [
+    meal.calories,
+    meal.protein,
+    meal.carbs,
+    meal.fat,
+    meal.fiber,
+    meal.sugar,
+    meal.sodium
+  ];
+  const bounds = [5000, 300, 600, 300, 200, 300, 50000];
+  for (var i = 0; i < values.length; i++) {
+    if (!values[i].isFinite || values[i] < 0 || values[i] > bounds[i]) {
+      throw ArgumentError('Meal nutrition is outside the supported range.');
+    }
+  }
+}
+
+void _validateFoodNutrition(FoodItem food) {
+  if (!food.defaultServingQuantity.isFinite ||
+      food.defaultServingQuantity <= 0 ||
+      food.defaultServingQuantity > 5000) {
+    throw ArgumentError(
+        'Food serving quantity is outside the supported range.');
+  }
+  final values = [
+    food.caloriesPer100g,
+    food.proteinPer100g,
+    food.carbsPer100g,
+    food.fatPer100g,
+    food.fiberPer100g,
+    food.sugarPer100g,
+    food.sodiumPer100g
+  ];
+  final bounds = food.nutritionBasis == NutritionBasis.perServing
+      ? [5000, 300, 600, 300, 200, 300, 50000]
+      : [1000, 200, 250, 200, 100, 200, 50000];
+  for (var i = 0; i < values.length; i++) {
+    if (!values[i].isFinite || values[i] < 0 || values[i] > bounds[i]) {
+      throw ArgumentError('Food nutrition is outside the supported range.');
+    }
+  }
 }
 
 class NutritionRepository {
@@ -120,15 +172,22 @@ class NutritionRepository {
       createdAt: entry.createdAt,
       updatedAt: now,
     );
+    final recent = foodItemFromMealEntry(saved, uid);
+    _validateFoodNutrition(recent);
+    final recentRef =
+        _foodItems('recent_foods', uid).doc(_stableFoodId(recent));
     await _firestore.runTransaction((transaction) async {
       final dailyRef = _dailyRef(uid, key);
       final dailyDoc = await transaction.get(dailyRef);
+      final oldDoc = await transaction.get(ref);
+      final oldEntry = oldDoc.exists ? MealEntry.fromMap(oldDoc.data()!) : null;
+      transaction.set(recentRef, recent.copyWith(id: recentRef.id).toMap());
       transaction.set(ref, saved.toMap());
       transaction.set(
         dailyRef,
         _dailyTotalsAfter(
           dailyDoc.data(),
-          _mealDeltaValues(saved),
+          _mealDeltaValues(saved, oldEntry: oldEntry),
           uid: uid,
           key: key,
           updatedAt: now,
@@ -136,7 +195,6 @@ class NutritionRepository {
         SetOptions(merge: true),
       );
     });
-    await _saveRecentFood(uid, foodItemFromMealEntry(saved, uid));
     return saved;
   }
 
@@ -145,6 +203,7 @@ class NutritionRepository {
     DateTime date,
     MealEntry entry,
   ) async {
+    _validateMealNutrition(entry);
     if (entry.id.isEmpty) {
       throw ArgumentError('Only document-backed meals can be updated.');
     }
@@ -340,6 +399,7 @@ class NutritionRepository {
   }
 
   Future<FoodItem> saveCustomFood(String uid, FoodItem food) async {
+    _validateFoodNutrition(food);
     final ref = food.id.isEmpty
         ? _foodItems('custom_foods', uid).doc()
         : _foodItems('custom_foods', uid).doc(food.id);
@@ -367,6 +427,7 @@ class NutritionRepository {
       await ref.delete();
       return;
     }
+    _validateFoodNutrition(food);
     await ref.set(
       food
           .copyWith(
@@ -484,20 +545,6 @@ class NutritionRepository {
     return snapshot.docs
         .map((doc) => FoodItem.fromMap(doc.id, doc.data()))
         .toList();
-  }
-
-  Future<void> _saveRecentFood(String uid, FoodItem food) {
-    final ref = _foodItems('recent_foods', uid).doc(_stableFoodId(food));
-    return ref.set(
-      food
-          .copyWith(
-            id: ref.id,
-            uid: uid,
-            updatedAt: DateTime.now(),
-          )
-          .toMap(),
-      SetOptions(merge: true),
-    );
   }
 
   String _stableFoodId(FoodItem food) {

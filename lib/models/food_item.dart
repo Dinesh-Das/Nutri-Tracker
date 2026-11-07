@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum NutritionBasis { per100g, perServing }
+
 class ServingOption {
   const ServingOption({
     required this.label,
@@ -38,6 +40,7 @@ class FoodItem {
     this.uid,
     required this.name,
     this.brand = '',
+    this.nutritionBasis = NutritionBasis.per100g,
     required this.caloriesPer100g,
     required this.proteinPer100g,
     required this.carbsPer100g,
@@ -61,6 +64,9 @@ class FoodItem {
   final String? uid;
   final String name;
   final String brand;
+  final NutritionBasis nutritionBasis;
+  // Legacy field names are retained in Firestore. nutritionBasis explicitly
+  // identifies whether these values describe 100g or the default serving.
   final double caloriesPer100g;
   final double proteinPer100g;
   final double carbsPer100g;
@@ -78,12 +84,42 @@ class FoodItem {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  String get nutritionBasisLabel => nutritionBasis == NutritionBasis.per100g
+      ? '100g'
+      : '$defaultServingQuantity $defaultServingUnit';
+
+  double portionFactor(ServingOption option, double quantity) {
+    if (!quantity.isFinite || quantity <= 0) {
+      throw ArgumentError('Quantity must be a positive finite number.');
+    }
+    if (nutritionBasis == NutritionBasis.perServing) {
+      if (!defaultServingQuantity.isFinite ||
+          defaultServingQuantity <= 0 ||
+          option.unit != defaultServingUnit) {
+        throw ArgumentError('This food has no known gram equivalent.');
+      }
+      return quantity / defaultServingQuantity;
+    }
+    final unit = option.unit.toLowerCase();
+    if (['g', 'gram', 'grams', 'ml'].contains(unit)) return quantity / 100;
+    final grams = option.gramEquivalent;
+    if (grams != null && grams > 0 && option.quantity > 0) {
+      return grams * quantity / option.quantity / 100;
+    }
+    throw ArgumentError('Choose a serving with a known gram equivalent.');
+  }
+
   factory FoodItem.fromMap(String id, Map<String, dynamic> map) {
     return FoodItem(
       id: id,
       uid: map['uid']?.toString(),
       name: map['name']?.toString() ?? map['foodName']?.toString() ?? '',
       brand: map['brand']?.toString() ?? '',
+      nutritionBasis: switch (map['nutritionBasis']) {
+        null || 'per100g' => NutritionBasis.per100g,
+        'perServing' => NutritionBasis.perServing,
+        _ => throw const FormatException('Unknown food nutrition basis.'),
+      },
       caloriesPer100g: (map['caloriesPer100g'] as num?)?.toDouble() ??
           (map['calories'] as num?)?.toDouble() ??
           0,
@@ -130,6 +166,7 @@ class FoodItem {
       'uid': uid,
       'name': name,
       'brand': brand,
+      'nutritionBasis': nutritionBasis.name,
       'caloriesPer100g': caloriesPer100g,
       'proteinPer100g': proteinPer100g,
       'carbsPer100g': carbsPer100g,
@@ -155,6 +192,7 @@ class FoodItem {
     String? uid,
     String? name,
     String? brand,
+    NutritionBasis? nutritionBasis,
     double? caloriesPer100g,
     double? proteinPer100g,
     double? carbsPer100g,
@@ -177,6 +215,7 @@ class FoodItem {
       uid: uid ?? this.uid,
       name: name ?? this.name,
       brand: brand ?? this.brand,
+      nutritionBasis: nutritionBasis ?? this.nutritionBasis,
       caloriesPer100g: caloriesPer100g ?? this.caloriesPer100g,
       proteinPer100g: proteinPer100g ?? this.proteinPer100g,
       carbsPer100g: carbsPer100g ?? this.carbsPer100g,

@@ -1,6 +1,7 @@
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nutri_tracker/models/meal_entry.dart';
+import 'package:nutri_tracker/models/food_item.dart';
 import 'package:nutri_tracker/models/user_goal.dart';
 import 'package:nutri_tracker/models/workout_session.dart';
 import 'package:nutri_tracker/repositories/goal_repository.dart';
@@ -96,6 +97,114 @@ void main() {
 
       final log = await repository.getDailyLog(uid, date);
       expect(log.waterIntakeMl, 1750);
+    });
+
+    test('a serving with unknown mass keeps its original nutrition basis',
+        () async {
+      final firestore = FakeFirebaseFirestore();
+      final repository = NutritionRepository(firestore: firestore);
+      final meal = MealEntry(
+        mealType: 'lunch',
+        foodName: 'Manual meal',
+        calories: 500,
+        protein: 20,
+        carbs: 60,
+        fat: 20,
+        quantity: 1,
+        unit: 'serving',
+      );
+      final food = foodItemFromMealEntry(meal, 'uid-1');
+      expect(food.caloriesPer100g, 500);
+      expect(food.proteinPer100g, 20);
+      expect(food.toMap()['nutritionBasis'], 'perServing');
+      expect(food.servingOptions.single.gramEquivalent, isNull);
+      final restored = FoodItem.fromMap('saved-food', food.toMap());
+      expect(restored.nutritionBasisLabel, '1.0 serving');
+      expect(
+          restored.caloriesPer100g *
+              restored.portionFactor(restored.servingOptions.single, 2),
+          1000);
+      expect(
+          () => restored.portionFactor(
+              const ServingOption(label: 'Grams', quantity: 100, unit: 'grams'),
+              100),
+          throwsArgumentError);
+
+      await repository.addMealEntry('uid-1', DateTime(2026, 11, 6), meal);
+      final recent =
+          await firestore.doc('recent_foods/uid-1/items/manual_meal').get();
+      expect(recent.data()?['caloriesPer100g'], 500);
+      expect(recent.data()?['nutritionBasis'], 'perServing');
+    });
+
+    test('invalid meal nutrition is rejected before any persistence', () async {
+      final firestore = FakeFirebaseFirestore();
+      final repository = NutritionRepository(firestore: firestore);
+      for (final protein in [-1.0, double.nan, double.infinity]) {
+        await expectLater(
+            repository.addMealEntry(
+              'uid-1',
+              DateTime(2026, 11, 6),
+              MealEntry(
+                  mealType: 'lunch',
+                  foodName: 'Invalid',
+                  calories: 500,
+                  protein: protein,
+                  carbs: 60,
+                  fat: 20,
+                  quantity: 1,
+                  unit: 'serving'),
+            ),
+            throwsArgumentError);
+      }
+      expect(
+          (await firestore.collection('calorie_logs/uid-1/daily').get()).docs,
+          isEmpty);
+      expect(
+          (await firestore.collection('recent_foods/uid-1/items').get()).docs,
+          isEmpty);
+    });
+
+    test('a volume-only meal does not invent a gram weight', () {
+      final food = foodItemFromMealEntry(
+        MealEntry(
+            mealType: 'snack',
+            foodName: 'Smoothie',
+            calories: 200,
+            protein: 10,
+            carbs: 25,
+            fat: 8,
+            quantity: 250,
+            unit: 'ml'),
+        'uid-1',
+      );
+      expect(food.toMap()['nutritionBasis'], 'perServing');
+      expect(food.caloriesPer100g, 200);
+      expect(food.servingOptions.single.gramEquivalent, isNull);
+      expect(food.portionFactor(food.servingOptions.single, 500), 2);
+    });
+
+    test('retrying an already saved meal does not double daily totals',
+        () async {
+      final firestore = FakeFirebaseFirestore();
+      final repository = NutritionRepository(firestore: firestore);
+      final date = DateTime(2026, 11, 6);
+      final saved = await repository.addMealEntry(
+          'uid-1',
+          date,
+          MealEntry(
+              mealType: 'lunch',
+              foodName: 'Dal',
+              calories: 500,
+              protein: 20,
+              carbs: 60,
+              fat: 20,
+              quantity: 250,
+              unit: 'grams'));
+      await repository.addMealEntry('uid-1', date, saved);
+      final log = await repository.getDailyLog('uid-1', date);
+      expect(log.totalCalories, 500);
+      expect(log.meals, hasLength(1));
     });
 
     test('mixed legacy array meals and document meals are both readable',

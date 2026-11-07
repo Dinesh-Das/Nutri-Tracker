@@ -301,7 +301,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            final factor = _servingFactor(food, selectedOption, quantity);
+            final factor = food.portionFactor(selectedOption, quantity);
             final calories = (food.caloriesPer100g * factor).round();
             final unit = selectedOption.unit;
             final slider = _sliderBoundsFor(selectedOption);
@@ -419,15 +419,26 @@ class _AddMealScreenState extends State<AddMealScreen> {
 List<ServingOption> _servingOptionsFor(FoodItem food) {
   final existing = food.servingOptions;
   final unit = food.defaultServingUnit.toLowerCase();
+  if (food.nutritionBasis == NutritionBasis.perServing) {
+    return [
+      ServingOption(
+          label: food.nutritionBasisLabel,
+          quantity: food.defaultServingQuantity,
+          unit: food.defaultServingUnit)
+    ];
+  }
   final options = <ServingOption>[
-    ...existing,
-    ServingOption(
-      label:
-          '${_formatQuantity(food.defaultServingQuantity)} ${food.defaultServingUnit}',
-      quantity: food.defaultServingQuantity,
-      unit: food.defaultServingUnit,
-      gramEquivalent: _isMassUnit(unit) ? food.defaultServingQuantity : null,
-    ),
+    ...existing.where((option) =>
+        _isMassUnit(option.unit.toLowerCase()) ||
+        (option.gramEquivalent ?? 0) > 0),
+    if (_isMassUnit(unit))
+      ServingOption(
+        label:
+            '${_formatQuantity(food.defaultServingQuantity)} ${food.defaultServingUnit}',
+        quantity: food.defaultServingQuantity,
+        unit: food.defaultServingUnit,
+        gramEquivalent: _isMassUnit(unit) ? food.defaultServingQuantity : null,
+      ),
     const ServingOption(
       label: 'Grams',
       quantity: 100,
@@ -470,36 +481,12 @@ List<ServingOption> _servingOptionsFor(FoodItem food) {
       unit: 'dosa',
       gramEquivalent: 120,
     ),
-    const ServingOption(
-      label: '1 serving',
-      quantity: 1,
-      unit: 'serving',
-    ),
   ];
   final seen = <String>{};
   return [
     for (final option in options)
       if (seen.add('${option.label}-${option.unit}')) option,
   ];
-}
-
-double _servingFactor(
-  FoodItem food,
-  ServingOption option,
-  double quantity,
-) {
-  final unit = option.unit.toLowerCase();
-  if (_isMassUnit(unit)) return quantity / 100;
-  final grams = option.gramEquivalent;
-  if (grams != null && grams > 0) {
-    final servings = quantity / (option.quantity <= 0 ? 1 : option.quantity);
-    return (grams * servings) / 100;
-  }
-  if (!_isMassUnit(food.defaultServingUnit.toLowerCase())) {
-    return quantity /
-        (food.defaultServingQuantity <= 0 ? 1 : food.defaultServingQuantity);
-  }
-  return 1;
 }
 
 bool _isMassUnit(String unit) {
@@ -866,7 +853,7 @@ class _FoodTile extends StatelessWidget {
       leading: const CircleAvatar(child: Icon(Icons.restaurant_menu)),
       title: Text(food.name),
       subtitle: Text(
-        '${food.caloriesPer100g.round()} kcal / 100g - ${food.dietType}',
+        '${food.caloriesPer100g.round()} kcal / ${food.nutritionBasisLabel} - ${food.dietType}',
       ),
       trailing: Icon(food.isFavourite ? Icons.star : Icons.chevron_right),
       onTap: () => onTap(food),

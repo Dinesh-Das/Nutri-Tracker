@@ -56,8 +56,9 @@ class _CustomFoodScreenState extends State<CustomFoodScreen> {
                   ),
                   TextField(
                     controller: _calories,
-                    decoration:
-                        const InputDecoration(labelText: 'Calories / 100g'),
+                    decoration: InputDecoration(
+                        labelText:
+                            'Calories / ${_editing?.nutritionBasisLabel ?? '100g'}'),
                     keyboardType: TextInputType.number,
                   ),
                   Row(
@@ -117,8 +118,8 @@ class _CustomFoodScreenState extends State<CustomFoodScreen> {
                     for (final food in foods)
                       ListTile(
                         title: Text(food.name),
-                        subtitle:
-                            Text('${food.caloriesPer100g.round()} kcal / 100g'),
+                        subtitle: Text(
+                            '${food.caloriesPer100g.round()} kcal / ${food.nutritionBasisLabel}'),
                         onTap: () => _edit(food),
                         trailing: IconButton(
                           tooltip: 'Delete custom food',
@@ -157,6 +158,10 @@ class _CustomFoodScreenState extends State<CustomFoodScreen> {
         carbsPer100g: double.tryParse(_carbs.text.trim()) ?? 0,
         fatPer100g: double.tryParse(_fat.text.trim()) ?? 0,
         isCustom: true,
+        nutritionBasis: _editing?.nutritionBasis ?? NutritionBasis.per100g,
+        defaultServingQuantity: _editing?.defaultServingQuantity ?? 100,
+        defaultServingUnit: _editing?.defaultServingUnit ?? 'grams',
+        servingOptions: _editing?.servingOptions ?? const [],
       ),
     );
     _clear();
