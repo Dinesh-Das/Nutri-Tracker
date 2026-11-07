@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:nutri_tracker/routes/app_routes.dart';
+import 'package:nutri_tracker/services/account_deletion_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> showAlertDialog(BuildContext context) {
@@ -41,8 +40,10 @@ Future<void> _deleteCurrentAccount(BuildContext context) async {
 
   try {
     await _reauthenticateForDelete(context, user);
-    await _deleteUserData(user.uid);
-    await user.delete();
+    await AccountDeletionService().deleteAccount(
+      uid: user.uid,
+      deleteAuthUser: user.delete,
+    );
     await GoogleSignIn().signOut();
     final preferences = await SharedPreferences.getInstance();
     await preferences.clear();
@@ -133,61 +134,6 @@ Future<String?> _promptForPassword(BuildContext context) {
       );
     },
   ).whenComplete(controller.dispose);
-}
-
-Future<void> _deleteUserData(String uid) async {
-  final firestore = FirebaseFirestore.instance;
-  await _deleteCollection(
-    firestore.collection('user_details').doc(uid).collection('favourites'),
-  );
-  await _deleteCollection(
-    firestore.collection('user_details').doc(uid).collection('mealPlans'),
-  );
-  await _deleteCollection(
-    firestore.collection('calorie_logs').doc(uid).collection('daily'),
-  );
-  await _deleteCollection(
-    firestore.collection('weight_logs').doc(uid).collection('entries'),
-  );
-  await _deleteCollection(
-    firestore.collection('ai_chats').doc(uid).collection('messages'),
-  );
-
-  await firestore.collection('user_details').doc(uid).delete();
-  await _tryDeleteDoc(firestore.collection('calorie_logs').doc(uid));
-  await _tryDeleteDoc(firestore.collection('weight_logs').doc(uid));
-  await _tryDeleteDoc(firestore.collection('ai_chats').doc(uid));
-  await _tryDeleteProfileImage(uid);
-}
-
-Future<void> _deleteCollection(
-    CollectionReference<Map<String, dynamic>> ref) async {
-  while (true) {
-    final snapshot = await ref.limit(400).get();
-    if (snapshot.docs.isEmpty) return;
-    final batch = FirebaseFirestore.instance.batch();
-    for (final doc in snapshot.docs) {
-      batch.delete(doc.reference);
-    }
-    await batch.commit();
-  }
-}
-
-Future<void> _tryDeleteDoc(DocumentReference<Map<String, dynamic>> ref) async {
-  try {
-    await ref.delete();
-  } on FirebaseException {
-    // The parent marker documents may not exist; subcollection cleanup above is
-    // the important part.
-  }
-}
-
-Future<void> _tryDeleteProfileImage(String uid) async {
-  try {
-    await FirebaseStorage.instance.ref().child('images/$uid/profile').delete();
-  } on FirebaseException {
-    // Missing images should not block account deletion.
-  }
 }
 
 void _goToLogin(BuildContext context) {

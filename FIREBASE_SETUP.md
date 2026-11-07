@@ -444,3 +444,14 @@ Then try signing in again so the app can resend the link.
 Use Firebase Console test phone numbers first. If test numbers work but real
 numbers do not, the issue is usually quota, region policy, carrier filtering,
 device eligibility, missing SHA fingerprints, or Phone provider setup.
+# Account cleanup rules and indexes
+
+Deploy the checked-in Firestore rules/indexes and Storage rules with this client.
+The meal and workout session cleanup queries use the `uid` collection-group
+indexes to find records even when their daily parent document is absent. Listing
+requires the signed-in user's UID filter; deletion still requires the concrete
+owner path. Storage cleanup covers `images/{uid}`, `profile_images/{uid}`, and
+`food_photos/{uid}`, including historical nested files.
+
+Account removal stops and reports any database or file cleanup failure before
+deleting the authentication account. Retrying continues from the remaining data.

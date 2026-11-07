@@ -266,6 +266,17 @@ service cloud.firestore {
       }
     }
 
+    // Account cleanup must find records whose daily parent does not exist.
+    // Only uid-filtered collection-group listing is granted here; deletion
+    // still requires the concrete owner path rules below.
+    match /{ownerPath=**}/meals/{mealId} {
+      allow list: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    match /{ownerPath=**}/sessions/{sessionId} {
+      allow list: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
     match /calorie_logs/{userId} {
       allow delete: if isOwner(userId);
 

@@ -1,6 +1,12 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    // Owners can enumerate and erase all historical nested files. Upload
+    // permissions remain constrained by the individual image rules below.
+    match /{folder}/{uid}/{path=**} {
+      allow read, delete: if folder in ['images', 'profile_images', 'food_photos'] &&
+        request.auth != null && request.auth.uid == uid;
+    }
     match /images/{userId}/{filename} {
       allow read: if request.auth != null && request.auth.uid == userId;
       allow create, update: if request.auth != null &&
